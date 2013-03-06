@@ -5,8 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import com.jason.lawgarden.R;
+import java.util.ArrayList;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -16,6 +15,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.jason.lawgarden.R;
+import com.jason.lawgarden.model.Subject;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DataBaseHelper";
@@ -181,5 +183,29 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor1 = mDataBase.query("user_info", new String[] { "user_name", "service_type" },
                 null, null, null, null, null);
         Log.d("SplashActivity", cursor1.getCount() + "");
+    }
+
+    public static final String[] SUBJECTS_PROJECTION = { "_id", "parent_id", "name", "description" };
+
+    public ArrayList<Subject> getSubjectsByParentId(int parentId) {
+        openDataBase();
+        ArrayList<Subject> subjects = new ArrayList<Subject>();
+        Subject subject;
+
+        Cursor cursor = mDataBase.query("subjects", SUBJECTS_PROJECTION, "parent_id=" + parentId,
+                null, null, null, null);
+
+        while (cursor.moveToNext()) {
+            subject = new Subject();
+
+            subject.setId(cursor.getInt(cursor.getColumnIndex("_id")));
+            subject.setParentId(cursor.getInt(cursor.getColumnIndex("parent_id")));
+            subject.setName(cursor.getString(cursor.getColumnIndex("name")));
+            subject.setDescription(cursor.getString(cursor.getColumnIndex("description")));
+
+            subjects.add(subject);
+        }
+
+        return subjects;
     }
 }

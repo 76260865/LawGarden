@@ -16,7 +16,6 @@
         android:id="@+id/button1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:drawableStart="@drawable/top_icon_search"
         android:hint="@string/edit_search_key_word_hint_text" />
 
     <RadioGroup
@@ -80,5 +79,32 @@
             android:drawableTop="@drawable/ic_menu_user"
             android:text="@string/txt_personal_center_text" />
     </LinearLayout>
+
+    <RadioGroup
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            style="@style/RadioButton"
+            android:drawableTop="@drawable/ic_menu_law_data"
+            android:text="@string/txt_full_text" />
+
+        <RadioButton
+            style="@style/RadioButton"
+            android:drawableTop="@drawable/ic_menu_news"
+            android:text="@string/txt_pro_text" />
+
+        <RadioButton
+            style="@style/RadioButton"
+            android:drawableTop="@drawable/ic_menu_icon_fav"
+            android:text="@string/txt_title_text" />
+
+        <RadioButton
+            style="@style/RadioButton"
+            android:drawableTop="@drawable/ic_menu_user"
+            android:text="@string/txt_full_text" />
+    </RadioGroup>
 
 </LinearLayout>
