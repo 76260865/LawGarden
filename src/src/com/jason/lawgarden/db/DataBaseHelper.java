@@ -17,6 +17,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.jason.lawgarden.R;
+import com.jason.lawgarden.model.Article;
 import com.jason.lawgarden.model.Subject;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
@@ -207,5 +208,27 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
 
         return subjects;
+    }
+
+    private static final String SQL_SELECT_ARTICLES_BY_SUBJECTID = "SELECT * FROM subjects_articles JOIN articles_of_law ON subjects_articles.article_id=articles_of_law._id WHERE subject_id =?";
+
+    public ArrayList<Article> getArticlesBySubjectId(int SubjectId) {
+        ArrayList<Article> articles = new ArrayList<Article>();
+        Article article;
+
+        Cursor cursor = mDataBase.rawQuery(SQL_SELECT_ARTICLES_BY_SUBJECTID,
+                new String[] { SubjectId + "" });
+
+        while (cursor.moveToNext()) {
+            article = new Article();
+
+            article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
+            article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+            article.setContents(cursor.getString(cursor.getColumnIndex("contents")));
+
+            articles.add(article);
+        }
+
+        return articles;
     }
 }

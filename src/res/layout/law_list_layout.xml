@@ -5,9 +5,12 @@
     android:orientation="vertical" >
 
     <LinearLayout
+        android:id="@+id/linear_subject"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone" >
 
         <ImageView
             android:id="@+id/imageView2"
@@ -16,12 +19,12 @@
             android:src="@drawable/list_icon" />
 
         <TextView
-            android:id="@+id/txt_law_title"
-            android:layout_width="wrap_content"
+            android:id="@+id/txt_subject_title"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="TextView"
-            android:textSize="22sp" />
+            android:textColor="@android:color/black"
+            android:textSize="20sp" />
 
         <ImageView
             android:id="@+id/imageView1"
