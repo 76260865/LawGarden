@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import android.content.ContentValues;
@@ -18,6 +20,7 @@ import android.util.Log;
 
 import com.jason.lawgarden.R;
 import com.jason.lawgarden.model.Article;
+import com.jason.lawgarden.model.News;
 import com.jason.lawgarden.model.Subject;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
@@ -192,19 +195,26 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         openDataBase();
         ArrayList<Subject> subjects = new ArrayList<Subject>();
         Subject subject;
+        Cursor cursor = null;
 
-        Cursor cursor = mDataBase.query("subjects", SUBJECTS_PROJECTION, "parent_id=" + parentId,
-                null, null, null, null);
+        try {
+            cursor = mDataBase.query("subjects", SUBJECTS_PROJECTION, "parent_id=" + parentId,
+                    null, null, null, null);
 
-        while (cursor.moveToNext()) {
-            subject = new Subject();
+            while (cursor.moveToNext()) {
+                subject = new Subject();
 
-            subject.setId(cursor.getInt(cursor.getColumnIndex("_id")));
-            subject.setParentId(cursor.getInt(cursor.getColumnIndex("parent_id")));
-            subject.setName(cursor.getString(cursor.getColumnIndex("name")));
-            subject.setDescription(cursor.getString(cursor.getColumnIndex("description")));
+                subject.setId(cursor.getInt(cursor.getColumnIndex("_id")));
+                subject.setParentId(cursor.getInt(cursor.getColumnIndex("parent_id")));
+                subject.setName(cursor.getString(cursor.getColumnIndex("name")));
+                subject.setDescription(cursor.getString(cursor.getColumnIndex("description")));
 
-            subjects.add(subject);
+                subjects.add(subject);
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            cursor.close();
         }
 
         return subjects;
@@ -215,20 +225,59 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public ArrayList<Article> getArticlesBySubjectId(int SubjectId) {
         ArrayList<Article> articles = new ArrayList<Article>();
         Article article;
+        Cursor cursor = null;
+        try {
+            cursor = mDataBase.rawQuery(SQL_SELECT_ARTICLES_BY_SUBJECTID, new String[] { SubjectId
+                    + "" });
 
-        Cursor cursor = mDataBase.rawQuery(SQL_SELECT_ARTICLES_BY_SUBJECTID,
-                new String[] { SubjectId + "" });
+            while (cursor.moveToNext()) {
+                article = new Article();
 
-        while (cursor.moveToNext()) {
-            article = new Article();
+                article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
+                article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                article.setContents(cursor.getString(cursor.getColumnIndex("contents")));
 
-            article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
-            article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
-            article.setContents(cursor.getString(cursor.getColumnIndex("contents")));
-
-            articles.add(article);
+                articles.add(article);
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            cursor.close();
         }
-
         return articles;
+    }
+
+    private static final String[] NEWS_PROJECTION = { "_id", "title", "content", "create_time",
+            "'from'" };
+
+    public ArrayList<News> getAllNews() {
+        ArrayList<News> newsList = new ArrayList<News>();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        News news = null;
+        Cursor cursor = null;
+
+        try {
+            cursor = mDataBase
+                    .query("news", NEWS_PROJECTION, null, null, null, null, "create_time");
+            while (cursor.moveToNext()) {
+                news = new News();
+
+                news.setId(cursor.getInt(cursor.getColumnIndex("_id")));
+                news.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                news.setContent(cursor.getString(cursor.getColumnIndex("content")));
+                news.setCrateTime(format.parse(cursor.getString(cursor
+                        .getColumnIndex("create_time"))));
+                news.setFrom(cursor.getString(cursor.getColumnIndex("from")));
+
+                newsList.add(news);
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } catch (ParseException e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            cursor.close();
+        }
+        return newsList;
     }
 }

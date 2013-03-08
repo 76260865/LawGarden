@@ -16,7 +16,8 @@
         android:id="@+id/button1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/edit_search_key_word_hint_text" />
+        android:hint="@string/edit_search_key_word_hint_text"
+        android:inputType="none" />
 
     <RadioGroup
         android:layout_width="fill_parent"

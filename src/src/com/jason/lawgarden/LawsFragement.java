@@ -16,7 +16,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.jason.lawgarden.MainActivity.SubjectCallBack;
 import com.jason.lawgarden.db.DataBaseHelper;
 import com.jason.lawgarden.model.Article;
 import com.jason.lawgarden.model.Subject;
@@ -35,8 +34,6 @@ public class LawsFragement extends Fragment {
     private ArrayList<Subject> mSubjects = new ArrayList<Subject>();
 
     private ArrayList<Article> mArticles = new ArrayList<Article>();
-
-    private SubjectCallBack mSubjectCallBack;
 
     private View mViewSubjectTitle;
 
@@ -83,20 +80,29 @@ public class LawsFragement extends Fragment {
         return view;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mSubjectCallBack = null;
-    }
-
     private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int postion, long id) {
-            if (mSubjectCallBack != null) {
-                Subject subject = mSubjects.get(postion);
-                mSubjectCallBack.openSubjectByParentId(subject.getId(), subject.getName());
-            }
+            Subject subject = mSubjects.get(postion);
+            LawsFragement fragment = new LawsFragement();
+
+            Bundle bundle = new Bundle();
+            bundle.putInt(LawsFragement.EXTRA_KEY_SUBJECT_ID, subject.getId());
+            bundle.putString(LawsFragement.EXTRA_KEY_SUBJECT_NAME, subject.getName());
+            fragment.setArguments(bundle);
+
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager()
+                    .beginTransaction();
+
+            // Replace whatever is in the fragment_container view with this
+            // fragment, and add the transaction to the back stack so the
+            // user can navigate back
+            transaction.replace(R.id.fragment_container, fragment);
+            transaction.addToBackStack(null);
+
+            // Commit the transaction
+            transaction.commit();
         }
     };
 
@@ -118,10 +124,6 @@ public class LawsFragement extends Fragment {
             transaction.commit();
         }
     };
-
-    public void setSubjectCallBack(SubjectCallBack callBack) {
-        mSubjectCallBack = callBack;
-    }
 
     private class LawsAdapter extends BaseAdapter {
 
