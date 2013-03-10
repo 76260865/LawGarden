@@ -1,5 +1,6 @@
 package com.jason.lawgarden;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -7,6 +8,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
+
+import com.jason.util.JsonUtil;
 
 public class MainActivity extends FragmentActivity {
 
@@ -27,30 +30,50 @@ public class MainActivity extends FragmentActivity {
         mRadioGroup.setOnCheckedChangeListener(mOnCheckedChangeListener);
         mRbtnLawData = (RadioButton) findViewById(R.id.rbtn_law_data);
         mRbtnLawData.setChecked(true);
+        new MyAsyncTask().execute();
     }
 
     private OnCheckedChangeListener mOnCheckedChangeListener = new OnCheckedChangeListener() {
 
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
+            popupAllFragmentStack();
+
             switch (checkedId) {
             case R.id.rbtn_law_data:
                 LawsFragement lawsFragement = new LawsFragement();
                 addLawFragement(0, null, lawsFragement);
                 break;
             case R.id.rbtn_law_fav:
-                NewsOfLawFragment newsFragment = new NewsOfLawFragment();
-                FragmentTransaction transaction = mFragmentManager.beginTransaction();
-                transaction.replace(R.id.fragment_container, newsFragment);
-                transaction.commit();
+                MyFavoriteFragment favoriteFragment = new MyFavoriteFragment();
+                FragmentTransaction favoriteTransaction = mFragmentManager.beginTransaction();
+                favoriteTransaction.replace(R.id.fragment_container, favoriteFragment);
+                favoriteTransaction.addToBackStack(null);
+                favoriteTransaction.commit();
                 break;
             case R.id.rbtn_law_news:
+                NewsOfLawFragment newsFragment = new NewsOfLawFragment();
+                FragmentTransaction newsTransaction = mFragmentManager.beginTransaction();
+                newsTransaction.replace(R.id.fragment_container, newsFragment);
+                newsTransaction.addToBackStack(null);
+                newsTransaction.commit();
                 break;
             case R.id.rbtn_law_user:
+                UserFragment userFragment = new UserFragment();
+                FragmentTransaction userTransaction = mFragmentManager.beginTransaction();
+                userTransaction.replace(R.id.fragment_container, userFragment);
+                userTransaction.addToBackStack(null);
+                userTransaction.commit();
                 break;
             }
         }
     };
+
+    private void popupAllFragmentStack() {
+        for (int i = 0; i < mFragmentManager.getBackStackEntryCount(); i++) {
+            mFragmentManager.popBackStack();
+        }
+    }
 
     @Override
     public void onBackPressed() {
@@ -80,4 +103,12 @@ public class MainActivity extends FragmentActivity {
         transaction.commit();
     }
 
+    private class MyAsyncTask extends AsyncTask {
+
+        @Override
+        protected Object doInBackground(Object... params) {
+            JsonUtil.login();
+            return null;
+        }
+    }
 }

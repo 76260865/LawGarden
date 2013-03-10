@@ -3,44 +3,9 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#F7FAF8"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical" >
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:src="@drawable/top_logo" />
-
-    <EditText
-        android:id="@+id/button1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/edit_search_key_word_hint_text"
-        android:inputType="none" />
-
-    <RadioGroup
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal" >
-
-        <RadioButton
-            style="@style/RadioButton"
-            android:text="@string/txt_full_text" />
-
-        <RadioButton
-            style="@style/RadioButton"
-            android:text="@string/txt_pro_text" />
-
-        <RadioButton
-            style="@style/RadioButton"
-            android:text="@string/txt_title_text" />
-
-        <RadioButton
-            style="@style/RadioButton"
-            android:text="@string/txt_full_text" />
-    </RadioGroup>
 
     <FrameLayout
         android:id="@+id/fragment_container"
@@ -60,25 +25,25 @@
             android:id="@+id/rbtn_law_data"
             style="@style/RadioButton"
             android:drawableTop="@drawable/ic_menu_law_data"
-            android:text="@string/txt_full_text" />
+            android:text="@string/rtbn_law_data_text" />
 
         <RadioButton
             android:id="@+id/rbtn_law_news"
             style="@style/RadioButton"
             android:drawableTop="@drawable/ic_menu_news"
-            android:text="@string/txt_pro_text" />
+            android:text="@string/rbtn_law_news_text" />
 
         <RadioButton
             android:id="@+id/rbtn_law_fav"
             style="@style/RadioButton"
             android:drawableTop="@drawable/ic_menu_icon_fav"
-            android:text="@string/txt_title_text" />
+            android:text="@string/rbtn_my_favorite_text" />
 
         <RadioButton
             android:id="@+id/rbtn_law_user"
             style="@style/RadioButton"
             android:drawableTop="@drawable/ic_menu_user"
-            android:text="@string/txt_full_text" />
+            android:text="@string/rbtn_personal_center_text" />
     </RadioGroup>
 
 </LinearLayout>

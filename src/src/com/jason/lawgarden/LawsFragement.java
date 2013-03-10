@@ -2,6 +2,7 @@ package com.jason.lawgarden;
 
 import java.util.ArrayList;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -112,8 +114,7 @@ public class LawsFragement extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int postion, long id) {
             LawDetailsFragement fragment = new LawDetailsFragement();
             Bundle bundle = new Bundle();
-            bundle.putString(LawDetailsFragement.EXTRA_KEY_ARTICLE_CONTENT, mArticles.get(postion)
-                    .getContents());
+            bundle.putInt(LawDetailsFragement.EXTRA_KEY_ARTICLE_ID, mArticles.get(postion).getId());
             fragment.setArguments(bundle);
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -122,6 +123,7 @@ public class LawsFragement extends Fragment {
 
             // Commit the transaction
             transaction.commit();
+
         }
     };
 
@@ -153,6 +155,11 @@ public class LawsFragement extends Fragment {
             }
             final Subject subject = mSubjects.get(position);
             TextView txtTitle = (TextView) convertView.findViewById(R.id.txt_law_title);
+            ImageView imgNew = (ImageView) convertView.findViewById(R.id.img_new);
+            ImageView imgFavorite = (ImageView) convertView.findViewById(R.id.img_favorite);
+            imgNew.setImageResource(subject.isNew() ? R.drawable.list_start_sect
+                    : R.drawable.list_start);
+            new FavoriteAyncTask(imgFavorite, subject.getId()).execute();
             txtTitle.setText(subject.getName());
             return convertView;
         }
@@ -186,8 +193,36 @@ public class LawsFragement extends Fragment {
             }
             final Article article = mArticles.get(position);
             TextView txtTitle = (TextView) convertView.findViewById(R.id.txt_law_title);
+            ImageView imgNew = (ImageView) convertView.findViewById(R.id.img_new);
+            ImageView imgFavorite = (ImageView) convertView.findViewById(R.id.img_favorite);
+            imgNew.setImageResource(article.isNew() ? R.drawable.list_start_sect
+                    : R.drawable.list_start);
+            new FavoriteAyncTask(imgFavorite, article.getId()).execute();
             txtTitle.setText(article.getTitle());
             return convertView;
+        }
+    }
+
+    private class FavoriteAyncTask extends AsyncTask<Void, Void, Boolean> {
+
+        private ImageView mImgFavorite;
+
+        private int favoriteId;
+
+        FavoriteAyncTask(ImageView imgView, int id) {
+            mImgFavorite = imgView;
+            favoriteId = id;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            return mDbHelper.isFavorited(favoriteId);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            mImgFavorite.setImageResource(result ? R.drawable.list_start_sect
+                    : R.drawable.list_start);
         }
     }
 }

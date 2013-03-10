@@ -4,6 +4,43 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/top_logo" />
+
+    <EditText
+        android:id="@+id/edit_search"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/top_icon_search"
+        android:hint="@string/edit_search_key_word_hint_text" />
+
+    <RadioGroup
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            style="@style/RadioButton"
+            android:text="@string/txt_full_text" />
+
+        <RadioButton
+            style="@style/RadioButton"
+            android:text="@string/txt_pro_text" />
+
+        <RadioButton
+            style="@style/RadioButton"
+            android:text="@string/txt_title_text" />
+
+        <RadioButton
+            style="@style/RadioButton"
+            android:text="@string/txt_full_text" />
+    </RadioGroup>
+
     <LinearLayout
         android:id="@+id/linear_subject"
         android:layout_width="match_parent"

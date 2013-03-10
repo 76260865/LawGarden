@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -20,8 +21,10 @@ import android.util.Log;
 
 import com.jason.lawgarden.R;
 import com.jason.lawgarden.model.Article;
+import com.jason.lawgarden.model.Favorite;
 import com.jason.lawgarden.model.News;
 import com.jason.lawgarden.model.Subject;
+import com.jason.lawgarden.model.User;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DataBaseHelper";
@@ -189,7 +192,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Log.d("SplashActivity", cursor1.getCount() + "");
     }
 
-    public static final String[] SUBJECTS_PROJECTION = { "_id", "parent_id", "name", "description" };
+    public static final String[] SUBJECTS_PROJECTION = { "_id", "parent_id", "name", "description",
+            "is_new" };
 
     public ArrayList<Subject> getSubjectsByParentId(int parentId) {
         openDataBase();
@@ -208,6 +212,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 subject.setParentId(cursor.getInt(cursor.getColumnIndex("parent_id")));
                 subject.setName(cursor.getString(cursor.getColumnIndex("name")));
                 subject.setDescription(cursor.getString(cursor.getColumnIndex("description")));
+                subject.setNew(cursor.getInt(cursor.getColumnIndex("is_new")) == 0 ? false : true);
 
                 subjects.add(subject);
             }
@@ -220,7 +225,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return subjects;
     }
 
-    private static final String SQL_SELECT_ARTICLES_BY_SUBJECTID = "SELECT * FROM subjects_articles JOIN articles_of_law ON subjects_articles.article_id=articles_of_law._id WHERE subject_id =?";
+    private static final String SQL_SELECT_ARTICLES_BY_SUBJECTID = "SELECT *, articles_of_law.is_new as new FROM subjects_articles JOIN articles_of_law ON subjects_articles.article_id=articles_of_law._id WHERE subject_id =?";
 
     public ArrayList<Article> getArticlesBySubjectId(int SubjectId) {
         ArrayList<Article> articles = new ArrayList<Article>();
@@ -236,6 +241,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
                 article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
                 article.setContents(cursor.getString(cursor.getColumnIndex("contents")));
+                article.setNew(cursor.getInt(cursor.getColumnIndex("new")) == 0 ? false : true);
 
                 articles.add(article);
             }
@@ -248,7 +254,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     private static final String[] NEWS_PROJECTION = { "_id", "title", "content", "create_time",
-            "'from'" };
+            "[from]" };
 
     public ArrayList<News> getAllNews() {
         ArrayList<News> newsList = new ArrayList<News>();
@@ -279,5 +285,100 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         return newsList;
+    }
+
+    private static final String[] FAVORITE_PROJECTION = { "_id", "title", "favorite_type",
+            "favorite_id" };
+
+    public ArrayList<Favorite> getAllFavorites() {
+        ArrayList<Favorite> favorites = new ArrayList<Favorite>();
+        Favorite favorite = null;
+        Cursor cursor = null;
+
+        try {
+            cursor = mDataBase
+                    .query("favorites", FAVORITE_PROJECTION, null, null, null, null, null);
+            while (cursor.moveToNext()) {
+                favorite = new Favorite();
+
+                favorite.setId(cursor.getInt(cursor.getColumnIndex("_id")));
+                favorite.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                favorite.setFavoriteType(cursor.getInt(cursor.getColumnIndex("favorite_type")));
+                favorite.setFavoriteId(cursor.getInt(cursor.getColumnIndex("favorite_id")));
+
+                favorites.add(favorite);
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            cursor.close();
+        }
+
+        return favorites;
+    }
+
+    public boolean isFavorited(int favoriteId) {
+        boolean isFavorited = false;
+        Cursor cursor = null;
+
+        try {
+            cursor = mDataBase.query("favorites", FAVORITE_PROJECTION, "favorite_id=" + favoriteId,
+                    null, null, null, null);
+            isFavorited = cursor.getCount() > 0;
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            cursor.close();
+        }
+        return isFavorited;
+    }
+
+    public Article getArticleById(int id) {
+        Article article = new Article();
+        Cursor cursor = null;
+
+        try {
+            cursor = mDataBase.query("articles_of_law", null, "_id=" + id, null, null, null, null);
+            if (cursor.moveToFirst()) {
+                article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
+                article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                article.setContents(cursor.getString(cursor.getColumnIndex("contents")));
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            cursor.close();
+        }
+
+        return article;
+    }
+
+    public User getUserInfo() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        User user = new User();
+        Cursor cursor = null;
+
+        try {
+            cursor = mDataBase.query("user_info", null, null, null, null, null, null);
+            if (cursor.moveToFirst()) {
+                user.setId(cursor.getInt(cursor.getColumnIndex("_id")));
+                user.setUserName(cursor.getString(cursor.getColumnIndex("user_name")));
+                user.setServiceType(cursor.getInt(cursor.getColumnIndex("service_type")));
+                user.setPurchaseDate(format.parse(cursor.getString(cursor
+                        .getColumnIndex("purchase_date"))));
+                user.setPurchaseDate(new Date());
+                user.setOverdueDate(format.parse(cursor.getString(cursor
+                        .getColumnIndex("overdue_date"))));
+                user.setAboutUs(cursor.getString(cursor.getColumnIndex("about_us")));
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } catch (ParseException e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            cursor.close();
+        }
+
+        return user;
     }
 }

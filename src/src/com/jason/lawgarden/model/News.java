@@ -4,10 +4,52 @@ import java.util.Date;
 
 public class News {
     private int _id;
+
     private String title;
+
     private String content;
+
     private String from;
+
     private Date crateTime;
+
+    private String source;
+
+    private String validTime;
+
+    private String lastUpdateTime;
+
+    public int get_id() {
+        return _id;
+    }
+
+    public void set_id(int _id) {
+        this._id = _id;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public String getValidTime() {
+        return validTime;
+    }
+
+    public void setValidTime(String validTime) {
+        this.validTime = validTime;
+    }
+
+    public String getLastUpdateTime() {
+        return lastUpdateTime;
+    }
+
+    public void setLastUpdateTime(String lastUpdateTime) {
+        this.lastUpdateTime = lastUpdateTime;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 
     public int getId() {
         return _id;

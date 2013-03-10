@@ -20,13 +20,13 @@
         android:textSize="20sp" />
 
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/img_new"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/list_start_sect" />
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/img_favorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/list_start" />
