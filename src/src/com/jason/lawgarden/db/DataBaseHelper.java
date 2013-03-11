@@ -89,7 +89,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         } catch (SQLiteException e) {
             // database does't exist yet.
-            Log.e(TAG, e.getMessage());
+            Log.d(TAG, e.getMessage());
         }
 
         if (checkDB != null) {
@@ -254,7 +254,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     private static final String[] NEWS_PROJECTION = { "_id", "title", "content", "create_time",
-            "[from]" };
+            "came_from" };
 
     public ArrayList<News> getAllNews() {
         ArrayList<News> newsList = new ArrayList<News>();
@@ -273,7 +273,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 news.setContent(cursor.getString(cursor.getColumnIndex("content")));
                 news.setCrateTime(format.parse(cursor.getString(cursor
                         .getColumnIndex("create_time"))));
-                news.setFrom(cursor.getString(cursor.getColumnIndex("from")));
+                news.setFrom(cursor.getString(cursor.getColumnIndex("came_from")));
 
                 newsList.add(news);
             }
@@ -380,5 +380,70 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
 
         return user;
+    }
+
+    public void insertSubjects(ArrayList<Subject> subjects) {
+        for (Subject subject : subjects) {
+            ContentValues values = new ContentValues();
+            values.put("_id", subject.getId());
+            values.put("parent_id", subject.getParentId());
+            values.put("name", subject.getName());
+            values.put("description", subject.getDescription());
+            values.put("order_id", subject.getOrderId());
+            values.put("is_private", subject.isPrivate());
+            values.put("last_update_time", subject.getLastUpdateTime());
+            values.put("is_new", subject.isNew());
+
+            mDataBase.insert("subjects", null, values);
+        }
+    }
+
+    public void removeSubjectsByIds(int[] ids) {
+        for (int id : ids) {
+            mDataBase.delete("subjects", "_id = " + id, null);
+        }
+    }
+
+    public void insertNews(ArrayList<News> news) {
+        for (News newsObj : news) {
+            ContentValues values = new ContentValues();
+            values.put("_id", newsObj.getId());
+            values.put("title", newsObj.getTitle());
+            values.put("content", newsObj.getContent());
+            values.put("came_from", newsObj.getFrom());
+            values.put("source", newsObj.getSource());
+            values.put("valid_time", newsObj.getValidTime());
+            values.put("last_update_time", newsObj.getLastUpdateTime());
+
+            mDataBase.insert("news", null, values);
+        }
+    }
+
+    public void removeNewsByIds(int[] ids) {
+        for (int id : ids) {
+            // mDataBase.delete("news", "_id = " + id, null);
+        }
+    }
+
+    public void insertArticles(ArrayList<Article> articles) {
+        for (Article article : articles) {
+            ContentValues values = new ContentValues();
+            values.put("_id", article.getId());
+            values.put("title", article.getTitle());
+            values.put("contents", article.getContents());
+            values.put("lastupdatetime", article.getLastUpdateTime());
+            values.put("level", article.getLevel());
+            values.put("is_new", article.isNew());
+            values.put("key_words", article.getKeyWords());
+            values.put("subjects", article.getSubjects());
+
+            mDataBase.insert("articles_of_law", null, values);
+        }
+    }
+
+    public void removeArticlesByIds(int[] ids) {
+        for (int id : ids) {
+            mDataBase.delete("articles_of_law", "_id = " + id, null);
+        }
     }
 }

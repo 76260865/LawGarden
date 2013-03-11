@@ -1,5 +1,7 @@
 package com.jason.lawgarden;
 
+import org.json.JSONException;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -107,7 +109,12 @@ public class MainActivity extends FragmentActivity {
 
         @Override
         protected Object doInBackground(Object... params) {
-            JsonUtil.login();
+//            try {
+//                JsonUtil.login("jason", "123456");
+//            } catch (JSONException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
             return null;
         }
     }

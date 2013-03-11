@@ -59,6 +59,12 @@ public class HttpUtil {
             HttpResponse httpResponse = httpClient.execute(httpPost);
             if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 result = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+                Log.d("HttpUtil", "result:" + result);
+            } else {
+                Log.d("HttpUtil", "httpResponse.getStatusCode:"
+                        + httpResponse.getStatusLine().getStatusCode());
+                result = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+                Log.d("HttpUtil", "failure result:" + result);
             }
         } catch (UnsupportedEncodingException e) {
             Log.e(TAG, e.getMessage());

@@ -1,10 +1,13 @@
 package com.jason.lawgarden;
 
+import org.json.JSONException;
+
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 
 import com.jason.lawgarden.db.DataBaseHelper;
+import com.jason.util.JsonUtil;
 
 public class SplashActivity extends FragmentActivity {
 

@@ -7,6 +7,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.util.Log;
+
+import com.jason.lawgarden.db.DataBaseHelper;
 import com.jason.lawgarden.model.Article;
 import com.jason.lawgarden.model.News;
 import com.jason.lawgarden.model.Subject;
@@ -16,7 +20,7 @@ public class JsonUtil {
 
     private static final String SERVICE_URI = "http://s-58277.gotocdn.com:8080/Service.svc";
 
-    private static String sAccessToken;
+    public static String sAccessToken = "rTacjaF7CUS6qbA2B74Q4Q";
 
     public static void register() throws JSONException {
         JSONObject object = new JSONObject();
@@ -25,13 +29,16 @@ public class JsonUtil {
 
         String appListString = HttpUtil.doPost(SERVICE_URI + "/Register", object);
         JSONObject objectRet = new JSONObject(appListString);
-        // objectRet.getBoolean("ExecutionResult");
+        if (objectRet.getBoolean("ExecutionResult")) {
+            Log.d(TAG, "register:sucess");
+        }
     }
 
     public static String login(String username, String password) throws JSONException {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(2013, 3, 18);
-        sDATE_FOR_TEST = String.format("V(Date(%s+0800)", calendar.getTimeInMillis());
+        calendar.set(2013, 2, 18);
+        // sDATE_FOR_TEST = String.format("/Date(%s+0800)/",
+        // calendar.getTimeInMillis());
 
         JSONObject object = new JSONObject();
         object.put("Username", "jason");
@@ -40,7 +47,7 @@ public class JsonUtil {
         String appListString = HttpUtil.doPost(SERVICE_URI + "/Login", object);
         JSONObject objectRet = new JSONObject(appListString);
         if (objectRet.getBoolean("ExecutionResult")) {
-            return objectRet.getString("AccessToken");
+            return objectRet.getString("AccesToken");
         }
         return null;
     }
@@ -49,9 +56,9 @@ public class JsonUtil {
         // TODO:implement the method
     }
 
-    private static String sDATE_FOR_TEST;
+    private static String sDATE_FOR_TEST = "/Date(1362575535693+0800)/";
 
-    public static void updateSubjects() throws JSONException {
+    public static void updateSubjects(Context context) throws JSONException {
 
         JSONObject object = new JSONObject();
         object.put("AccesToken", sAccessToken);
@@ -75,7 +82,10 @@ public class JsonUtil {
 
                 subjects.add(subject);
             }
-            // TODO: add the subjects to db
+            // add the subjects to db
+            DataBaseHelper dbHelper = new DataBaseHelper(context);
+            dbHelper.openDataBase();
+            dbHelper.insertSubjects(subjects);
 
             // remove the subjects:
             JSONArray removedArray = objectRet.getJSONArray("RemovedSubjectIds");
@@ -83,17 +93,18 @@ public class JsonUtil {
             for (int i = 0; i < removedArray.length(); i++) {
                 removedIds[i] = removedArray.getInt(i);
             }
-            // TODO: remove the subjects by ids
+            // remove the subjects by ids
+            dbHelper.removeSubjectsByIds(removedIds);
         }
 
     }
 
-    public static void updateNews() throws JSONException {
+    public static void updateNews(Context context) throws JSONException {
 
         JSONObject object = new JSONObject();
         object.put("AccesToken", sAccessToken);
         object.put("LastUpdateTime", sDATE_FOR_TEST);
-        String appListString = HttpUtil.doPost(SERVICE_URI + "/UpdateSubjects", object);
+        String appListString = HttpUtil.doPost(SERVICE_URI + "/UpdateNews", object);
         JSONObject objectRet = new JSONObject(appListString);
         if (objectRet.getBoolean("ExecutionResult")) {
             JSONArray array = objectRet.getJSONArray("News");
@@ -112,7 +123,10 @@ public class JsonUtil {
 
                 newsList.add(news);
             }
-            // TODO: add the subjects to db
+            // add the news to db
+            DataBaseHelper dbHelper = new DataBaseHelper(context);
+            dbHelper.openDataBase();
+            dbHelper.insertNews(newsList);
 
             // remove the subjects:
             JSONArray removedArray = objectRet.getJSONArray("RemovedNewsIds");
@@ -120,19 +134,20 @@ public class JsonUtil {
             for (int i = 0; i < removedArray.length(); i++) {
                 removedIds[i] = removedArray.getInt(i);
             }
-            // TODO: remove the news by ids
+            // remove the news by ids
+            dbHelper.removeNewsByIds(removedIds);
         }
     }
 
-    public static void updateArticles() throws JSONException {
+    public static void updateArticles(Context context) throws JSONException {
 
         JSONObject object = new JSONObject();
         object.put("AccesToken", sAccessToken);
         object.put("LastUpdateTime", sDATE_FOR_TEST);
-        String appListString = HttpUtil.doPost(SERVICE_URI + "/UpdateSubjects", object);
+        String appListString = HttpUtil.doPost(SERVICE_URI + "/UpdateArticles", object);
         JSONObject objectRet = new JSONObject(appListString);
         if (objectRet.getBoolean("ExecutionResult")) {
-            JSONArray array = objectRet.getJSONArray("UpdateArticles");
+            JSONArray array = objectRet.getJSONArray("Articles");
             ArrayList<Article> articles = new ArrayList<Article>();
 
             for (int i = 0; i < array.length(); i++) {
@@ -149,7 +164,10 @@ public class JsonUtil {
 
                 articles.add(article);
             }
-            // TODO: add the articles to db
+            // add the articles to db
+            DataBaseHelper dbHelper = new DataBaseHelper(context);
+            dbHelper.openDataBase();
+            dbHelper.insertArticles(articles);
 
             // remove the articles:
             JSONArray removedArray = objectRet.getJSONArray("RemovedArticleIds");
@@ -157,7 +175,8 @@ public class JsonUtil {
             for (int i = 0; i < removedArray.length(); i++) {
                 removedIds[i] = removedArray.getInt(i);
             }
-            // TODO: remove the articles by ids
+            // remove the articles by ids
+            dbHelper.removeArticlesByIds(removedIds);
         }
     }
 }
