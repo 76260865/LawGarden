@@ -1,17 +1,15 @@
 package com.jason.lawgarden;
 
-import org.json.JSONException;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
-
-import com.jason.util.JsonUtil;
 
 public class MainActivity extends FragmentActivity {
 
@@ -33,6 +31,11 @@ public class MainActivity extends FragmentActivity {
         mRbtnLawData = (RadioButton) findViewById(R.id.rbtn_law_data);
         mRbtnLawData.setChecked(true);
         new MyAsyncTask().execute();
+
+//        getActionBar().setDisplayShowTitleEnabled(false);
+//        getActionBar().setDisplayUseLogoEnabled(false);
+//        getActionBar().setDisplayShowHomeEnabled(false);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private OnCheckedChangeListener mOnCheckedChangeListener = new OnCheckedChangeListener() {
@@ -105,16 +108,23 @@ public class MainActivity extends FragmentActivity {
         transaction.commit();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
     private class MyAsyncTask extends AsyncTask {
 
         @Override
         protected Object doInBackground(Object... params) {
-//            try {
-//                JsonUtil.login("jason", "123456");
-//            } catch (JSONException e) {
-//                // TODO Auto-generated catch block
-//                e.printStackTrace();
-//            }
+            // try {
+            // JsonUtil.login("jason", "123456");
+            // } catch (JSONException e) {
+            // // TODO Auto-generated catch block
+            // e.printStackTrace();
+            // }
             return null;
         }
     }

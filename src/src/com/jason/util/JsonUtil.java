@@ -37,8 +37,7 @@ public class JsonUtil {
     public static String login(String username, String password) throws JSONException {
         Calendar calendar = Calendar.getInstance();
         calendar.set(2013, 2, 18);
-        // sDATE_FOR_TEST = String.format("/Date(%s+0800)/",
-        // calendar.getTimeInMillis());
+        sDATE_FOR_TEST = String.format("/Date(%s+0800)/", calendar.getTimeInMillis());
 
         JSONObject object = new JSONObject();
         object.put("Username", "jason");

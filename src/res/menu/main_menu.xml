@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_search"
+        android:actionViewClass="android.widget.SearchView"
+        android:icon="@android:drawable/ic_menu_search"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/action_bar_search"/>
+    <item
+        android:id="@+id/item_edit"
+        android:icon="@drawable/usercenter_ok"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/action_bar_edit">
+    </item>
+    <item
+        android:id="@+id/item_ok"
+        android:icon="@drawable/usercenter_edit"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/action_bar_save">
+    </item>
+
+</menu>

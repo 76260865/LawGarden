@@ -30,16 +30,16 @@ public class LoginActivity extends Activity {
         @Override
         protected Void doInBackground(Void... params) {
 
-            try {
+//            try {
 //                JsonUtil.register();
-                JsonUtil.sAccessToken = JsonUtil.login("jason", "123456");
+//                JsonUtil.sAccessToken = JsonUtil.login("jason", "123456");
 //                JsonUtil.updateSubjects(getApplicationContext());
 //                JsonUtil.updateNews(getApplicationContext());
-                JsonUtil.updateArticles(getApplicationContext());
-            } catch (JSONException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+//                JsonUtil.updateArticles(getApplicationContext());
+//            } catch (JSONException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
             return null;
         }
 
