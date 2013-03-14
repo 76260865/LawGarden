@@ -32,9 +32,9 @@ public class MainActivity extends FragmentActivity {
         mRbtnLawData.setChecked(true);
         new MyAsyncTask().execute();
 
-//        getActionBar().setDisplayShowTitleEnabled(false);
-//        getActionBar().setDisplayUseLogoEnabled(false);
-//        getActionBar().setDisplayShowHomeEnabled(false);
+        // getActionBar().setDisplayShowTitleEnabled(false);
+        // getActionBar().setDisplayUseLogoEnabled(false);
+        // getActionBar().setDisplayShowHomeEnabled(false);
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -43,6 +43,7 @@ public class MainActivity extends FragmentActivity {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             popupAllFragmentStack();
+            invalidateOptionsMenu();
 
             switch (checkedId) {
             case R.id.rbtn_law_data:
@@ -113,6 +114,33 @@ public class MainActivity extends FragmentActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        switch (mRadioGroup.getCheckedRadioButtonId()) {
+        case R.id.rbtn_law_data:
+            menu.findItem(R.id.action_search).setVisible(true);
+            menu.findItem(R.id.item_edit).setVisible(false);
+            menu.findItem(R.id.item_ok).setVisible(false);
+            break;
+        case R.id.rbtn_law_fav:
+            menu.findItem(R.id.action_search).setVisible(false);
+            menu.findItem(R.id.item_edit).setVisible(false);
+            menu.findItem(R.id.item_ok).setVisible(false);
+            break;
+        case R.id.rbtn_law_news:
+            menu.findItem(R.id.action_search).setVisible(false);
+            menu.findItem(R.id.item_edit).setVisible(true);
+            menu.findItem(R.id.item_ok).setVisible(true);
+            break;
+        case R.id.rbtn_law_user:
+            menu.findItem(R.id.action_search).setVisible(false);
+            menu.findItem(R.id.item_edit).setVisible(false);
+            menu.findItem(R.id.item_ok).setVisible(false);
+            break;
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     private class MyAsyncTask extends AsyncTask {

@@ -446,4 +446,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             mDataBase.delete("articles_of_law", "_id = " + id, null);
         }
     }
+
+    public void addFavorite(Favorite favorite) {
+        ContentValues values = new ContentValues();
+        values.put("title", favorite.getTitle());
+        values.put("favorite_type", favorite.getFavoriteType());
+        values.put("favorite_id", favorite.getFavoriteId());
+        mDataBase.insert("favorites", null, values);
+    }
+
+    public void removeFavoriteByFavoriteIds(int[] ids) {
+        for (int id : ids) {
+            mDataBase.delete("favorites", "favorite_id = " + id, null);
+        }
+    }
 }

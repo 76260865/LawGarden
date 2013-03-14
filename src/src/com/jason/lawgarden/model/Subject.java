@@ -18,6 +18,8 @@ public class Subject {
 
     private boolean isPrivate;
 
+    private boolean isFavorited;
+
     public boolean isPrivate() {
         return isPrivate;
     }
@@ -36,6 +38,14 @@ public class Subject {
 
     public boolean isNew() {
         return isNew;
+    }
+
+    public boolean isFavorited() {
+        return isFavorited;
+    }
+
+    public void setFavorited(boolean isFavorited) {
+        this.isFavorited = isFavorited;
     }
 
     public void setNew(boolean isNew) {

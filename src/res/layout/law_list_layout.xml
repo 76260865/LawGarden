@@ -5,6 +5,7 @@
     android:orientation="vertical" >
 
     <RadioGroup
+        android:id="@+id/rgrp_top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -13,12 +14,23 @@
 
         <RadioButton
             style="@style/RadioButtonCategory"
-            android:checked="true"
-            android:text="@string/txt_pro_text" />
+            android:text="@string/txt_pro_text"
+            android:visibility="gone" />
 
         <RadioButton
             style="@style/RadioButtonCategory"
-            android:text="@string/txt_title_text" />
+            android:text="@string/txt_article_text"
+            android:visibility="gone" />
+
+        <RadioButton
+            style="@style/RadioButtonCategory"
+            android:text="@string/txt_title_text"
+            android:visibility="gone" />
+
+        <RadioButton
+            style="@style/RadioButtonCategory"
+            android:text="@string/txt_full_text"
+            android:visibility="gone" />
     </RadioGroup>
 
     <LinearLayout
@@ -33,7 +45,9 @@
             android:id="@+id/imageView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/list_icon" />
+            android:layout_marginLeft="5dip"
+            android:layout_marginRight="5dip"
+            android:src="@drawable/esc" />
 
         <TextView
             android:id="@+id/txt_subject_title"
@@ -41,17 +55,11 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="@android:color/black"
-            android:textSize="20sp" />
+            android:textSize="22sp" />
 
         <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/list_start_sect" />
-
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="wrap_content"
+            android:id="@+id/img_subject_favorite"
+            android:layout_width="80dip"
             android:layout_height="wrap_content"
             android:src="@drawable/list_start" />
     </LinearLayout>
@@ -60,5 +68,11 @@
         android:id="@+id/list_law"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <ListView
+        android:id="@+id/list_articles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 
 </LinearLayout>

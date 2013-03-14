@@ -18,13 +18,14 @@
     <string name="search_type_full_txt">全文</string>
     <string name="txt_pro_text">专题</string>
     <string name="txt_title_text">标题</string>
+    <string name="txt_article_text">内容</string>
     <string name="txt_user_name_format_text">用户名:%s</string>
     <string name="txt_service_type_format_text">服务类型：%s</string>
     <string name="txt_purchase_date_format_text">购买时间：%s</string>
     <string name="txt_overdue_date_format_text">过期时间：%s</string>
     <string name="txt_about_us_text">关于我们</string>
     <string name="action_bar_search">搜索</string>
-    <string name="action_bar_edit">搜索</string>
-    <string name="action_bar_save">搜索</string>
+    <string name="action_bar_edit">编辑</string>
+    <string name="action_bar_save">保存</string>
 
 </resources>
