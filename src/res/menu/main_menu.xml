@@ -17,7 +17,8 @@
         android:id="@+id/item_ok"
         android:icon="@drawable/usercenter_edit"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/action_bar_save">
+        android:title="@string/action_bar_save"
+        android:visible="false">
     </item>
 
 </menu>

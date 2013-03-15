@@ -305,6 +305,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 favorite.setTitle(cursor.getString(cursor.getColumnIndex("title")));
                 favorite.setFavoriteType(cursor.getInt(cursor.getColumnIndex("favorite_type")));
                 favorite.setFavoriteId(cursor.getInt(cursor.getColumnIndex("favorite_id")));
+                favorite.setFavorited(true);
 
                 favorites.add(favorite);
             }

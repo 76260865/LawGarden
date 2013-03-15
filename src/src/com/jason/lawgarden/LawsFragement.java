@@ -9,10 +9,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
+import android.view.MenuInflater;
 import android.view.View;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -20,6 +20,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioGroup;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
 
 import com.jason.lawgarden.db.DataBaseHelper;
@@ -69,6 +71,8 @@ public class LawsFragement extends Fragment {
         super.onCreate(savedInstanceState);
 
         mDbHelper = new DataBaseHelper(getActivity());
+
+        setHasOptionsMenu(true);
 
         Bundle bundle = getArguments();
         mSubjectId = bundle.getInt(EXTRA_KEY_SUBJECT_ID, 0);
@@ -159,29 +163,41 @@ public class LawsFragement extends Fragment {
         }
     };
 
-    //TODO: implement the action bar search function
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        if (item.getItemId() == R.id.action_search) {
-//            mRadioGroup.getChildAt(1).setVisibility(View.VISIBLE);
-//            mRadioGroup.getChildAt(2).setVisibility(View.VISIBLE);
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setOnQueryTextFocusChangeListener(new OnFocusChangeListener() {
 
-//    @Override
-//    public void onPrepareOptionsMenu(Menu menu) {
-//        super.onPrepareOptionsMenu(menu);
-//        menu.findItem(R.id.action_search).setOnMenuItemClickListener(new OnMenuItemClickListener() {
-//
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                mRadioGroup.getChildAt(1).setVisibility(View.VISIBLE);
-//                mRadioGroup.getChildAt(2).setVisibility(View.VISIBLE);
-//                return false;
-//            }
-//        });
-//    }
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    mRadioGroup.getChildAt(0).setVisibility(View.VISIBLE);
+                    mRadioGroup.getChildAt(1).setVisibility(View.VISIBLE);
+                    mRadioGroup.getChildAt(2).setVisibility(View.GONE);
+                    mRadioGroup.getChildAt(3).setVisibility(View.VISIBLE);
+                } else {
+                    mRadioGroup.getChildAt(0).setVisibility(View.GONE);
+                    mRadioGroup.getChildAt(1).setVisibility(View.GONE);
+                    mRadioGroup.getChildAt(2).setVisibility(View.GONE);
+                    mRadioGroup.getChildAt(3).setVisibility(View.GONE);
+                }
+            }
+        });
+        searchView.setOnQueryTextListener(new OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+    }
 
     private OnItemClickListener mOnLastItemClickListener = new OnItemClickListener() {
 

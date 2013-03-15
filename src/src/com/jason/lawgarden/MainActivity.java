@@ -35,7 +35,7 @@ public class MainActivity extends FragmentActivity {
         // getActionBar().setDisplayShowTitleEnabled(false);
         // getActionBar().setDisplayUseLogoEnabled(false);
         // getActionBar().setDisplayShowHomeEnabled(false);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        // getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private OnCheckedChangeListener mOnCheckedChangeListener = new OnCheckedChangeListener() {
@@ -49,6 +49,7 @@ public class MainActivity extends FragmentActivity {
             case R.id.rbtn_law_data:
                 LawsFragement lawsFragement = new LawsFragement();
                 addLawFragement(0, null, lawsFragement);
+                getActionBar().setTitle(R.string.rtbn_law_data_text);
                 break;
             case R.id.rbtn_law_fav:
                 MyFavoriteFragment favoriteFragment = new MyFavoriteFragment();
@@ -56,6 +57,7 @@ public class MainActivity extends FragmentActivity {
                 favoriteTransaction.replace(R.id.fragment_container, favoriteFragment);
                 favoriteTransaction.addToBackStack(null);
                 favoriteTransaction.commit();
+                getActionBar().setTitle(R.string.rbtn_my_favorite_text);
                 break;
             case R.id.rbtn_law_news:
                 NewsOfLawFragment newsFragment = new NewsOfLawFragment();
@@ -63,6 +65,7 @@ public class MainActivity extends FragmentActivity {
                 newsTransaction.replace(R.id.fragment_container, newsFragment);
                 newsTransaction.addToBackStack(null);
                 newsTransaction.commit();
+                getActionBar().setTitle(R.string.rbtn_law_news_text);
                 break;
             case R.id.rbtn_law_user:
                 UserFragment userFragment = new UserFragment();
@@ -70,6 +73,7 @@ public class MainActivity extends FragmentActivity {
                 userTransaction.replace(R.id.fragment_container, userFragment);
                 userTransaction.addToBackStack(null);
                 userTransaction.commit();
+                getActionBar().setTitle(R.string.rbtn_personal_center_text);
                 break;
             }
         }
@@ -124,15 +128,15 @@ public class MainActivity extends FragmentActivity {
             menu.findItem(R.id.item_edit).setVisible(false);
             menu.findItem(R.id.item_ok).setVisible(false);
             break;
-        case R.id.rbtn_law_fav:
+        case R.id.rbtn_law_news:
             menu.findItem(R.id.action_search).setVisible(false);
             menu.findItem(R.id.item_edit).setVisible(false);
             menu.findItem(R.id.item_ok).setVisible(false);
             break;
-        case R.id.rbtn_law_news:
+        case R.id.rbtn_law_fav:
             menu.findItem(R.id.action_search).setVisible(false);
             menu.findItem(R.id.item_edit).setVisible(true);
-            menu.findItem(R.id.item_ok).setVisible(true);
+            menu.findItem(R.id.item_ok).setVisible(false);
             break;
         case R.id.rbtn_law_user:
             menu.findItem(R.id.action_search).setVisible(false);

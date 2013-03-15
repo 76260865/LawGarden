@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="horizontal" >
 
     <TextView
@@ -14,15 +13,10 @@
         android:textSize="20sp" />
 
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/img_favorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/list_start_sect" />
-
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/list_start" />
+        android:src="@drawable/list_start_sect"
+        android:visibility="invisible" />
 
 </LinearLayout>
