@@ -1,15 +1,20 @@
 package com.jason.lawgarden;
 
+import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -44,9 +49,53 @@ public class MyFavoriteFragment extends Fragment {
         View view = inflater.inflate(R.layout.activity_my_favorite, null);
         mListFavorite = (ListView) view.findViewById(R.id.list_law);
         mListFavorite.setAdapter(mFavoriteAdapter);
+        mListFavorite.setOnItemClickListener(mOnItemClickListener);
 
         return view;
     }
+
+    private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int postion, long id) {
+            Favorite favorite = mFavoritesList.get(postion);
+            if (favorite.getFavoriteType() == 0) {
+                Bundle bundle = new Bundle();
+                bundle.putInt(LawsFragement.EXTRA_KEY_SUBJECT_ID, favorite.getFavoriteId());
+                bundle.putString(LawsFragement.EXTRA_KEY_SUBJECT_NAME, favorite.getTitle());
+                bundle.putBoolean(LawsFragement.EXTRA_KEY_SUBJECT_IS_FAVORITED, true);
+
+                LawsFragement fragment = new LawsFragement();
+                fragment.setArguments(bundle);
+
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager()
+                        .beginTransaction();
+
+                transaction.replace(R.id.fragment_container, fragment);
+                transaction.addToBackStack(null);
+
+                // Commit the transaction
+                transaction.commit();
+            } else {
+                Bundle bundle = new Bundle();
+                bundle.putInt(LawDetailsFragement.EXTRA_KEY_ARTICLE_ID, favorite.getFavoriteId());
+                bundle.putBoolean(LawsFragement.EXTRA_KEY_SUBJECT_IS_FAVORITED, true);
+
+                LawDetailsFragement fragment = new LawDetailsFragement();
+
+                fragment.setArguments(bundle);
+
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager()
+                        .beginTransaction();
+
+                transaction.replace(R.id.fragment_container, fragment);
+                transaction.addToBackStack(null);
+
+                // Commit the transaction
+                transaction.commit();
+            }
+        }
+    };
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

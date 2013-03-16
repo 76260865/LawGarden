@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,6 +26,8 @@ public class LawDetailsFragement extends Fragment {
 
     private DataBaseHelper mDbHelper;
 
+    private Article mArticle;
+
     private int mArticleId;
 
     @Override
@@ -40,18 +43,40 @@ public class LawDetailsFragement extends Fragment {
         mTxtLawContent = (TextView) view.findViewById(R.id.txt_article_content);
         mTxtArticleTitle = (TextView) view.findViewById(R.id.txt_article_title);
         imgFavorite = (ImageView) view.findViewById(R.id.img_favorite);
+        imgFavorite.setOnClickListener(mOnClickListener);
         new ArticleAyncTask().execute();
         return view;
     }
+
+    private OnClickListener mOnClickListener = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (mArticle == null)
+                return;
+
+            if (mArticle.isFavorite()) {
+                Favorite favorite = new Favorite();
+                favorite.setFavoriteId(mArticleId);
+                favorite.setTitle(mArticle.getTitle());
+                favorite.setFavoriteType(1);
+                mDbHelper.addFavorite(favorite);
+                imgFavorite.setImageResource(R.drawable.list_start);
+            } else {
+                mDbHelper.removeFavoriteByFavoriteIds(new int[] { mArticleId });
+                imgFavorite.setImageResource(R.drawable.list_start_sect);
+            }
+        }
+    };
 
     private class ArticleAyncTask extends AsyncTask<Void, Void, Article> {
 
         @Override
         protected Article doInBackground(Void... params) {
             mDbHelper.openDataBase();
-            Article article = mDbHelper.getArticleById(mArticleId);
-            article.setFavorite(mDbHelper.isFavorited(mArticleId));
-            return article;
+            mArticle = mDbHelper.getArticleById(mArticleId);
+            mArticle.setFavorite(mDbHelper.isFavorited(mArticleId));
+            return mArticle;
         }
 
         @Override

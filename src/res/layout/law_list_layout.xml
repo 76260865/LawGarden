@@ -13,16 +13,19 @@
         android:orientation="horizontal" >
 
         <RadioButton
+            android:id="@+id/rbtn_subject"
             style="@style/RadioButtonCategory"
             android:text="@string/txt_pro_text"
             android:visibility="gone" />
 
         <RadioButton
+            android:id="@+id/rbtn_article"
             style="@style/RadioButtonCategory"
             android:text="@string/txt_article_text"
             android:visibility="gone" />
 
         <RadioButton
+            android:id="@+id/rbtn_full_text"
             style="@style/RadioButtonCategory"
             android:text="@string/txt_title_text"
             android:visibility="gone" />
@@ -59,8 +62,8 @@
 
         <ImageView
             android:id="@+id/img_subject_favorite"
-            android:layout_width="80dip"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:src="@drawable/list_start" />
     </LinearLayout>
 

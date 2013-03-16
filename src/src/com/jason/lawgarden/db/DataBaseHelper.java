@@ -25,6 +25,7 @@ import com.jason.lawgarden.model.Favorite;
 import com.jason.lawgarden.model.News;
 import com.jason.lawgarden.model.Subject;
 import com.jason.lawgarden.model.User;
+import com.jason.lawgarden.model.UserSubjects;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DataBaseHelper";
@@ -460,5 +461,76 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         for (int id : ids) {
             mDataBase.delete("favorites", "favorite_id = " + id, null);
         }
+    }
+
+    public void insertUserSubjects(ArrayList<UserSubjects> subjects) {
+        for (UserSubjects subject : subjects) {
+            ContentValues values = new ContentValues();
+            values.put("_id", subject.getId());
+            values.put("parent_id", subject.getParentId());
+            values.put("name", subject.getName());
+            values.put("description", subject.getDescription());
+            values.put("order_id", subject.getOrderId());
+            values.put("is_private", subject.getIsPrivate());
+            values.put("last_update_time", subject.getLastUpdateTime());
+            values.put("description", subject.getDescription());
+
+            mDataBase.insert("user_subjects", null, values);
+        }
+    }
+
+    public ArrayList<Subject> searchSubjects(String text) {
+        ArrayList<Subject> subjects = new ArrayList<Subject>();
+        Subject subject;
+        Cursor cursor = null;
+
+        try {
+            cursor = mDataBase.rawQuery("SELECT * FROM subjects WHERE name LIKE ?",
+                    new String[] { "%" + text + "%" });
+
+            while (cursor.moveToNext()) {
+                subject = new Subject();
+
+                subject.setId(cursor.getInt(cursor.getColumnIndex("_id")));
+                subject.setParentId(cursor.getInt(cursor.getColumnIndex("parent_id")));
+                subject.setName(cursor.getString(cursor.getColumnIndex("name")));
+                subject.setDescription(cursor.getString(cursor.getColumnIndex("description")));
+                subject.setNew(cursor.getInt(cursor.getColumnIndex("is_new")) == 0 ? false : true);
+
+                subjects.add(subject);
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            cursor.close();
+        }
+
+        return subjects;
+    }
+
+    public ArrayList<Article> searchArticles(String text) {
+        ArrayList<Article> articles = new ArrayList<Article>();
+        Article article;
+        Cursor cursor = null;
+        try {
+            cursor = mDataBase.rawQuery("SELECT * FROM articles_of_law WHERE contents LIKE ?",
+                    new String[] { "%" + text + "%" });
+
+            while (cursor.moveToNext()) {
+                article = new Article();
+
+                article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
+                article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                article.setContents(cursor.getString(cursor.getColumnIndex("contents")));
+                article.setNew(cursor.getInt(cursor.getColumnIndex("new")) == 0 ? false : true);
+
+                articles.add(article);
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            cursor.close();
+        }
+        return articles;
     }
 }

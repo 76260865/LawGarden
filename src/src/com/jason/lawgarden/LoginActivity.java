@@ -31,13 +31,14 @@ public class LoginActivity extends Activity {
         protected Void doInBackground(Void... params) {
 
 //            try {
-//                JsonUtil.register();
+                // JsonUtil.register();
 //                JsonUtil.sAccessToken = JsonUtil.login("jason", "123456");
-//                JsonUtil.updateSubjects(getApplicationContext());
-//                JsonUtil.updateNews(getApplicationContext());
-//                JsonUtil.updateArticles(getApplicationContext());
+//                JsonUtil.getUserSubjects(getApplicationContext());
+                // JsonUtil.updateSubjects(getApplicationContext());
+                // JsonUtil.updateNews(getApplicationContext());
+                // JsonUtil.updateArticles(getApplicationContext());
 //            } catch (JSONException e) {
-//                // TODO Auto-generated catch block
+                // TODO Auto-generated catch block
 //                e.printStackTrace();
 //            }
             return null;

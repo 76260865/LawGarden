@@ -19,7 +19,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
@@ -62,6 +64,8 @@ public class LawsFragement extends Fragment {
 
     private RadioGroup mRadioGroup;
 
+    private ListView mListLaw;
+
     private ListView mListArticle;
 
     private ImageView mImageFavorite;
@@ -95,13 +99,15 @@ public class LawsFragement extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.law_list_layout, container, false);
-        ListView listLaw = (ListView) view.findViewById(R.id.list_law);
+        mListLaw = (ListView) view.findViewById(R.id.list_law);
         mListArticle = (ListView) view.findViewById(R.id.list_articles);
         mAdapter = mIsDetails ? new LastLawsAdapter() : new LawsAdapter();
         mArticleAdapter = new LastLawsAdapter();
-        listLaw.setAdapter(mAdapter);
-        listLaw.setOnItemClickListener(mIsDetails ? mOnLastItemClickListener : mOnItemClickListener);
+        mListLaw.setAdapter(mAdapter);
+        mListLaw.setOnItemClickListener(mIsDetails ? mOnLastItemClickListener
+                : mOnItemClickListener);
         mListArticle.setAdapter(mArticleAdapter);
+        mListArticle.setOnItemClickListener(mOnArticleItemClickListener);
 
         mViewSubjectTitle = view.findViewById(R.id.linear_subject);
         mTxtSubjectName = (TextView) view.findViewById(R.id.txt_subject_title);
@@ -142,6 +148,27 @@ public class LawsFragement extends Fragment {
         }
     };
 
+    private OnItemClickListener mOnArticleItemClickListener = new OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int postion, long id) {
+            Article article = mArticles.get(postion);
+            Bundle bundle = new Bundle();
+            bundle.putInt(LawDetailsFragement.EXTRA_KEY_ARTICLE_ID, article.getId());
+            LawDetailsFragement fragment = new LawDetailsFragement();
+            fragment.setArguments(bundle);
+
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager()
+                    .beginTransaction();
+
+            transaction.replace(R.id.fragment_container, fragment);
+            transaction.addToBackStack(null);
+
+            // Commit the transaction
+            transaction.commit();
+        }
+    };
+
     private OnClickListener mOnClickListener = new OnClickListener() {
 
         @Override
@@ -173,6 +200,8 @@ public class LawsFragement extends Fragment {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
                     mRadioGroup.getChildAt(0).setVisibility(View.VISIBLE);
+                    RadioButton rbtn = (RadioButton) mRadioGroup.getChildAt(0);
+                    rbtn.setChecked(true);
                     mRadioGroup.getChildAt(1).setVisibility(View.VISIBLE);
                     mRadioGroup.getChildAt(2).setVisibility(View.GONE);
                     mRadioGroup.getChildAt(3).setVisibility(View.VISIBLE);
@@ -188,8 +217,24 @@ public class LawsFragement extends Fragment {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // TODO Auto-generated method stub
-                return false;
+                switch (mRadioGroup.getCheckedRadioButtonId()) {
+                case R.id.rbtn_subject:
+                    mSubjects = mDbHelper.searchSubjects(query);
+                    mAdapter = new LawsAdapter();
+                    mListLaw.setAdapter(mAdapter);
+                    mIsDetails = false;
+                    break;
+                case R.id.rbtn_article:
+                    mArticles = mDbHelper.searchArticles(query);
+                    mAdapter = new LastLawsAdapter();
+                    mListArticle.setAdapter(mAdapter);
+                    mIsDetails = true;
+                    break;
+                case R.id.rbtn_full_text:
+                    break;
+                }
+                new MyFavoriteAyncTask().execute();
+                return true;
             }
 
             @Override
@@ -327,7 +372,7 @@ public class LawsFragement extends Fragment {
                     } else {
                         Favorite favorite = new Favorite();
                         favorite.setFavoriteId(article.getId());
-                        favorite.setFavoriteType(0);
+                        favorite.setFavoriteType(1);
                         favorite.setTitle(article.getTitle());
 
                         mDbHelper.addFavorite(favorite);
@@ -361,6 +406,22 @@ public class LawsFragement extends Fragment {
                 mRadioGroup.getChildAt(1).setVisibility(View.VISIBLE);
             }
             mArticleAdapter.notifyDataSetChanged();
+            mRadioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    switch (checkedId) {
+                    case R.id.rbtn_subject:
+                        mListLaw.setVisibility(View.VISIBLE);
+                        mListArticle.setVisibility(View.GONE);
+                        break;
+                    case R.id.rbtn_article:
+                        mListLaw.setVisibility(View.GONE);
+                        mListArticle.setVisibility(View.VISIBLE);
+                        break;
+                    }
+                }
+            });
         }
     }
 

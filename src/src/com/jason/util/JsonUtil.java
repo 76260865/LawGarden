@@ -14,6 +14,7 @@ import com.jason.lawgarden.db.DataBaseHelper;
 import com.jason.lawgarden.model.Article;
 import com.jason.lawgarden.model.News;
 import com.jason.lawgarden.model.Subject;
+import com.jason.lawgarden.model.UserSubjects;
 
 public class JsonUtil {
     private static final String TAG = "JsonUtil";
@@ -51,8 +52,33 @@ public class JsonUtil {
         return null;
     }
 
-    public static void getUserSubjects() {
-        // TODO:implement the method
+    public static void getUserSubjects(Context context) throws JSONException {
+        JSONObject object = new JSONObject();
+        object.put("AccesToken", sAccessToken);
+        String appListString = HttpUtil.doPost(SERVICE_URI + "/GetUserSubjects", object);
+        JSONObject objectRet = new JSONObject(appListString);
+        if (objectRet.getBoolean("ExecutionResult")) {
+            JSONArray array = objectRet.getJSONArray("Subjects");
+            ArrayList<UserSubjects> subjects = new ArrayList<UserSubjects>();
+
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject obj = array.getJSONObject(i);
+                UserSubjects subject = new UserSubjects();
+                subject.setDescription(obj.getString("Description"));
+                subject.setId(obj.getInt("Id"));
+                subject.setIsPrivate(obj.getInt("IsPrivate"));
+                subject.setLastUpdateTime(obj.getString("LastUpdateTime"));
+                subject.setName(obj.getString("Name"));
+                subject.setOrderId(obj.getInt("OrderId"));
+                subject.setParentId(obj.getInt("ParentId"));
+
+                subjects.add(subject);
+            }
+            // add the subjects to db
+            DataBaseHelper dbHelper = new DataBaseHelper(context);
+            dbHelper.openDataBase();
+            dbHelper.insertUserSubjects(subjects);
+        }
     }
 
     private static String sDATE_FOR_TEST = "/Date(1362575535693+0800)/";

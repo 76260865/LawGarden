@@ -38,10 +38,8 @@ public class UserFragment extends Fragment {
         txtUserName.setText(getString(R.string.txt_user_name_format_text, mUser.getUserName()));
         txtServiceType.setText(getString(R.string.txt_service_type_format_text,
                 mUser.getServiceType()));
-        txtPurchaseType.setText(getString(R.string.txt_purchase_date_format_text,
-                simpleDateFormat.format(mUser.getPurchaseDate())));
-        txtOverdueDate.setText(getString(R.string.txt_overdue_date_format_text,
-                simpleDateFormat.format(mUser.getOverdueDate())));
+//        txtOverdueDate.setText(getString(R.string.txt_overdue_date_format_text,
+//                simpleDateFormat.format(mUser.getOverdueDate())));
         txtAboutUs.setText(mUser.getAboutUs());
         return view;
     }
