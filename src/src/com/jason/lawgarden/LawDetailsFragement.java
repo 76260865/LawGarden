@@ -55,16 +55,18 @@ public class LawDetailsFragement extends Fragment {
             if (mArticle == null)
                 return;
 
-            if (mArticle.isFavorite()) {
+            if (!mArticle.isFavorite()) {
                 Favorite favorite = new Favorite();
                 favorite.setFavoriteId(mArticleId);
                 favorite.setTitle(mArticle.getTitle());
                 favorite.setFavoriteType(1);
                 mDbHelper.addFavorite(favorite);
-                imgFavorite.setImageResource(R.drawable.list_start);
+                imgFavorite.setImageResource(R.drawable.list_start_sect);
+                mArticle.setFavorite(true);
             } else {
                 mDbHelper.removeFavoriteByFavoriteIds(new int[] { mArticleId });
-                imgFavorite.setImageResource(R.drawable.list_start_sect);
+                imgFavorite.setImageResource(R.drawable.list_start);
+                mArticle.setFavorite(false);
             }
         }
     };

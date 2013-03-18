@@ -28,8 +28,9 @@
 
         <ImageView
             android:id="@+id/img_favorite"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
+            android:layout_width="50dip"
+            android:layout_height="50dip"
+            android:padding="15dip" />
     </LinearLayout>
 
     <TextView

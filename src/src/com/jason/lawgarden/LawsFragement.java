@@ -2,6 +2,7 @@ package com.jason.lawgarden;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -91,9 +92,13 @@ public class LawsFragement extends Fragment {
             mIsDetails = true;
         }
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         new MyFavoriteAyncTask().execute();
         new ArticleAyncTask().execute();
-
     }
 
     @Override
@@ -101,7 +106,7 @@ public class LawsFragement extends Fragment {
         View view = inflater.inflate(R.layout.law_list_layout, container, false);
         mListLaw = (ListView) view.findViewById(R.id.list_law);
         mListArticle = (ListView) view.findViewById(R.id.list_articles);
-        mAdapter = mIsDetails ? new LastLawsAdapter() : new LawsAdapter();
+        mAdapter = new LawsAdapter();
         mArticleAdapter = new LastLawsAdapter();
         mListLaw.setAdapter(mAdapter);
         mListLaw.setOnItemClickListener(mIsDetails ? mOnLastItemClickListener
@@ -119,8 +124,32 @@ public class LawsFragement extends Fragment {
         mRadioGroup = (RadioGroup) view.findViewById(R.id.rgrp_top);
         mImageFavorite = (ImageView) view.findViewById(R.id.img_subject_favorite);
         mImageFavorite.setOnClickListener(mOnClickListener);
+
+        mRadioGroup.setOnCheckedChangeListener(mOnCheckedChangeListener);
         return view;
     }
+
+    private OnCheckedChangeListener mOnCheckedChangeListener = new OnCheckedChangeListener() {
+
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+            switch (checkedId) {
+            case R.id.rbtn_subject:
+                mListLaw.setVisibility(View.VISIBLE);
+                mListLaw.setAdapter(mAdapter);
+                mListArticle.setVisibility(View.GONE);
+                mIsDetails = false;
+                new MyFavoriteAyncTask().execute();
+                break;
+            case R.id.rbtn_article:
+                mListLaw.setVisibility(View.GONE);
+                mListArticle.setVisibility(View.VISIBLE);
+                mIsDetails = true;
+                new MyFavoriteAyncTask().execute();
+                break;
+            }
+        }
+    };
 
     private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
 
@@ -226,8 +255,8 @@ public class LawsFragement extends Fragment {
                     break;
                 case R.id.rbtn_article:
                     mArticles = mDbHelper.searchArticles(query);
-                    mAdapter = new LastLawsAdapter();
-                    mListArticle.setAdapter(mAdapter);
+                    mArticleAdapter = new LastLawsAdapter();
+                    mListArticle.setAdapter(mArticleAdapter);
                     mIsDetails = true;
                     break;
                 case R.id.rbtn_full_text:
@@ -357,8 +386,7 @@ public class LawsFragement extends Fragment {
             TextView txtTitle = (TextView) convertView.findViewById(R.id.txt_law_title);
             ImageView imgNew = (ImageView) convertView.findViewById(R.id.img_new);
             final ImageView imgFavorite = (ImageView) convertView.findViewById(R.id.img_favorite);
-            imgNew.setImageResource(article.isNew() ? R.drawable.list_start_sect
-                    : R.drawable.list_start);
+            imgNew.setImageResource(article.isNew() ? R.drawable.news : null);
             imgFavorite.setImageResource(article.isFavorite() ? R.drawable.list_start_sect
                     : R.drawable.list_start);
 
@@ -406,22 +434,6 @@ public class LawsFragement extends Fragment {
                 mRadioGroup.getChildAt(1).setVisibility(View.VISIBLE);
             }
             mArticleAdapter.notifyDataSetChanged();
-            mRadioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-                @Override
-                public void onCheckedChanged(RadioGroup group, int checkedId) {
-                    switch (checkedId) {
-                    case R.id.rbtn_subject:
-                        mListLaw.setVisibility(View.VISIBLE);
-                        mListArticle.setVisibility(View.GONE);
-                        break;
-                    case R.id.rbtn_article:
-                        mListLaw.setVisibility(View.GONE);
-                        mListArticle.setVisibility(View.VISIBLE);
-                        break;
-                    }
-                }
-            });
         }
     }
 
@@ -447,7 +459,11 @@ public class LawsFragement extends Fragment {
 
         @Override
         protected void onPostExecute(Void result) {
-            mAdapter.notifyDataSetChanged();
+            if (mIsDetails) {
+                mAdapter.notifyDataSetChanged();
+            } else {
+                mArticleAdapter.notifyDataSetChanged();
+            }
         }
     }
 }
