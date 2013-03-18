@@ -11,7 +11,7 @@
         android:src="@drawable/welcome_logo" />
 
     <EditText
-        android:id="@+id/editText1"
+        android:id="@+id/edit_user_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dip"
@@ -24,7 +24,7 @@
     </EditText>
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/edit_pwd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dip"
@@ -58,7 +58,7 @@
         android:orientation="horizontal" >
 
         <CheckBox
-            android:id="@+id/checkBox1"
+            android:id="@+id/chk_remember_pwd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"

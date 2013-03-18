@@ -522,7 +522,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
                 article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
                 article.setContents(cursor.getString(cursor.getColumnIndex("contents")));
-                article.setNew(cursor.getInt(cursor.getColumnIndex("new")) == 0 ? false : true);
+                article.setNew(cursor.getInt(cursor.getColumnIndex("is_new")) == 0 ? false : true);
 
                 articles.add(article);
             }
@@ -532,5 +532,60 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         return articles;
+    }
+
+    public boolean isExistUser(String userName) {
+        boolean ret = false;
+        Cursor cursor = null;
+        try {
+            cursor = mDataBase.query("user_info", null, "user_name=" + userName, null, null, null,
+                    null);
+
+            ret = cursor.getCount() > 0;
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            cursor.close();
+        }
+        return ret;
+    }
+
+    public void insertOrUpdateUser(User user) {
+        if (isExistUser(user.getUserName())) {
+            ContentValues values = new ContentValues();
+            values.put("token", user.getToken());
+            mDataBase.update("user_info", values, "user_name=" + user.getUserName(), null);
+        } else {
+            ContentValues values = new ContentValues();
+            values.put("_id", user.getId());
+            values.put("user_name", user.getUserName());
+            values.put("token", user.getToken());
+
+            mDataBase.insert("user_info", null, values);
+        }
+    }
+
+    public User getRememberedUser() {
+        User user = null;
+        Cursor cursor = null;
+        try {
+            cursor = mDataBase
+                    .query("user_info", null, "is_remember_pwd=1", null, null, null, null);
+
+            if (cursor.moveToFirst()) {
+                user = new User();
+
+                user.setId(cursor.getInt(cursor.getColumnIndex("_id")));
+                user.setUserName(cursor.getString(cursor.getColumnIndex("user_name")));
+                user.setToken(cursor.getString(cursor.getColumnIndex("token")));
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return user;
     }
 }

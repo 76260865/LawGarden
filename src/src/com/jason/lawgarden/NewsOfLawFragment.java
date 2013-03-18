@@ -8,6 +8,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -38,8 +40,17 @@ public class NewsOfLawFragment extends Fragment {
         View view = inflater.inflate(R.layout.news_of_law_layout, null);
         mListLaw = (ListView) view.findViewById(R.id.lst_news);
         mListLaw.setAdapter(new NewsAdapter());
+        mListLaw.setOnItemClickListener(mOnItemClickListener);
         return view;
     }
+
+    private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        }
+    };
 
     private class NewsAdapter extends BaseAdapter {
 

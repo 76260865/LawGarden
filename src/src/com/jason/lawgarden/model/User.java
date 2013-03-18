@@ -9,6 +9,24 @@ public class User {
     private Date purchaseDate;
     private Date overdueDate;
     private String aboutUs;
+    private String token;
+    private boolean isRememberPwd;
+
+    public boolean isRememberPwd() {
+        return isRememberPwd;
+    }
+
+    public void setRememberPwd(boolean isRememberPwd) {
+        this.isRememberPwd = isRememberPwd;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     public int getId() {
         return id;
