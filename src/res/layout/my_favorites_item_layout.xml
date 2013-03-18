@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:descendantFocusability="blocksDescendants"
     android:gravity="center"
+    android:minHeight="50dip"
     android:orientation="horizontal" >
 
     <TextView
@@ -16,9 +17,10 @@
 
     <ImageView
         android:id="@+id/img_favorite"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_width="50dip"
+        android:layout_height="50dip"
         android:focusable="false"
+        android:padding="15dip"
         android:src="@drawable/list_start_sect"
         android:visibility="invisible" />
 

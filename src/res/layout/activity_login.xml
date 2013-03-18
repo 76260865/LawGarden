@@ -5,11 +5,10 @@
     android:orientation="vertical" >
 
     <ImageView
-        android:id="@+id/imageView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:src="@drawable/ic_menu_law_data" />
+        android:src="@drawable/welcome_logo" />
 
     <EditText
         android:id="@+id/editText1"
