@@ -126,6 +126,7 @@ public class LawsFragement extends Fragment {
         mImageFavorite.setOnClickListener(mOnClickListener);
 
         mRadioGroup.setOnCheckedChangeListener(mOnCheckedChangeListener);
+        ((RadioButton) mRadioGroup.getChildAt(0)).setChecked(true);
         return view;
     }
 
@@ -459,7 +460,7 @@ public class LawsFragement extends Fragment {
 
         @Override
         protected void onPostExecute(Void result) {
-            if (mIsDetails) {
+            if (!mIsDetails) {
                 mAdapter.notifyDataSetChanged();
             } else {
                 mArticleAdapter.notifyDataSetChanged();
