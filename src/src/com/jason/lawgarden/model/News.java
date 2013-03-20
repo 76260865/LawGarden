@@ -19,6 +19,16 @@ public class News {
 
     private String lastUpdateTime;
 
+    private String uri;
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
     public int get_id() {
         return _id;
     }

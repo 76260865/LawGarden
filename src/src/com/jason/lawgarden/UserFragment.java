@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.jason.lawgarden.db.DataBaseHelper;
 import com.jason.lawgarden.model.User;
+import com.jason.util.JsonUtil;
 
 public class UserFragment extends Fragment {
     private DataBaseHelper mDbHelper;
@@ -23,7 +24,8 @@ public class UserFragment extends Fragment {
         mDbHelper = new DataBaseHelper(getActivity());
         mDbHelper.openDataBase();
 
-        mUser = mDbHelper.getUserInfo();
+        // mUser = mDbHelper.getUserInfo();
+        mUser = JsonUtil.sUser;
     }
 
     @Override
@@ -38,8 +40,8 @@ public class UserFragment extends Fragment {
         txtUserName.setText(getString(R.string.txt_user_name_format_text, mUser.getUserName()));
         txtServiceType.setText(getString(R.string.txt_service_type_format_text,
                 mUser.getServiceType()));
-//        txtOverdueDate.setText(getString(R.string.txt_overdue_date_format_text,
-//                simpleDateFormat.format(mUser.getOverdueDate())));
+        // txtOverdueDate.setText(getString(R.string.txt_overdue_date_format_text,
+        // simpleDateFormat.format(mUser.getOverdueDate())));
         txtAboutUs.setText(mUser.getAboutUs());
         return view;
     }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +49,17 @@ public class NewsOfLawFragment extends Fragment {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            NewsDetailsFragment fragment = new NewsDetailsFragment();
+            Bundle bundle = new Bundle();
+            bundle.putInt(NewsDetailsFragment.EXTRA_KEY_NEWS_ID, mNewsList.get(position).getId());
+            fragment.setArguments(bundle);
 
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, fragment);
+            transaction.addToBackStack(null);
+
+            // Commit the transaction
+            transaction.commit();
         }
     };
 

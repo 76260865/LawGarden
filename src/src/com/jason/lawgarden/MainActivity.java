@@ -48,7 +48,7 @@ public class MainActivity extends FragmentActivity {
             switch (checkedId) {
             case R.id.rbtn_law_data:
                 LawsFragement lawsFragement = new LawsFragement();
-                addLawFragement(0, null, lawsFragement);
+                addLawFragement(-1, null, lawsFragement);
                 getActionBar().setTitle(R.string.rtbn_law_data_text);
                 break;
             case R.id.rbtn_law_fav:

@@ -31,6 +31,7 @@ import com.jason.lawgarden.db.DataBaseHelper;
 import com.jason.lawgarden.model.Article;
 import com.jason.lawgarden.model.Favorite;
 import com.jason.lawgarden.model.Subject;
+import com.jason.util.JsonUtil;
 
 public class LawsFragement extends Fragment {
     private static final String TAG = "LawsFragement";
@@ -80,11 +81,12 @@ public class LawsFragement extends Fragment {
         setHasOptionsMenu(true);
 
         Bundle bundle = getArguments();
-        mSubjectId = bundle.getInt(EXTRA_KEY_SUBJECT_ID, 0);
+        mSubjectId = bundle.getInt(EXTRA_KEY_SUBJECT_ID, -1);
         mSubjectName = bundle.getString(EXTRA_KEY_SUBJECT_NAME);
         mIsFavorited = bundle.getBoolean(EXTRA_KEY_SUBJECT_IS_FAVORITED);
 
-        mSubjects = mDbHelper.getSubjectsByParentId(mSubjectId);
+        mSubjects = mSubjectId == -1 ? mDbHelper.getSubjectsByUserId(JsonUtil.sUser.getId())
+                : mDbHelper.getSubjectsByParentId(mSubjectId);
         if (mSubjects.size() == 0) {
             // the last subject, need load the articles
             // mSubjectCallBack.onLastSubjectItemClick(mSubjectId);
@@ -116,7 +118,7 @@ public class LawsFragement extends Fragment {
 
         mViewSubjectTitle = view.findViewById(R.id.linear_subject);
         mTxtSubjectName = (TextView) view.findViewById(R.id.txt_subject_title);
-        if (mSubjectId != 0) {
+        if (mSubjectId > 0) {
             mViewSubjectTitle.setVisibility(View.VISIBLE);
             mTxtSubjectName.setText(mSubjectName);
         }

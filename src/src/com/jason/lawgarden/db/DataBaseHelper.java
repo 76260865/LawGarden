@@ -26,6 +26,7 @@ import com.jason.lawgarden.model.News;
 import com.jason.lawgarden.model.Subject;
 import com.jason.lawgarden.model.User;
 import com.jason.lawgarden.model.UserSubjects;
+import com.jason.util.JsonUtil;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DataBaseHelper";
@@ -226,6 +227,38 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return subjects;
     }
 
+    public ArrayList<Subject> getSubjectsByUserId(int userId) {
+        openDataBase();
+        ArrayList<Subject> subjects = new ArrayList<Subject>();
+        Subject subject;
+        Cursor cursor = null;
+
+        try {
+            cursor = mDataBase
+                    .rawQuery(
+                            "SELECT subjects.* FROM subjects JOIN user_subject ON subjects._id=user_subject.parent_id WHERE user_id=?",
+                            new String[] { "" + userId });
+
+            while (cursor.moveToNext()) {
+                subject = new Subject();
+
+                subject.setId(cursor.getInt(cursor.getColumnIndex("_id")));
+                subject.setParentId(cursor.getInt(cursor.getColumnIndex("parent_id")));
+                subject.setName(cursor.getString(cursor.getColumnIndex("name")));
+                subject.setDescription(cursor.getString(cursor.getColumnIndex("description")));
+                subject.setNew(cursor.getInt(cursor.getColumnIndex("is_new")) == 0 ? false : true);
+
+                subjects.add(subject);
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            cursor.close();
+        }
+
+        return subjects;
+    }
+
     private static final String SQL_SELECT_ARTICLES_BY_SUBJECTID = "SELECT *, articles_of_law.is_new as new FROM subjects_articles JOIN articles_of_law ON subjects_articles.article_id=articles_of_law._id WHERE subject_id =?";
 
     public ArrayList<Article> getArticlesBySubjectId(int SubjectId) {
@@ -255,7 +288,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     private static final String[] NEWS_PROJECTION = { "_id", "title", "content", "create_time",
-            "came_from" };
+            "uri", "came_from" };
 
     public ArrayList<News> getAllNews() {
         ArrayList<News> newsList = new ArrayList<News>();
@@ -286,6 +319,35 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         return newsList;
+    }
+
+    public News getNewsById(int id) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        News news = null;
+        Cursor cursor = null;
+
+        try {
+            cursor = mDataBase
+                    .query("news", NEWS_PROJECTION, null, null, null, null, "create_time");
+            if (cursor.moveToFirst()) {
+                news = new News();
+
+                news.setId(cursor.getInt(cursor.getColumnIndex("_id")));
+                news.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                news.setContent(cursor.getString(cursor.getColumnIndex("content")));
+                news.setCrateTime(format.parse(cursor.getString(cursor
+                        .getColumnIndex("create_time"))));
+                news.setFrom(cursor.getString(cursor.getColumnIndex("came_from")));
+                news.setUri(cursor.getString(cursor.getColumnIndex("uri")));
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } catch (ParseException e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            cursor.close();
+        }
+        return news;
     }
 
     private static final String[] FAVORITE_PROJECTION = { "_id", "title", "favorite_type",
@@ -355,28 +417,26 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return article;
     }
 
-    public User getUserInfo() {
+    public User getUserInfo(String userName) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         User user = new User();
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase.query("user_info", null, null, null, null, null, null);
+            cursor = mDataBase.query("user_info", null, "user_name='" + userName + "'", null, null,
+                    null, null);
             if (cursor.moveToFirst()) {
                 user.setId(cursor.getInt(cursor.getColumnIndex("_id")));
                 user.setUserName(cursor.getString(cursor.getColumnIndex("user_name")));
                 user.setServiceType(cursor.getInt(cursor.getColumnIndex("service_type")));
-                user.setPurchaseDate(format.parse(cursor.getString(cursor
+                user.setPurchaseDate(new Date((long) cursor.getDouble(cursor
                         .getColumnIndex("purchase_date"))));
-                user.setPurchaseDate(new Date());
-                user.setOverdueDate(format.parse(cursor.getString(cursor
+                user.setOverdueDate(new Date((long) cursor.getDouble(cursor
                         .getColumnIndex("overdue_date"))));
                 user.setAboutUs(cursor.getString(cursor.getColumnIndex("about_us")));
             }
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
-        } catch (ParseException e) {
-            Log.e(TAG, e.getMessage());
         } finally {
             cursor.close();
         }
@@ -463,19 +523,39 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public boolean isExistUserSubjects(UserSubjects userSubject) {
+        Cursor cursor = null;
+
+        try {
+            cursor = mDataBase.query("user_subject", null, "user_id=? and parent_id=?",
+                    new String[] { userSubject.getUserId() + "", userSubject.getParentId() + "" },
+                    null, null, null);
+            if (cursor.getCount() > 0) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            cursor.close();
+        }
+        return false;
+    }
+
     public void insertUserSubjects(ArrayList<UserSubjects> subjects) {
         for (UserSubjects subject : subjects) {
-            ContentValues values = new ContentValues();
-            values.put("_id", subject.getId());
-            values.put("parent_id", subject.getParentId());
-            values.put("name", subject.getName());
-            values.put("description", subject.getDescription());
-            values.put("order_id", subject.getOrderId());
-            values.put("is_private", subject.getIsPrivate());
-            values.put("last_update_time", subject.getLastUpdateTime());
-            values.put("description", subject.getDescription());
+            if (!isExistUserSubjects(subject)) {
+                ContentValues values = new ContentValues();
+                values.put("_id", subject.getId());
+                values.put("user_id", JsonUtil.sUser.getId());
+                values.put("parent_id", subject.getParentId());
+                values.put("name", subject.getName());
+                values.put("description", subject.getDescription());
+                values.put("order_id", subject.getOrderId());
+                values.put("is_private", subject.getIsPrivate());
+                values.put("last_update_time", subject.getLastUpdateTime());
 
-            mDataBase.insert("user_subjects", null, values);
+                mDataBase.insert("user_subject", null, values);
+            }
         }
     }
 
@@ -538,8 +618,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         boolean ret = false;
         Cursor cursor = null;
         try {
-            cursor = mDataBase.query("user_info", null, "user_name=" + userName, null, null, null,
-                    null);
+            cursor = mDataBase.query("user_info", null, "user_name='" + userName + "'", null, null,
+                    null, null);
 
             ret = cursor.getCount() > 0;
         } catch (SQLException ex) {
@@ -550,19 +630,23 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return ret;
     }
 
-    public void insertOrUpdateUser(User user) {
+    public User insertOrUpdateUser(User user) {
         if (isExistUser(user.getUserName())) {
             ContentValues values = new ContentValues();
             values.put("token", user.getToken());
-            mDataBase.update("user_info", values, "user_name=" + user.getUserName(), null);
+            mDataBase.update("user_info", values, "user_name='" + user.getUserName() + "'", null);
         } else {
             ContentValues values = new ContentValues();
             values.put("_id", user.getId());
             values.put("user_name", user.getUserName());
             values.put("token", user.getToken());
+            values.put("purchase_date", user.getPurchaseDate().getTime());
+            values.put("overdue_date", user.getOverdueDate().getTime());
+            values.put("is_remember_pwd", user.isRememberPwd() ? 1 : 0);
 
             mDataBase.insert("user_info", null, values);
         }
+        return getUserInfo(user.getUserName());
     }
 
     public User getRememberedUser() {
@@ -587,5 +671,70 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             }
         }
         return user;
+    }
+
+    public String getLastUpdateSubjectTime() {
+        String lastUpdateTime = "";
+        Cursor cursor = null;
+        try {
+            cursor = mDataBase.query("subjects", null, null, null, null, null,
+                    "last_update_time desc");
+
+            if (cursor.moveToFirst()) {
+                lastUpdateTime = cursor.getString(cursor.getColumnIndex("last_update_time"));
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        Log.d(TAG, "Last update subject time is :" + lastUpdateTime);
+        return lastUpdateTime;
+    }
+
+    public String getLastUpdateNewsTime() {
+        String lastUpdateTime = "";
+        Cursor cursor = null;
+        try {
+            cursor = mDataBase.query("news", null, null, null, null, null, "last_update_time desc");
+
+            if (cursor.moveToFirst()) {
+                lastUpdateTime = cursor.getString(cursor.getColumnIndex("last_update_time"));
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        Log.d(TAG, "Last update subject time is :" + lastUpdateTime);
+        return lastUpdateTime;
+    }
+
+    public String getLastUpdateArticleTime() {
+        String lastUpdateTime = "";
+        Cursor cursor = null;
+        try {
+            cursor = mDataBase.query("articles_of_law", null, null, null, null, null,
+                    "last_update_time desc");
+
+            if (cursor.moveToFirst()) {
+                lastUpdateTime = cursor.getString(cursor.getColumnIndex("last_update_time"));
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        Log.d(TAG, "Last update subject time is :" + lastUpdateTime);
+        return lastUpdateTime;
     }
 }

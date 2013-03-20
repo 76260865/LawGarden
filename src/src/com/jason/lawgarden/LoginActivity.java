@@ -1,5 +1,7 @@
 package com.jason.lawgarden;
 
+import java.util.Date;
+
 import org.json.JSONException;
 
 import android.app.Activity;
@@ -47,7 +49,7 @@ public class LoginActivity extends Activity {
     public void onBtnLoginClick(View view) {
         mUserName = mEditUserName.getText().toString();
         mPwd = mEditPwd.getText().toString();
-        // new MyAsyncTask().execute();
+        new MyAsyncTask().execute();
     }
 
     private class QueryPwdTask extends AsyncTask<Void, Void, User> {
@@ -83,12 +85,16 @@ public class LoginActivity extends Activity {
                 User user = new User();
                 user.setUserName(mUserName);
                 user.setToken(mCheckBox.isChecked() ? JsonUtil.sAccessToken : "");
-                mDbHelper.insertOrUpdateUser(user);
+                user.setRememberPwd(mCheckBox.isChecked());
+                user.setPurchaseDate(new Date());
+                user.setOverdueDate(new Date());
 
-                // JsonUtil.getUserSubjects(getApplicationContext());
-                // JsonUtil.updateSubjects(getApplicationContext());
-                // JsonUtil.updateNews(getApplicationContext());
-                // JsonUtil.updateArticles(getApplicationContext());
+                JsonUtil.sUser = mDbHelper.insertOrUpdateUser(user);
+                JsonUtil.updateUserSubjects(getApplicationContext());
+                JsonUtil.updateSubjects(getApplicationContext());
+
+                JsonUtil.updateNews(getApplicationContext());
+                JsonUtil.updateArticles(getApplicationContext());
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
             }

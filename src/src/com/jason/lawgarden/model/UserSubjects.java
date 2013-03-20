@@ -7,6 +7,8 @@ public class UserSubjects {
 
     private String lastUpdateTime;
 
+    private int userId;
+
     private String name;
 
     private int orderId;
@@ -25,6 +27,14 @@ public class UserSubjects {
 
     public int getId() {
         return id;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public void setId(int id) {

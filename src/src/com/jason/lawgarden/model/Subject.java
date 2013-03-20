@@ -1,5 +1,7 @@
 package com.jason.lawgarden.model;
 
+import java.util.Date;
+
 public class Subject {
 
     private int id;
@@ -19,6 +21,16 @@ public class Subject {
     private boolean isPrivate;
 
     private boolean isFavorited;
+
+    private Date createDate;
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
 
     public boolean isPrivate() {
         return isPrivate;
