@@ -288,7 +288,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     private static final String[] NEWS_PROJECTION = { "_id", "title", "content", "create_time",
-            "uri", "came_from" };
+            "uri", "came_from", "img_byte" };
 
     public ArrayList<News> getAllNews() {
         ArrayList<News> newsList = new ArrayList<News>();
@@ -308,6 +308,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 news.setCrateTime(format.parse(cursor.getString(cursor
                         .getColumnIndex("create_time"))));
                 news.setFrom(cursor.getString(cursor.getColumnIndex("came_from")));
+                news.setUri(cursor.getString(cursor.getColumnIndex("uri")));
+                news.setBmpByte(cursor.getBlob(cursor.getColumnIndex("img_byte")));
 
                 newsList.add(news);
             }
@@ -474,6 +476,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             values.put("content", newsObj.getContent());
             values.put("came_from", newsObj.getFrom());
             values.put("source", newsObj.getSource());
+            values.put("uri", newsObj.getUri());
             values.put("valid_time", newsObj.getValidTime());
             values.put("last_update_time", newsObj.getLastUpdateTime());
 
@@ -736,5 +739,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         Log.d(TAG, "Last update subject time is :" + lastUpdateTime);
         return lastUpdateTime;
+    }
+
+    public void updateNews(News newsObj) {
+        ContentValues values = new ContentValues();
+        values.put("_id", newsObj.getId());
+        values.put("img_byte", newsObj.getBmpByte());
+
+        mDataBase.update("news", values, "_id=" + newsObj.get_id(), null);
     }
 }

@@ -51,14 +51,14 @@ public class JsonUtil {
         String appListString = HttpUtil.doPost(SERVICE_URI + "/Login", object);
         JSONObject objectRet = new JSONObject(appListString);
         if (objectRet.getBoolean("ExecutionResult")) {
-            return objectRet.getString("AccesToken");
+            return objectRet.getString("AccessToken");
         }
         return null;
     }
 
     public static void updateUserSubjects(Context context) throws JSONException {
         JSONObject object = new JSONObject();
-        object.put("AccesToken", sAccessToken);
+        object.put("AccessToken", sAccessToken);
         String appListString = HttpUtil.doPost(SERVICE_URI + "/GetUserSubjects", object);
         JSONObject objectRet = new JSONObject(appListString);
         if (objectRet.getBoolean("ExecutionResult")) {
@@ -93,7 +93,7 @@ public class JsonUtil {
         String lastUpdateSubjectTime = dbHelper.getLastUpdateSubjectTime();
 
         JSONObject object = new JSONObject();
-        object.put("AccesToken", sAccessToken);
+        object.put("AccessToken", sAccessToken);
         object.put("LastUpdateTime",
                 !TextUtils.isEmpty(lastUpdateSubjectTime) ? lastUpdateSubjectTime : sDATE_FOR_TEST);
         String appListString = HttpUtil.doPost(SERVICE_URI + "/UpdateSubjects", object);
@@ -136,7 +136,7 @@ public class JsonUtil {
         String lastUpdateSubjectTime = dbHelper.getLastUpdateNewsTime();
 
         JSONObject object = new JSONObject();
-        object.put("AccesToken", sAccessToken);
+        object.put("AccessToken", sAccessToken);
         object.put("LastUpdateTime",
                 !TextUtils.isEmpty(lastUpdateSubjectTime) ? lastUpdateSubjectTime : sDATE_FOR_TEST);
         String appListString = HttpUtil.doPost(SERVICE_URI + "/UpdateNews", object);
@@ -155,6 +155,7 @@ public class JsonUtil {
                 news.setSource(obj.getString("Source"));
                 news.setValidTime(obj.getString("ValidTime"));
                 news.setLastUpdateTime(obj.getString("LastUpdateTime"));
+                news.setUri(obj.getString("DefaultImageUrl"));
 
                 newsList.add(news);
             }
@@ -178,7 +179,7 @@ public class JsonUtil {
         String lastUpdateSubjectTime = dbHelper.getLastUpdateArticleTime();
 
         JSONObject object = new JSONObject();
-        object.put("AccesToken", sAccessToken);
+        object.put("AccessToken", sAccessToken);
         object.put("LastUpdateTime",
                 !TextUtils.isEmpty(lastUpdateSubjectTime) ? lastUpdateSubjectTime : sDATE_FOR_TEST);
         String appListString = HttpUtil.doPost(SERVICE_URI + "/UpdateArticles", object);

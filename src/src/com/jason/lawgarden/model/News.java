@@ -2,6 +2,8 @@ package com.jason.lawgarden.model;
 
 import java.util.Date;
 
+import android.graphics.Bitmap;
+
 public class News {
     private int _id;
 
@@ -20,6 +22,26 @@ public class News {
     private String lastUpdateTime;
 
     private String uri;
+
+    private String path;
+
+    private byte[] bmp;
+
+    public byte[] getBmpByte() {
+        return bmp;
+    }
+
+    public void setBmpByte(byte[] bmp) {
+        this.bmp = bmp;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
 
     public String getUri() {
         return uri;

@@ -1,8 +1,20 @@
 package com.jason.lawgarden;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -12,8 +24,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jason.lawgarden.db.DataBaseHelper;
 import com.jason.lawgarden.model.News;
@@ -92,13 +106,95 @@ public class NewsOfLawFragment extends Fragment {
             TextView txtContent = (TextView) convertView.findViewById(R.id.txt_content);
             TextView txtTime = (TextView) convertView.findViewById(R.id.txt_time);
             TextView txtFrom = (TextView) convertView.findViewById(R.id.txt_from);
+            ImageView imgNews = (ImageView) convertView.findViewById(R.id.img_new_icon);
 
             txtTitle.setText(news.getTitle());
             txtContent.setText(news.getContent());
             txtTime.setText(sdf.format(news.getCrateTime()));
             txtFrom.setText(news.getFrom());
+            if (news.getBmpByte() != null) {
+                imgNews.setImageBitmap(BitmapFactory.decodeByteArray(news.getBmpByte(), 0,
+                        news.getBmpByte().length));
+            } else {
+                new BitmapAyncTask(imgNews, news).execute();
+            }
 
             return convertView;
         }
+    }
+
+    private class BitmapAyncTask extends AsyncTask<Void, Void, Bitmap> {
+
+        private ImageView mImageView;
+        private News mNews;
+        private byte[] bmpByte = null;
+
+        BitmapAyncTask(ImageView imgView, News news) {
+            mImageView = imgView;
+            mNews = news;
+        }
+
+        @Override
+        protected Bitmap doInBackground(Void... params) {
+            Bitmap bitmap = null;
+            try {
+                bmpByte = getImage(mNews.getUri());
+                // saveFile(bitmap, mNews.getId() + ".jpg");
+                mNews.setBmpByte(bmpByte);
+                mDbHelper.updateNews(mNews);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (bmpByte != null) {
+                bitmap = BitmapFactory.decodeByteArray(bmpByte, 0, bmpByte.length);// bitmap
+            } else {
+                Toast.makeText(getActivity(), "Image error!", 1).show();
+            }
+
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            mNews.setBmpByte(bmpByte);
+            mImageView.setImageBitmap(result);
+        }
+
+    }
+
+    public byte[] getImage(String path) throws IOException {
+        URL url = new URL(path);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setConnectTimeout(5 * 1000);
+        conn.setRequestMethod("GET");
+        InputStream inStream = conn.getInputStream();
+        if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            return readStream(inStream);
+        }
+        return null;
+    }
+
+    public static byte[] readStream(InputStream inStream) throws IOException {
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int len = 0;
+        while ((len = inStream.read(buffer)) != -1) {
+            outStream.write(buffer, 0, len);
+        }
+        outStream.close();
+        inStream.close();
+        return outStream.toByteArray();
+    }
+
+    public void saveFile(Bitmap bm, String fileName) throws IOException {
+        File dirFile = new File("/sdcard/lawgarden/");
+        if (!dirFile.exists()) {
+            dirFile.mkdir();
+        }
+        File myCaptureFile = new File("/sdcard/lawgarden/" + fileName);
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(myCaptureFile));
+        bm.compress(Bitmap.CompressFormat.JPEG, 80, bos);
+        bos.flush();
+        bos.close();
     }
 }
