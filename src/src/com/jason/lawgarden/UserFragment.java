@@ -33,15 +33,17 @@ public class UserFragment extends Fragment {
         View view = inflater.inflate(R.layout.user_info_layout, null);
         TextView txtUserName = (TextView) view.findViewById(R.id.txt_user_name);
         TextView txtServiceType = (TextView) view.findViewById(R.id.txt_service_type);
-        TextView txtPurchaseType = (TextView) view.findViewById(R.id.txt_purchase_type);
+        TextView txtPurchaseDate = (TextView) view.findViewById(R.id.txt_purchase_date);
         TextView txtOverdueDate = (TextView) view.findViewById(R.id.txt_overdue_date);
         TextView txtAboutUs = (TextView) view.findViewById(R.id.txt_about_us_content);
 
         txtUserName.setText(getString(R.string.txt_user_name_format_text, mUser.getUserName()));
         txtServiceType.setText(getString(R.string.txt_service_type_format_text,
                 mUser.getServiceType()));
-        // txtOverdueDate.setText(getString(R.string.txt_overdue_date_format_text,
-        // simpleDateFormat.format(mUser.getOverdueDate())));
+        txtPurchaseDate.setText(getString(R.string.txt_purchase_date_format_text,
+                simpleDateFormat.format(mUser.getPurchaseDate())));
+        txtOverdueDate.setText(getString(R.string.txt_overdue_date_format_text,
+                simpleDateFormat.format(mUser.getOverdueDate())));
         txtAboutUs.setText(mUser.getAboutUs());
         return view;
     }

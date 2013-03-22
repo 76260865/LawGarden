@@ -4,8 +4,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,10 +21,6 @@ public class LawDetailsFragement extends Fragment {
 
     private TextView mTxtLawContent;
 
-    private TextView mTxtArticleTitle;
-
-    private ImageView imgFavorite;
-
     private DataBaseHelper mDbHelper;
 
     private Article mArticle;
@@ -35,41 +32,16 @@ public class LawDetailsFragement extends Fragment {
         super.onCreate(savedInstanceState);
         mDbHelper = new DataBaseHelper(getActivity());
         mArticleId = getArguments().getInt(EXTRA_KEY_ARTICLE_ID);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.law_details_layout, null);
         mTxtLawContent = (TextView) view.findViewById(R.id.txt_article_content);
-        mTxtArticleTitle = (TextView) view.findViewById(R.id.txt_article_title);
-        imgFavorite = (ImageView) view.findViewById(R.id.img_favorite);
-        imgFavorite.setOnClickListener(mOnClickListener);
         new ArticleAyncTask().execute();
         return view;
     }
-
-    private OnClickListener mOnClickListener = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            if (mArticle == null)
-                return;
-
-            if (!mArticle.isFavorite()) {
-                Favorite favorite = new Favorite();
-                favorite.setFavoriteId(mArticleId);
-                favorite.setTitle(mArticle.getTitle());
-                favorite.setFavoriteType(1);
-                mDbHelper.addFavorite(favorite);
-                imgFavorite.setImageResource(R.drawable.list_start_sect);
-                mArticle.setFavorite(true);
-            } else {
-                mDbHelper.removeFavoriteByFavoriteIds(new int[] { mArticleId });
-                imgFavorite.setImageResource(R.drawable.list_start);
-                mArticle.setFavorite(false);
-            }
-        }
-    };
 
     private class ArticleAyncTask extends AsyncTask<Void, Void, Article> {
 
@@ -83,10 +55,41 @@ public class LawDetailsFragement extends Fragment {
 
         @Override
         protected void onPostExecute(Article result) {
-            imgFavorite.setImageResource(result.isFavorite() ? R.drawable.list_start_sect
-                    : R.drawable.list_start);
-            mTxtArticleTitle.setText(result.getTitle());
             mTxtLawContent.setText(result.getContents());
+            setHasOptionsMenu(true);
+            // getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+            getActivity().getActionBar().setTitle(result.getTitle());
+            getActivity().invalidateOptionsMenu();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mArticle == null)
+            return true;
+
+        if (!mArticle.isFavorite()) {
+            Favorite favorite = new Favorite();
+            favorite.setFavoriteId(mArticleId);
+            favorite.setTitle(mArticle.getTitle());
+            favorite.setFavoriteType(1);
+            mDbHelper.addFavorite(favorite);
+            mArticle.setFavorite(true);
+        } else {
+            mDbHelper.removeFavoriteByFavoriteIds(new int[] { mArticleId });
+            mArticle.setFavorite(false);
+        }
+        item.setIcon(mArticle.isFavorite() ? R.drawable.list_start_sect : R.drawable.list_start);
+        getActivity().invalidateOptionsMenu();
+        return true;
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.getItem(0).setVisible(false);
+        menu.getItem(1).setVisible(true);
+        menu.getItem(1).setIcon(
+                mArticle.isFavorite() ? R.drawable.list_start_sect : R.drawable.list_start);
+        // super.onPrepareOptionsMenu(menu);
     }
 }

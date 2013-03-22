@@ -7,6 +7,9 @@
     <ListView
         android:id="@+id/lst_news"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:divider="#9DC0AA"
+        android:dividerHeight="1dip"
+        android:listSelector="@drawable/item_selector" />
 
-</LinearLayout> 
+</LinearLayout>

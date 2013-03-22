@@ -162,7 +162,7 @@ public class NewsOfLawFragment extends Fragment {
 
     }
 
-    public byte[] getImage(String path) throws IOException {
+    private byte[] getImage(String path) throws IOException {
         URL url = new URL(path);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setConnectTimeout(5 * 1000);
@@ -174,7 +174,7 @@ public class NewsOfLawFragment extends Fragment {
         return null;
     }
 
-    public static byte[] readStream(InputStream inStream) throws IOException {
+    private static byte[] readStream(InputStream inStream) throws IOException {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int len = 0;
@@ -186,7 +186,7 @@ public class NewsOfLawFragment extends Fragment {
         return outStream.toByteArray();
     }
 
-    public void saveFile(Bitmap bm, String fileName) throws IOException {
+    private void saveFile(Bitmap bm, String fileName) throws IOException {
         File dirFile = new File("/sdcard/lawgarden/");
         if (!dirFile.exists()) {
             dirFile.mkdir();

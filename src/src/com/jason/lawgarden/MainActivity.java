@@ -126,22 +126,18 @@ public class MainActivity extends FragmentActivity {
         case R.id.rbtn_law_data:
             menu.findItem(R.id.action_search).setVisible(true);
             menu.findItem(R.id.item_edit).setVisible(false);
-            menu.findItem(R.id.item_ok).setVisible(false);
             break;
         case R.id.rbtn_law_news:
             menu.findItem(R.id.action_search).setVisible(false);
             menu.findItem(R.id.item_edit).setVisible(false);
-            menu.findItem(R.id.item_ok).setVisible(false);
             break;
         case R.id.rbtn_law_fav:
             menu.findItem(R.id.action_search).setVisible(false);
             menu.findItem(R.id.item_edit).setVisible(true);
-            menu.findItem(R.id.item_ok).setVisible(false);
             break;
         case R.id.rbtn_law_user:
             menu.findItem(R.id.action_search).setVisible(false);
             menu.findItem(R.id.item_edit).setVisible(false);
-            menu.findItem(R.id.item_ok).setVisible(false);
             break;
         }
         return super.onPrepareOptionsMenu(menu);

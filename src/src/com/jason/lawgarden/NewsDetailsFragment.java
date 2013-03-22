@@ -1,10 +1,14 @@
 package com.jason.lawgarden;
 
+import java.text.SimpleDateFormat;
+
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jason.lawgarden.db.DataBaseHelper;
@@ -24,6 +28,8 @@ public class NewsDetailsFragment extends Fragment {
     private TextView mTxtTime;
     private TextView txt_from;
     private TextView txt_content;
+    private ImageView imgNews;
+    private SimpleDateFormat mDateFormat;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,6 +39,7 @@ public class NewsDetailsFragment extends Fragment {
         mDbHelper.openDataBase();
 
         mNews = mDbHelper.getNewsById(mId);
+        mDateFormat = new SimpleDateFormat("yyy-MM-dd HH:mm");
     }
 
     @Override
@@ -42,11 +49,14 @@ public class NewsDetailsFragment extends Fragment {
         mTxtTime = (TextView) view.findViewById(R.id.txt_time);
         txt_from = (TextView) view.findViewById(R.id.txt_from);
         txt_content = (TextView) view.findViewById(R.id.txt_content);
+        imgNews = (ImageView) view.findViewById(R.id.img_news);
 
         mTxtTitle.setText(mNews.getTitle());
-        mTxtTime.setText(mNews.getCrateTime().toString());
+        mTxtTime.setText(mDateFormat.format(mNews.getCrateTime()));
         txt_from.setText(mNews.getFrom());
         txt_content.setText(mNews.getContent());
+        imgNews.setImageBitmap(BitmapFactory.decodeByteArray(mNews.getBmpByte(), 0,
+                mNews.getBmpByte().length));
         return view;
     }
 }

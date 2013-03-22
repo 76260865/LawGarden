@@ -101,6 +101,7 @@ public class LawsFragement extends Fragment {
         super.onResume();
         new MyFavoriteAyncTask().execute();
         new ArticleAyncTask().execute();
+        getActivity().getActionBar().setTitle(R.string.rtbn_law_data_text);
     }
 
     @Override

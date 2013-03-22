@@ -9,16 +9,18 @@
         android:title="@string/action_bar_search"/>
     <item
         android:id="@+id/item_edit"
-        android:icon="@drawable/usercenter_ok"
+        android:icon="@drawable/usercenter_edit"
         android:showAsAction="ifRoom|withText"
         android:title="@string/action_bar_edit">
     </item>
+    <!--
     <item
         android:id="@+id/item_ok"
         android:icon="@drawable/usercenter_edit"
         android:showAsAction="ifRoom|withText"
         android:title="@string/action_bar_save"
         android:visible="false">
-    </item>
+    </item>
+    -->
 
 </menu>

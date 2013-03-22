@@ -4,35 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal" >
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/list_icon" />
-
-        <TextView
-            android:id="@+id/txt_article_title"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textColor="@android:color/black"
-            android:textSize="22sp"
-            android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/img_favorite"
-            android:layout_width="50dip"
-            android:layout_height="50dip"
-            android:padding="15dip" />
-    </LinearLayout>
-
     <TextView
         android:id="@+id/txt_article_content"
         android:layout_width="match_parent"
