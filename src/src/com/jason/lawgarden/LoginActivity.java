@@ -2,8 +2,11 @@ package com.jason.lawgarden;
 
 import java.util.Date;
 
+<<<<<<< HEAD
 import org.json.JSONException;
 
+=======
+>>>>>>> 1090880710f00e2475ca208020e620db3fd3ab2a
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -13,31 +16,42 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
+<<<<<<< HEAD
 import android.widget.Toast;
 
 import com.jason.lawgarden.db.DataBaseHelper;
 import com.jason.lawgarden.model.User;
+=======
+
+>>>>>>> 1090880710f00e2475ca208020e620db3fd3ab2a
 import com.jason.util.JsonUtil;
 
 public class LoginActivity extends Activity {
 
+<<<<<<< HEAD
     private static final String TAG = "LoginActivity";
 
+=======
+>>>>>>> 1090880710f00e2475ca208020e620db3fd3ab2a
     private String mUserName;
 
     private String mPwd;
 
     private CheckBox mCheckBox;
 
+<<<<<<< HEAD
     private DataBaseHelper mDbHelper;
     private EditText mEditUserName;
     private EditText mEditPwd;
 
+=======
+>>>>>>> 1090880710f00e2475ca208020e620db3fd3ab2a
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         mCheckBox = (CheckBox) findViewById(R.id.chk_remember_pwd);
+<<<<<<< HEAD
         mDbHelper = new DataBaseHelper(getApplicationContext());
         mDbHelper.openDataBase();
 
@@ -67,6 +81,14 @@ public class LoginActivity extends Activity {
                 mCheckBox.setChecked(true);
             }
         }
+=======
+    }
+
+    public void onBtnLoginClick(View view) {
+        mUserName = ((EditText) findViewById(R.id.edit_user_name)).getText().toString();
+        mPwd = ((EditText) findViewById(R.id.edit_pwd)).getText().toString();
+        new MyAsyncTask().execute();
+>>>>>>> 1090880710f00e2475ca208020e620db3fd3ab2a
     }
 
     private class MyAsyncTask extends AsyncTask<Void, Void, Boolean> {
@@ -77,6 +99,7 @@ public class LoginActivity extends Activity {
             try {
                 // JsonUtil.register();
                 JsonUtil.sAccessToken = JsonUtil.login(mUserName, mPwd);
+<<<<<<< HEAD
                 if (TextUtils.isEmpty(JsonUtil.sAccessToken)) {
                     return false;
                 }
@@ -109,6 +132,25 @@ public class LoginActivity extends Activity {
             } else {
                 Toast.makeText(getApplicationContext(), "ÃÜÂë´íÎó", Toast.LENGTH_SHORT).show();
             }
+=======
+                if (mCheckBox.isChecked()) {
+
+                }
+                // JsonUtil.getUserSubjects(getApplicationContext());
+                // JsonUtil.updateSubjects(getApplicationContext());
+                // JsonUtil.updateNews(getApplicationContext());
+                // JsonUtil.updateArticles(getApplicationContext());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+>>>>>>> 1090880710f00e2475ca208020e620db3fd3ab2a
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
         }
 
     }
