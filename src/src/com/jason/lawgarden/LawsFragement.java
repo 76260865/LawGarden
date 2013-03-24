@@ -2,22 +2,23 @@ package com.jason.lawgarden;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
+import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -31,7 +32,6 @@ import com.jason.lawgarden.db.DataBaseHelper;
 import com.jason.lawgarden.model.Article;
 import com.jason.lawgarden.model.Favorite;
 import com.jason.lawgarden.model.Subject;
-import com.jason.util.JsonUtil;
 
 public class LawsFragement extends Fragment {
     private static final String TAG = "LawsFragement";
@@ -72,36 +72,39 @@ public class LawsFragement extends Fragment {
 
     private ImageView mImageFavorite;
 
+    private EditText mEditSearch;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mDbHelper = new DataBaseHelper(getActivity());
 
-        setHasOptionsMenu(true);
-
         Bundle bundle = getArguments();
         mSubjectId = bundle.getInt(EXTRA_KEY_SUBJECT_ID, -1);
         mSubjectName = bundle.getString(EXTRA_KEY_SUBJECT_NAME);
         mIsFavorited = bundle.getBoolean(EXTRA_KEY_SUBJECT_IS_FAVORITED);
 
-        mSubjects = mSubjectId == -1 ? mDbHelper.getSubjectsByUserId(JsonUtil.sUser.getId())
-                : mDbHelper.getSubjectsByParentId(mSubjectId);
-        if (mSubjects.size() == 0) {
-            // the last subject, need load the articles
-            // mSubjectCallBack.onLastSubjectItemClick(mSubjectId);
-            mArticles = mDbHelper.getArticlesBySubjectId(mSubjectId);
-            mIsDetails = true;
-        }
+        // mSubjects = mSubjectId == -1 ?
+        // mDbHelper.getSubjectsByUserId(JsonUtil.sUser.getId())
+        // : mDbHelper.getSubjectsByParentId(mSubjectId);
+        // if (mSubjects.size() == 0) {
+        // // the last subject, need load the articles
+        // // mSubjectCallBack.onLastSubjectItemClick(mSubjectId);
+        // mArticles = mDbHelper.getArticlesBySubjectId(mSubjectId);
+        // mIsDetails = true;
+        // }
 
+        mAdapter = new LawsAdapter();
+        mArticleAdapter = new ArticlesAdapter();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         new MyFavoriteAyncTask().execute();
-        new ArticleAyncTask().execute();
-        getActivity().getActionBar().setTitle(R.string.rtbn_law_data_text);
+        // new ArticleAyncTask().execute();
+        // getActivity().getActionBar().setTitle(R.string.rtbn_law_data_text);
     }
 
     @Override
@@ -109,13 +112,6 @@ public class LawsFragement extends Fragment {
         View view = inflater.inflate(R.layout.law_list_layout, container, false);
         mListLaw = (ListView) view.findViewById(R.id.list_law);
         mListArticle = (ListView) view.findViewById(R.id.list_articles);
-        mAdapter = new LawsAdapter();
-        mArticleAdapter = new LastLawsAdapter();
-        mListLaw.setAdapter(mAdapter);
-        mListLaw.setOnItemClickListener(mIsDetails ? mOnLastItemClickListener
-                : mOnItemClickListener);
-        mListArticle.setAdapter(mArticleAdapter);
-        mListArticle.setOnItemClickListener(mOnArticleItemClickListener);
 
         mViewSubjectTitle = view.findViewById(R.id.linear_subject);
         mTxtSubjectName = (TextView) view.findViewById(R.id.txt_subject_title);
@@ -130,7 +126,76 @@ public class LawsFragement extends Fragment {
 
         mRadioGroup.setOnCheckedChangeListener(mOnCheckedChangeListener);
         ((RadioButton) mRadioGroup.getChildAt(0)).setChecked(true);
+
+        mEditSearch = (EditText) view.findViewById(R.id.edit_search);
+        mEditSearch.setOnKeyListener(mOnKeyListener);
         return view;
+    }
+
+    private OnKeyListener mOnKeyListener = new OnKeyListener() {
+
+        @Override
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+            if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                switch (mRadioGroup.getCheckedRadioButtonId()) {
+                case R.id.rbtn_subject:
+                    new SearchLawsAsyncTask().execute();
+                    break;
+                case R.id.rbtn_article:
+                    new SearchArticlesAsyncTask(false).execute();
+                    break;
+                case R.id.rbtn_title_text:
+                    new SearchArticlesAsyncTask(true).execute();
+                    break;
+                }
+                new MyFavoriteAyncTask().execute();
+                return true;
+            }
+            return false;
+        }
+    };
+
+    private class SearchLawsAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            mSubjects = mDbHelper.searchSubjects(mEditSearch.getText() + "");
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            mAdapter = new LawsAdapter();
+            mListLaw.setAdapter(mAdapter);
+            mIsDetails = false;
+        }
+
+    }
+
+    private class SearchArticlesAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        private boolean mIsTitle = false;
+
+        SearchArticlesAsyncTask(boolean isTitle) {
+            mIsTitle = isTitle;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            if (mIsTitle) {
+                mArticles = mDbHelper.searchArticlesByTitle(mEditSearch.getText() + "");
+            } else {
+                mArticles = mDbHelper.searchArticles(mEditSearch.getText() + "");
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            mArticleAdapter = new ArticlesAdapter();
+            mListArticle.setAdapter(mArticleAdapter);
+            mIsDetails = false;
+        }
     }
 
     private OnCheckedChangeListener mOnCheckedChangeListener = new OnCheckedChangeListener() {
@@ -140,20 +205,59 @@ public class LawsFragement extends Fragment {
             switch (checkedId) {
             case R.id.rbtn_subject:
                 mListLaw.setVisibility(View.VISIBLE);
-                mListLaw.setAdapter(mAdapter);
                 mListArticle.setVisibility(View.GONE);
+                mListLaw.setAdapter(mAdapter);
+                mListLaw.setOnItemClickListener(mOnItemClickListener);
+
                 mIsDetails = false;
+                new SubjectsAsyncTask().execute();
                 new MyFavoriteAyncTask().execute();
                 break;
             case R.id.rbtn_article:
                 mListLaw.setVisibility(View.GONE);
                 mListArticle.setVisibility(View.VISIBLE);
-                mIsDetails = true;
+                mListArticle.setAdapter(mArticleAdapter);
+                mListArticle.setOnItemClickListener(mOnArticleItemClickListener);
+
+                new ArticlesAsyncTask().execute();
                 new MyFavoriteAyncTask().execute();
                 break;
             }
         }
     };
+
+    private class SubjectsAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            // TODO: filter by userId
+            // mSubjects = mSubjectId == -1 ?
+            // mDbHelper.getSubjectsByUserId(JsonUtil.sUser.getId())
+            // : mDbHelper.getSubjectsByParentId(mSubjectId);
+            mSubjects = mSubjectId == -1 ? mDbHelper.getSubjectsByParentId(0) : mDbHelper
+                    .getSubjectsByParentId(mSubjectId);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private class ArticlesAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            mArticles = mDbHelper.getArticlesBySubjectId(mSubjectId);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            mArticleAdapter.notifyDataSetChanged();
+        }
+    }
 
     private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
 
@@ -187,8 +291,8 @@ public class LawsFragement extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int postion, long id) {
             Article article = mArticles.get(postion);
             Bundle bundle = new Bundle();
-            bundle.putInt(LawDetailsFragement.EXTRA_KEY_ARTICLE_ID, article.getId());
-            LawDetailsFragement fragment = new LawDetailsFragement();
+            bundle.putInt(ArticleFragement.EXTRA_KEY_ARTICLE_ID, article.getId());
+            ArticleFragement fragment = new ArticleFragement();
             fragment.setArguments(bundle);
 
             FragmentTransaction transaction = getActivity().getSupportFragmentManager()
@@ -223,96 +327,20 @@ public class LawsFragement extends Fragment {
         }
     };
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setOnQueryTextFocusChangeListener(new OnFocusChangeListener() {
-
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    mRadioGroup.getChildAt(0).setVisibility(View.VISIBLE);
-                    RadioButton rbtn = (RadioButton) mRadioGroup.getChildAt(0);
-                    rbtn.setChecked(true);
-                    mRadioGroup.getChildAt(1).setVisibility(View.VISIBLE);
-                    mRadioGroup.getChildAt(2).setVisibility(View.GONE);
-                    mRadioGroup.getChildAt(3).setVisibility(View.VISIBLE);
-                } else {
-                    mRadioGroup.getChildAt(0).setVisibility(View.GONE);
-                    mRadioGroup.getChildAt(1).setVisibility(View.GONE);
-                    mRadioGroup.getChildAt(2).setVisibility(View.GONE);
-                    mRadioGroup.getChildAt(3).setVisibility(View.GONE);
-                }
-            }
-        });
-        searchView.setOnQueryTextListener(new OnQueryTextListener() {
-
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                switch (mRadioGroup.getCheckedRadioButtonId()) {
-                case R.id.rbtn_subject:
-                    mSubjects = mDbHelper.searchSubjects(query);
-                    mAdapter = new LawsAdapter();
-                    mListLaw.setAdapter(mAdapter);
-                    mIsDetails = false;
-                    break;
-                case R.id.rbtn_article:
-                    mArticles = mDbHelper.searchArticles(query);
-                    mArticleAdapter = new LastLawsAdapter();
-                    mListArticle.setAdapter(mArticleAdapter);
-                    mIsDetails = true;
-                    break;
-                case R.id.rbtn_full_text:
-                    break;
-                }
-                new MyFavoriteAyncTask().execute();
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-    }
-
-    private OnItemClickListener mOnLastItemClickListener = new OnItemClickListener() {
-
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int postion, long id) {
-            LawDetailsFragement fragment = new LawDetailsFragement();
-            Bundle bundle = new Bundle();
-            bundle.putInt(LawDetailsFragement.EXTRA_KEY_ARTICLE_ID, mArticles.get(postion).getId());
-            fragment.setArguments(bundle);
-            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.replace(R.id.fragment_container, fragment);
-            transaction.addToBackStack(null);
-
-            // Commit the transaction
-            transaction.commit();
-
-        }
-    };
-
     private class LawsAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
-            // TODO Auto-generated method stub
             return mSubjects.size();
         }
 
         @Override
         public Object getItem(int position) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public long getItemId(int position) {
-            // TODO Auto-generated method stub
             return 0;
         }
 
@@ -360,23 +388,20 @@ public class LawsFragement extends Fragment {
         }
     }
 
-    private class LastLawsAdapter extends BaseAdapter {
+    private class ArticlesAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
-            // TODO Auto-generated method stub
             return mArticles.size();
         }
 
         @Override
         public Object getItem(int position) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public long getItemId(int position) {
-            // TODO Auto-generated method stub
             return 0;
         }
 
@@ -390,7 +415,11 @@ public class LawsFragement extends Fragment {
             TextView txtTitle = (TextView) convertView.findViewById(R.id.txt_law_title);
             ImageView imgNew = (ImageView) convertView.findViewById(R.id.img_new);
             final ImageView imgFavorite = (ImageView) convertView.findViewById(R.id.img_favorite);
-            imgNew.setImageResource(article.isNew() ? R.drawable.news : null);
+            if (article.isNew()) {
+                imgNew.setImageResource(R.drawable.news);
+            } else {
+                imgNew.setImageBitmap(null);
+            }
             imgFavorite.setImageResource(article.isFavorite() ? R.drawable.list_start_sect
                     : R.drawable.list_start);
 

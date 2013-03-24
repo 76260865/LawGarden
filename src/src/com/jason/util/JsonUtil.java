@@ -28,6 +28,7 @@ public class JsonUtil {
     public static User sUser;
 
     public static void register() throws JSONException {
+        Log.d(TAG, "register");
         JSONObject object = new JSONObject();
         object.put("Username", "jason");
         object.put("Password", "123456");
@@ -40,8 +41,9 @@ public class JsonUtil {
     }
 
     public static String login(String username, String password) throws JSONException {
+        Log.d(TAG, "login");
         Calendar calendar = Calendar.getInstance();
-        calendar.set(2012, 2, 18);
+        calendar.set(1997, 2, 1);
         sDATE_FOR_TEST = String.format("/Date(%s+0800)/", calendar.getTimeInMillis());
 
         JSONObject object = new JSONObject();
@@ -57,6 +59,7 @@ public class JsonUtil {
     }
 
     public static void updateUserSubjects(Context context) throws JSONException {
+        Log.d(TAG, "updateUserSubjects");
         JSONObject object = new JSONObject();
         object.put("AccessToken", sAccessToken);
         String appListString = HttpUtil.doPost(SERVICE_URI + "/GetUserSubjects", object);
@@ -82,12 +85,14 @@ public class JsonUtil {
             DataBaseHelper dbHelper = new DataBaseHelper(context);
             dbHelper.openDataBase();
             dbHelper.insertUserSubjects(subjects);
+            dbHelper.close();
         }
     }
 
     private static String sDATE_FOR_TEST = "/Date(1362575535693+0800)/";
 
     public static void updateSubjects(Context context) throws JSONException {
+        Log.d(TAG, "updateSubjects");
         DataBaseHelper dbHelper = new DataBaseHelper(context);
         dbHelper.openDataBase();
         String lastUpdateSubjectTime = dbHelper.getLastUpdateSubjectTime();
@@ -127,10 +132,11 @@ public class JsonUtil {
             // remove the subjects by ids
             dbHelper.removeSubjectsByIds(removedIds);
         }
-
+        dbHelper.close();
     }
 
     public static void updateNews(Context context) throws JSONException {
+        Log.d(TAG, "updateNews");
         DataBaseHelper dbHelper = new DataBaseHelper(context);
         dbHelper.openDataBase();
         String lastUpdateSubjectTime = dbHelper.getLastUpdateNewsTime();
@@ -171,17 +177,23 @@ public class JsonUtil {
             // remove the news by ids
             dbHelper.removeNewsByIds(removedIds);
         }
+        dbHelper.close();
     }
 
-    public static void updateArticles(Context context) throws JSONException {
+    public static int updateArticles(Context context, int PageIndex, String lastUpdateSubjectTime)
+            throws JSONException {
+        Log.d(TAG, "updateArticles");
         DataBaseHelper dbHelper = new DataBaseHelper(context);
         dbHelper.openDataBase();
-        String lastUpdateSubjectTime = dbHelper.getLastUpdateArticleTime();
+        // String lastUpdateSubjectTime = dbHelper.getLastUpdateArticleTime();
 
         JSONObject object = new JSONObject();
         object.put("AccessToken", sAccessToken);
         object.put("LastUpdateTime",
                 !TextUtils.isEmpty(lastUpdateSubjectTime) ? lastUpdateSubjectTime : sDATE_FOR_TEST);
+        object.put("PageIndex", PageIndex);
+        object.put("PageSize", 100);
+
         String appListString = HttpUtil.doPost(SERVICE_URI + "/UpdateArticles", object);
         JSONObject objectRet = new JSONObject(appListString);
         if (objectRet.getBoolean("ExecutionResult")) {
@@ -198,7 +210,7 @@ public class JsonUtil {
                 article.setLastUpdateTime(obj.getString("LastUpdateTime"));
                 article.setLevel(obj.getInt("Level"));
                 article.setSubjects(obj.getString("Subjects"));
-                article.setLastUpdateTime(obj.getString("Title"));
+                article.setTitle(obj.getString("Title"));
 
                 articles.add(article);
             }
@@ -214,5 +226,8 @@ public class JsonUtil {
             // remove the articles by ids
             dbHelper.removeArticlesByIds(removedIds);
         }
+        dbHelper.close();
+
+        return objectRet.getInt("TotalPages");
     }
 }

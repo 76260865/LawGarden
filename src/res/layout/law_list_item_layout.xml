@@ -21,19 +21,18 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textColor="@android:color/black"
-        android:textSize="20sp" />
+        android:textSize="18sp" />
 
     <ImageView
         android:id="@+id/img_new"
-        android:layout_width="50dip"
-        android:layout_height="50dip"
-        android:padding="15dip" />
+        android:layout_width="25dip"
+        android:layout_height="25dip"
+        android:padding="10dip" />
 
     <ImageView
         android:id="@+id/img_favorite"
-        android:layout_width="50dip"
-        android:layout_height="50dip"
-        android:focusable="false"
-        android:padding="15dip" />
+        android:layout_width="25dip"
+        android:layout_height="25dip"
+        android:focusable="false" />
 
 </LinearLayout>

@@ -2,6 +2,7 @@ package com.jason.lawgarden;
 
 import java.util.ArrayList;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -39,6 +40,8 @@ public class MyFavoriteFragment extends Fragment {
 
     private RadioGroup mRadioGroup;
 
+    private ImageView mImageFavorite;
+
     private static final int TYPE_SUBJECTS = 0;
 
     private static final int TYPE_ARTICLE = 1;
@@ -48,17 +51,8 @@ public class MyFavoriteFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mDbHelper = new DataBaseHelper(getActivity());
         mDbHelper.openDataBase();
-        ArrayList<Favorite> favorites = mDbHelper.getAllFavorites();
-        for (Favorite favorite : favorites) {
-            if (favorite.getFavoriteType() == 0) {
-                mFavoritesList.add(favorite);
-            } else {
-                mArticleFavoritesList.add(favorite);
-            }
-        }
-        favorites.clear();
 
-        setHasOptionsMenu(true);
+        new FavoriteAsyncTask().execute();
     }
 
     @Override
@@ -71,9 +65,68 @@ public class MyFavoriteFragment extends Fragment {
         mRadioGroup.setOnCheckedChangeListener(mOnCheckedChangeListener);
         ((RadioButton) mRadioGroup.getChildAt(0)).setChecked(true);
 
+        mImageFavorite = (ImageView) view.findViewById(R.id.img_favorite);
+        mImageFavorite.setImageResource(mInEditMode ? R.drawable.usercenter_ok
+                : R.drawable.usercenter_edit);
+        mImageFavorite.setOnClickListener(mOnClickListener);
+
         return view;
     }
 
+    private OnClickListener mOnClickListener = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (mInEditMode) {
+                // delete the unfavorited items:
+                for (int i = mFavoritesList.size() - 1; i >= 0; i--) {
+                    Favorite favorite = mFavoritesList.get(i);
+                    if (!favorite.isFavorited()) {
+                        mDbHelper
+                                .removeFavoriteByFavoriteIds(new int[] { favorite.getFavoriteId() });
+                        mFavoritesList.remove(favorite);
+                    }
+                }
+
+                for (int i = mArticleFavoritesList.size() - 1; i >= 0; i--) {
+                    Favorite favorite = mArticleFavoritesList.get(i);
+                    if (!favorite.isFavorited()) {
+                        mDbHelper
+                                .removeFavoriteByFavoriteIds(new int[] { favorite.getFavoriteId() });
+                        mArticleFavoritesList.remove(favorite);
+                    }
+                }
+            }
+            mInEditMode = !mInEditMode;
+            mImageFavorite.setImageResource(mInEditMode ? R.drawable.usercenter_ok
+                    : R.drawable.usercenter_edit);
+            mFavoriteAdapter.notifyDataSetChanged();
+        }
+    };
+
+    private class FavoriteAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            ArrayList<Favorite> favorites = mDbHelper.getAllFavorites();
+            for (Favorite favorite : favorites) {
+                if (favorite.getFavoriteType() == 0) {
+                    mFavoritesList.add(favorite);
+                } else {
+                    mArticleFavoritesList.add(favorite);
+                }
+            }
+            favorites.clear();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            mFavoriteAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private int mCurrentType = 0;
     private OnCheckedChangeListener mOnCheckedChangeListener = new OnCheckedChangeListener() {
 
         @Override
@@ -82,19 +135,23 @@ public class MyFavoriteFragment extends Fragment {
             case R.id.rbtn_subject:
                 mFavoriteAdapter = new FavoriteAdapter(TYPE_SUBJECTS);
                 mListFavorite.setAdapter(mFavoriteAdapter);
+                mCurrentType = TYPE_SUBJECTS;
                 break;
             case R.id.rbtn_article:
                 mFavoriteAdapter = new FavoriteAdapter(TYPE_ARTICLE);
                 mListFavorite.setAdapter(mFavoriteAdapter);
+                mCurrentType = TYPE_ARTICLE;
                 break;
             }
         }
     };
+
     private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int postion, long id) {
-            Favorite favorite = mFavoritesList.get(postion);
+            Favorite favorite = mCurrentType == TYPE_SUBJECTS ? mFavoritesList.get(postion)
+                    : mArticleFavoritesList.get(postion);
             if (favorite.getFavoriteType() == 0) {
                 Bundle bundle = new Bundle();
                 bundle.putInt(LawsFragement.EXTRA_KEY_SUBJECT_ID, favorite.getFavoriteId());
@@ -114,10 +171,10 @@ public class MyFavoriteFragment extends Fragment {
                 transaction.commit();
             } else {
                 Bundle bundle = new Bundle();
-                bundle.putInt(LawDetailsFragement.EXTRA_KEY_ARTICLE_ID, favorite.getFavoriteId());
+                bundle.putInt(ArticleFragement.EXTRA_KEY_ARTICLE_ID, favorite.getFavoriteId());
                 bundle.putBoolean(LawsFragement.EXTRA_KEY_SUBJECT_IS_FAVORITED, true);
 
-                LawDetailsFragement fragment = new LawDetailsFragement();
+                ArticleFragement fragment = new ArticleFragement();
 
                 fragment.setArguments(bundle);
 
@@ -132,39 +189,6 @@ public class MyFavoriteFragment extends Fragment {
             }
         }
     };
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (mInEditMode) {
-            // delete the unfavorited items:
-            for (int i = mFavoritesList.size() - 1; i >= 0; i--) {
-                Favorite favorite = mFavoritesList.get(i);
-                if (!favorite.isFavorited()) {
-                    mDbHelper.removeFavoriteByFavoriteIds(new int[] { favorite.getFavoriteId() });
-                    mFavoritesList.remove(favorite);
-                }
-            }
-
-            for (int i = mArticleFavoritesList.size() - 1; i >= 0; i--) {
-                Favorite favorite = mArticleFavoritesList.get(i);
-                if (!favorite.isFavorited()) {
-                    mDbHelper.removeFavoriteByFavoriteIds(new int[] { favorite.getFavoriteId() });
-                    mArticleFavoritesList.remove(favorite);
-                }
-            }
-        }
-        mInEditMode = !mInEditMode;
-        item.setIcon(mInEditMode ? R.drawable.usercenter_ok : R.drawable.usercenter_edit);
-        mFavoriteAdapter.notifyDataSetChanged();
-        return true;
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        menu.getItem(1)
-                .setIcon(mInEditMode ? R.drawable.usercenter_ok : R.drawable.usercenter_edit);
-        super.onPrepareOptionsMenu(menu);
-    }
 
     private class FavoriteAdapter extends BaseAdapter {
 

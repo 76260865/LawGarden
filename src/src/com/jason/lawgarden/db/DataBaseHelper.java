@@ -17,6 +17,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.jason.lawgarden.R;
@@ -497,13 +498,24 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             values.put("_id", article.getId());
             values.put("title", article.getTitle());
             values.put("contents", article.getContents());
-            values.put("lastupdatetime", article.getLastUpdateTime());
+            values.put("last_update_time", article.getLastUpdateTime());
             values.put("level", article.getLevel());
             values.put("is_new", article.isNew());
             values.put("key_words", article.getKeyWords());
             values.put("subjects", article.getSubjects());
 
             mDataBase.insert("articles_of_law", null, values);
+
+            String[] subjectIds = article.getSubjects().split(",");
+            for (String id : subjectIds) {
+                if (TextUtils.isEmpty(id)) {
+                    continue;
+                }
+                ContentValues valuesSubjectArticles = new ContentValues();
+                valuesSubjectArticles.put("article_id", article.getId());
+                valuesSubjectArticles.put("subject_id", Integer.valueOf(id));
+                mDataBase.insert("subjects_articles", null, valuesSubjectArticles);
+            }
         }
     }
 
@@ -598,6 +610,32 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
         try {
             cursor = mDataBase.rawQuery("SELECT * FROM articles_of_law WHERE contents LIKE ?",
+                    new String[] { "%" + text + "%" });
+
+            while (cursor.moveToNext()) {
+                article = new Article();
+
+                article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
+                article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                article.setContents(cursor.getString(cursor.getColumnIndex("contents")));
+                article.setNew(cursor.getInt(cursor.getColumnIndex("is_new")) == 0 ? false : true);
+
+                articles.add(article);
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            cursor.close();
+        }
+        return articles;
+    }
+
+    public ArrayList<Article> searchArticlesByTitle(String text) {
+        ArrayList<Article> articles = new ArrayList<Article>();
+        Article article;
+        Cursor cursor = null;
+        try {
+            cursor = mDataBase.rawQuery("SELECT * FROM articles_of_law WHERE title LIKE ?",
                     new String[] { "%" + text + "%" });
 
             while (cursor.moveToNext()) {

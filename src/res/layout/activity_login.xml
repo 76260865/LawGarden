@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg"
     android:orientation="vertical" >
 
     <ImageView
@@ -20,7 +21,8 @@
         android:layout_marginTop="5dip"
         android:ems="10"
         android:hint="@string/edit_input_user_name_hint_text"
-        android:inputType="text" >
+        android:inputType="text"
+        android:text="xinlan" >
     </EditText>
 
     <EditText
@@ -33,7 +35,8 @@
         android:layout_marginTop="5dip"
         android:ems="10"
         android:hint="@string/edit_input_password_hint_text"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:text="123456" />
 
     <Button
         android:id="@+id/button1"

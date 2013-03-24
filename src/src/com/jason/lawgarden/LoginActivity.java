@@ -5,6 +5,7 @@ import java.util.Date;
 import org.json.JSONException;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -49,9 +50,12 @@ public class LoginActivity extends Activity {
         new QueryPwdTask().execute();
     }
 
+    private ProgressDialog mProgressDialog;
+
     public void onBtnLoginClick(View view) {
         mUserName = mEditUserName.getText().toString();
         mPwd = mEditPwd.getText().toString();
+        mProgressDialog = ProgressDialog.show(this, "", "Loading. Please wait...", true);
         new MyAsyncTask().execute();
     }
 
@@ -99,7 +103,17 @@ public class LoginActivity extends Activity {
                 JsonUtil.updateSubjects(getApplicationContext());
 
                 JsonUtil.updateNews(getApplicationContext());
-                JsonUtil.updateArticles(getApplicationContext());
+
+                // update the articles
+                String lastUpdateTime = mDbHelper.getLastUpdateArticleTime();
+                int pageIndex = 0;
+                int totalPages = JsonUtil.updateArticles(getApplicationContext(), pageIndex,
+                        lastUpdateTime);
+                while (pageIndex < totalPages) {
+                    Log.d("LoginActivity", "pageIndex:" + pageIndex + "totalPages:" + totalPages);
+                    pageIndex++;
+                    JsonUtil.updateArticles(getApplicationContext(), pageIndex, lastUpdateTime);
+                }
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
             }
@@ -108,6 +122,7 @@ public class LoginActivity extends Activity {
 
         @Override
         protected void onPostExecute(Boolean result) {
+            mProgressDialog.dismiss();
             if (result) {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);

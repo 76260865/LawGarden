@@ -1,5 +1,11 @@
 package com.jason.lawgarden;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -35,7 +41,7 @@ public class MainActivity extends FragmentActivity {
         // getActionBar().setDisplayShowTitleEnabled(false);
         // getActionBar().setDisplayUseLogoEnabled(false);
         // getActionBar().setDisplayShowHomeEnabled(false);
-        // getActionBar().setDisplayHomeAsUpEnabled(true);
+        // getActionBar().setBackgroundDrawable(null);
     }
 
     private OnCheckedChangeListener mOnCheckedChangeListener = new OnCheckedChangeListener() {
@@ -49,7 +55,7 @@ public class MainActivity extends FragmentActivity {
             case R.id.rbtn_law_data:
                 LawsFragement lawsFragement = new LawsFragement();
                 addLawFragement(-1, null, lawsFragement);
-                getActionBar().setTitle(R.string.rtbn_law_data_text);
+                // getActionBar().setTitle(R.string.rtbn_law_data_text);
                 break;
             case R.id.rbtn_law_fav:
                 MyFavoriteFragment favoriteFragment = new MyFavoriteFragment();
@@ -57,7 +63,7 @@ public class MainActivity extends FragmentActivity {
                 favoriteTransaction.replace(R.id.fragment_container, favoriteFragment);
                 favoriteTransaction.addToBackStack(null);
                 favoriteTransaction.commit();
-                getActionBar().setTitle(R.string.rbtn_my_favorite_text);
+                // getActionBar().setTitle(R.string.rbtn_my_favorite_text);
                 break;
             case R.id.rbtn_law_news:
                 NewsOfLawFragment newsFragment = new NewsOfLawFragment();
@@ -65,7 +71,7 @@ public class MainActivity extends FragmentActivity {
                 newsTransaction.replace(R.id.fragment_container, newsFragment);
                 newsTransaction.addToBackStack(null);
                 newsTransaction.commit();
-                getActionBar().setTitle(R.string.rbtn_law_news_text);
+                // getActionBar().setTitle(R.string.rbtn_law_news_text);
                 break;
             case R.id.rbtn_law_user:
                 UserFragment userFragment = new UserFragment();
@@ -73,7 +79,7 @@ public class MainActivity extends FragmentActivity {
                 userTransaction.replace(R.id.fragment_container, userFragment);
                 userTransaction.addToBackStack(null);
                 userTransaction.commit();
-                getActionBar().setTitle(R.string.rbtn_personal_center_text);
+                // getActionBar().setTitle(R.string.rbtn_personal_center_text);
                 break;
             }
         }

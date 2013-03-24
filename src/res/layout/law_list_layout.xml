@@ -5,9 +5,26 @@
     android:background="#F7FAF8"
     android:orientation="vertical" >
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dip"
+        android:layout_marginRight="50dip"
+        android:layout_marginTop="10dip"
+        android:src="@drawable/top_logo" />
+
+    <EditText
+        android:id="@+id/edit_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dip"
+        android:background="@drawable/top_search"
+        android:drawableLeft="@drawable/top_icon_search"
+        android:paddingLeft="10dip" />
+
     <RadioGroup
         android:id="@+id/rgrp_top"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
@@ -16,25 +33,17 @@
         <RadioButton
             android:id="@+id/rbtn_subject"
             style="@style/RadioButtonCategory"
-            android:text="@string/txt_pro_text"
-            android:visibility="gone" />
+            android:text="@string/txt_pro_text" />
+
+        <RadioButton
+            android:id="@+id/rbtn_title_text"
+            style="@style/RadioButtonCategory"
+            android:text="@string/txt_title_text" />
 
         <RadioButton
             android:id="@+id/rbtn_article"
             style="@style/RadioButtonCategory"
-            android:text="@string/txt_article_text"
-            android:visibility="gone" />
-
-        <RadioButton
-            android:id="@+id/rbtn_full_text"
-            style="@style/RadioButtonCategory"
-            android:text="@string/txt_title_text"
-            android:visibility="gone" />
-
-        <RadioButton
-            style="@style/RadioButtonCategory"
-            android:text="@string/txt_full_text"
-            android:visibility="gone" />
+            android:text="@string/txt_article_text" />
     </RadioGroup>
 
     <LinearLayout
@@ -60,13 +69,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="@android:color/black"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
         <ImageView
             android:id="@+id/img_subject_favorite"
-            android:layout_width="50dip"
-            android:layout_height="50dip"
-            android:padding="15dip"
+            android:layout_width="25dip"
+            android:layout_height="25dip"
             android:src="@drawable/list_start" />
     </LinearLayout>
 
