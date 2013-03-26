@@ -59,6 +59,11 @@ public class LoginActivity extends Activity {
         new MyAsyncTask().execute();
     }
 
+    public void onRegisterClick(View view) {
+        Intent intent = new Intent(this, RegisterActivity.class);
+        startActivity(intent);
+    }
+
     private class QueryPwdTask extends AsyncTask<Void, Void, User> {
 
         @Override
@@ -87,6 +92,7 @@ public class LoginActivity extends Activity {
                 JsonUtil.sAccessToken = JsonUtil.login(mUserName, mPwd);
 
                 if (TextUtils.isEmpty(JsonUtil.sAccessToken)) {
+                    Toast.makeText(getApplicationContext(), "µÇÂ¼Ê§°Ü", Toast.LENGTH_SHORT).show();
                     return false;
                 }
 
@@ -105,15 +111,18 @@ public class LoginActivity extends Activity {
                 JsonUtil.updateNews(getApplicationContext());
 
                 // update the articles
-                String lastUpdateTime = mDbHelper.getLastUpdateArticleTime();
-                int pageIndex = 0;
-                int totalPages = JsonUtil.updateArticles(getApplicationContext(), pageIndex,
-                        lastUpdateTime);
-                while (pageIndex < totalPages) {
-                    Log.d("LoginActivity", "pageIndex:" + pageIndex + "totalPages:" + totalPages);
-                    pageIndex++;
-                    JsonUtil.updateArticles(getApplicationContext(), pageIndex, lastUpdateTime);
-                }
+                // String lastUpdateTime = mDbHelper.getLastUpdateArticleTime();
+                // int pageIndex = 0;
+                // int totalPages =
+                // JsonUtil.updateArticles(getApplicationContext(), pageIndex,
+                // lastUpdateTime);
+                // while (pageIndex < totalPages) {
+                // Log.d("LoginActivity", "pageIndex:" + pageIndex +
+                // "totalPages:" + totalPages);
+                // pageIndex++;
+                // JsonUtil.updateArticles(getApplicationContext(), pageIndex,
+                // lastUpdateTime);
+                // }
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
             }

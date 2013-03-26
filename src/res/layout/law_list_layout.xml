@@ -2,22 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F7FAF8"
     android:orientation="vertical" >
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/title_height"
         android:layout_marginLeft="50dip"
         android:layout_marginRight="50dip"
-        android:layout_marginTop="10dip"
         android:src="@drawable/top_logo" />
 
     <EditText
         android:id="@+id/edit_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dip"
+        android:layout_marginLeft="5dip"
+        android:layout_marginRight="5dip"
         android:background="@drawable/top_search"
         android:drawableLeft="@drawable/top_icon_search"
         android:paddingLeft="10dip" />
@@ -38,18 +37,20 @@
         <RadioButton
             android:id="@+id/rbtn_title_text"
             style="@style/RadioButtonCategory"
+            android:drawableLeft="@drawable/tab_l_03"
             android:text="@string/txt_title_text" />
 
         <RadioButton
             android:id="@+id/rbtn_article"
             style="@style/RadioButtonCategory"
+            android:drawableLeft="@drawable/tab_l_03"
             android:text="@string/txt_article_text" />
     </RadioGroup>
 
     <LinearLayout
         android:id="@+id/linear_subject"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dip"
         android:background="#699191"
         android:gravity="center"
         android:orientation="horizontal"
@@ -69,12 +70,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="@android:color/black"
-            android:textSize="18sp" />
+            android:textSize="@dimen/txt_subject_title_text_size" />
 
         <ImageView
             android:id="@+id/img_subject_favorite"
-            android:layout_width="25dip"
-            android:layout_height="25dip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="18dip"
             android:src="@drawable/list_start" />
     </LinearLayout>
 
@@ -82,7 +84,7 @@
         android:id="@+id/list_law"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="#9DC0AA"
+        android:divider="#dedede"
         android:dividerHeight="1dip"
         android:listSelector="@drawable/item_selector" />
 
@@ -90,7 +92,7 @@
         android:id="@+id/list_articles"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="#9DC0AA"
+        android:divider="#dedede"
         android:dividerHeight="1dip"
         android:listSelector="@drawable/item_selector"
         android:visibility="gone" />

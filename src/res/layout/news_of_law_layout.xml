@@ -6,17 +6,16 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/title_height"
         android:layout_marginLeft="50dip"
         android:layout_marginRight="50dip"
-        android:layout_marginTop="10dip"
         android:src="@drawable/top_logo" />
 
     <ListView
         android:id="@+id/lst_news"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="#9DC0AA"
+        android:divider="#dedede"
         android:dividerHeight="1dip"
         android:listSelector="@drawable/item_selector" />
 

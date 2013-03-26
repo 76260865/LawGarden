@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/title_height"
         android:gravity="center"
         android:orientation="horizontal" >
 
@@ -17,14 +17,14 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="我的收藏"
-            android:textColor="@android:color/black"
-            android:textSize="18sp" />
+            android:textColor="#5A7C7C"
+            android:textSize="@dimen/my_favorite_title_text_size" />
 
         <ImageView
             android:id="@+id/img_favorite"
-            android:layout_width="25dip"
-            android:layout_height="25dip"
-            android:src="@drawable/list_start" />
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingRight="15dip" />
     </LinearLayout>
 
     <RadioGroup
@@ -43,6 +43,7 @@
         <RadioButton
             android:id="@+id/rbtn_article"
             style="@style/RadioButtonCategory"
+            android:drawableLeft="@drawable/tab_l_03"
             android:text="@string/txt_article_text" />
     </RadioGroup>
 
@@ -50,7 +51,7 @@
         android:id="@+id/list_law"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="#9DC0AA"
+        android:divider="#dedede"
         android:dividerHeight="1dip"
         android:listSelector="@drawable/item_selector" />
 
