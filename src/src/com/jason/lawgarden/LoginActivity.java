@@ -92,7 +92,6 @@ public class LoginActivity extends Activity {
                 JsonUtil.sAccessToken = JsonUtil.login(mUserName, mPwd);
 
                 if (TextUtils.isEmpty(JsonUtil.sAccessToken)) {
-                    Toast.makeText(getApplicationContext(), "µÇÂ¼Ê§°Ü", Toast.LENGTH_SHORT).show();
                     return false;
                 }
 
@@ -136,7 +135,7 @@ public class LoginActivity extends Activity {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
             } else {
-                Toast.makeText(getApplicationContext(), "ÃÜÂë´íÎó", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "µÇÂ¼Ê§°Ü", Toast.LENGTH_SHORT).show();
             }
             if (mCheckBox.isChecked()) {
 
