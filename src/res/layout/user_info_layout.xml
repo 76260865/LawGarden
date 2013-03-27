@@ -5,9 +5,10 @@
     android:orientation="vertical" >
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/title_height"
         android:layout_gravity="center"
+        android:background="#EFEFEF"
         android:gravity="center"
         android:text="个人中心"
         android:textColor="#5A7C7C"
@@ -22,7 +23,8 @@
     <TextView
         android:id="@+id/txt_user_name"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/user_info_text_height"
+        android:gravity="center"
         android:textColor="#5A7C7C"
         android:textSize="18sp" />
 
@@ -34,7 +36,8 @@
     <TextView
         android:id="@+id/txt_service_type"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/user_info_text_height"
+        android:gravity="center"
         android:textColor="#5A7C7C"
         android:textSize="18sp" />
 
@@ -46,7 +49,8 @@
     <TextView
         android:id="@+id/txt_purchase_date"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/user_info_text_height"
+        android:gravity="center"
         android:textColor="#5A7C7C"
         android:textSize="18sp" />
 
@@ -58,7 +62,8 @@
     <TextView
         android:id="@+id/txt_overdue_date"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/user_info_text_height"
+        android:gravity="center"
         android:textColor="#5A7C7C"
         android:textSize="18sp" />
 
@@ -70,7 +75,8 @@
     <TextView
         android:id="@+id/txt_about_us"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/user_info_text_height"
+        android:gravity="center"
         android:text="@string/txt_about_us_text"
         android:textColor="#5A7C7C"
         android:textSize="18sp" />
@@ -83,7 +89,8 @@
     <TextView
         android:id="@+id/txt_about_us_content"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/user_info_text_height"
+        android:gravity="center"
         android:textColor="#5A7C7C"
         android:textSize="15sp" />
 

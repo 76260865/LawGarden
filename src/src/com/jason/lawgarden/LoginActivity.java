@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.jason.lawgarden.db.DataBaseHelper;
 import com.jason.lawgarden.model.User;
 import com.jason.util.JsonUtil;
+import com.jason.util.NetworkUtil;
 
 public class LoginActivity extends Activity {
 
@@ -48,6 +49,10 @@ public class LoginActivity extends Activity {
         mEditUserName = (EditText) findViewById(R.id.edit_user_name);
         mEditPwd = (EditText) findViewById(R.id.edit_pwd);
         new QueryPwdTask().execute();
+
+        if (!NetworkUtil.isNetworkConnected(this)) {
+            Toast.makeText(getApplicationContext(), "«Îœ»¡¥Ω”Õ¯¬Á", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private ProgressDialog mProgressDialog;

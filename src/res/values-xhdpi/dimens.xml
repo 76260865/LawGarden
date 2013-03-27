@@ -9,7 +9,8 @@
     <dimen name="radio_button_category_text_size">15sp</dimen>
     <dimen name="txt_subject_title_text_size">18sp</dimen>
     <dimen name="img_new_icon_size">72dip</dimen>
-    <dimen name="radio_button_favorite_height">28dip</dimen>
+    <dimen name="radio_button_favorite_height">38dip</dimen>
     <dimen name="my_favorite_title_text_size">24sp</dimen>
+    <dimen name="user_info_text_height">45dip</dimen>
 
 </resources>
