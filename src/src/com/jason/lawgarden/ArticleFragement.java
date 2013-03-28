@@ -70,8 +70,6 @@ public class ArticleFragement extends Fragment {
             img_article_favorite
                     .setImageResource(mArticle.isFavorite() ? R.drawable.list_start_sect
                             : R.drawable.list_start);
-            getActivity().invalidateOptionsMenu();
-
         }
     };
 

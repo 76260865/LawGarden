@@ -27,17 +27,23 @@ public class JsonUtil {
 
     public static User sUser;
 
-    public static void register() throws JSONException {
+    public static boolean register(String userName, String password) throws JSONException {
         Log.d(TAG, "register");
         JSONObject object = new JSONObject();
-        object.put("Username", "jason");
-        object.put("Password", "123456");
+        object.put("Username", userName);
+        object.put("Password", password);
 
         String appListString = HttpUtil.doPost(SERVICE_URI + "/Register", object);
         JSONObject objectRet = new JSONObject(appListString);
+        if (TextUtils.isEmpty(appListString)) {
+            return false;
+        }
         if (objectRet.getBoolean("ExecutionResult")) {
             Log.d(TAG, "register:sucess");
+            sAccessToken = objectRet.getString("AccessToken");
+            return true;
         }
+        return false;
     }
 
     public static String login(String username, String password) throws JSONException {
@@ -51,6 +57,9 @@ public class JsonUtil {
         object.put("Password", password);
 
         String appListString = HttpUtil.doPost(SERVICE_URI + "/Login", object);
+        if (TextUtils.isEmpty(appListString)) {
+            return null;
+        }
         JSONObject objectRet = new JSONObject(appListString);
         if (objectRet.getBoolean("ExecutionResult")) {
             return objectRet.getString("AccessToken");
@@ -63,6 +72,11 @@ public class JsonUtil {
         JSONObject object = new JSONObject();
         object.put("AccessToken", sAccessToken);
         String appListString = HttpUtil.doPost(SERVICE_URI + "/GetUserSubjects", object);
+        if (TextUtils.isEmpty(appListString)) {
+            Log.d(TAG, "get updateUserSubjects api error");
+            return;
+        }
+
         JSONObject objectRet = new JSONObject(appListString);
         if (objectRet.getBoolean("ExecutionResult")) {
             JSONArray array = objectRet.getJSONArray("Subjects");
@@ -102,6 +116,10 @@ public class JsonUtil {
         object.put("LastUpdateTime",
                 !TextUtils.isEmpty(lastUpdateSubjectTime) ? lastUpdateSubjectTime : sDATE_FOR_TEST);
         String appListString = HttpUtil.doPost(SERVICE_URI + "/UpdateSubjects", object);
+        if (TextUtils.isEmpty(appListString)) {
+            Log.d(TAG, "get updateSubjects api error");
+            return;
+        }
         JSONObject objectRet = new JSONObject(appListString);
         if (objectRet.getBoolean("ExecutionResult")) {
             JSONArray array = objectRet.getJSONArray("Subjects");
@@ -146,6 +164,12 @@ public class JsonUtil {
         object.put("LastUpdateTime",
                 !TextUtils.isEmpty(lastUpdateSubjectTime) ? lastUpdateSubjectTime : sDATE_FOR_TEST);
         String appListString = HttpUtil.doPost(SERVICE_URI + "/UpdateNews", object);
+
+        if (TextUtils.isEmpty(appListString)) {
+            Log.d(TAG, "get appListString api error");
+            return;
+        }
+
         JSONObject objectRet = new JSONObject(appListString);
         if (objectRet.getBoolean("ExecutionResult")) {
             JSONArray array = objectRet.getJSONArray("News");

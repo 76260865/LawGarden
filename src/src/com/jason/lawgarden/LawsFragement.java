@@ -8,12 +8,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
 import android.view.View.OnKeyListener;
+import android.view.inputmethod.EditorInfo;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -24,9 +22,8 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
-import android.widget.SearchView;
-import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.jason.lawgarden.db.DataBaseHelper;
 import com.jason.lawgarden.model.Article;
@@ -123,37 +120,37 @@ public class LawsFragement extends Fragment {
         mRadioGroup = (RadioGroup) view.findViewById(R.id.rgrp_top);
         mImageFavorite = (ImageView) view.findViewById(R.id.img_subject_favorite);
         mImageFavorite.setOnClickListener(mOnClickListener);
+        mImageFavorite.setImageResource(mIsFavorited ? R.drawable.list_start_sect
+                : R.drawable.list_start);
 
         mRadioGroup.setOnCheckedChangeListener(mOnCheckedChangeListener);
         ((RadioButton) mRadioGroup.getChildAt(0)).setChecked(true);
 
         mEditSearch = (EditText) view.findViewById(R.id.edit_search);
-        mEditSearch.setOnKeyListener(mOnKeyListener);
+        mEditSearch.setOnEditorActionListener(new OnEditorActionListener() {
+
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    switch (mRadioGroup.getCheckedRadioButtonId()) {
+                    case R.id.rbtn_subject:
+                        new SearchLawsAsyncTask().execute();
+                        break;
+                    case R.id.rbtn_article:
+                        new SearchArticlesAsyncTask(false).execute();
+                        break;
+                    case R.id.rbtn_title_text:
+                        new SearchArticlesAsyncTask(true).execute();
+                        break;
+                    }
+                    new MyFavoriteAyncTask().execute();
+                    return true;
+                }
+                return false;
+            }
+        });
         return view;
     }
-
-    private OnKeyListener mOnKeyListener = new OnKeyListener() {
-
-        @Override
-        public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                switch (mRadioGroup.getCheckedRadioButtonId()) {
-                case R.id.rbtn_subject:
-                    new SearchLawsAsyncTask().execute();
-                    break;
-                case R.id.rbtn_article:
-                    new SearchArticlesAsyncTask(false).execute();
-                    break;
-                case R.id.rbtn_title_text:
-                    new SearchArticlesAsyncTask(true).execute();
-                    break;
-                }
-                new MyFavoriteAyncTask().execute();
-                return true;
-            }
-            return false;
-        }
-    };
 
     private class SearchLawsAsyncTask extends AsyncTask<Void, Void, Void> {
 
@@ -211,7 +208,6 @@ public class LawsFragement extends Fragment {
 
                 mIsDetails = false;
                 new SubjectsAsyncTask().execute();
-                new MyFavoriteAyncTask().execute();
                 break;
             case R.id.rbtn_article:
                 mListLaw.setVisibility(View.GONE);
@@ -220,7 +216,6 @@ public class LawsFragement extends Fragment {
                 mListArticle.setOnItemClickListener(mOnArticleItemClickListener);
 
                 new ArticlesAsyncTask().execute();
-                new MyFavoriteAyncTask().execute();
                 break;
             }
         }
@@ -242,6 +237,7 @@ public class LawsFragement extends Fragment {
         @Override
         protected void onPostExecute(Void result) {
             mAdapter.notifyDataSetChanged();
+            new MyFavoriteAyncTask().execute();
         }
     }
 
@@ -256,6 +252,7 @@ public class LawsFragement extends Fragment {
         @Override
         protected void onPostExecute(Void result) {
             mArticleAdapter.notifyDataSetChanged();
+            new MyFavoriteAyncTask().execute();
         }
     }
 
@@ -269,6 +266,7 @@ public class LawsFragement extends Fragment {
             Bundle bundle = new Bundle();
             bundle.putInt(LawsFragement.EXTRA_KEY_SUBJECT_ID, subject.getId());
             bundle.putString(LawsFragement.EXTRA_KEY_SUBJECT_NAME, subject.getName());
+            bundle.putBoolean(EXTRA_KEY_SUBJECT_IS_FAVORITED, subject.isFavorited());
             fragment.setArguments(bundle);
 
             FragmentTransaction transaction = getActivity().getSupportFragmentManager()

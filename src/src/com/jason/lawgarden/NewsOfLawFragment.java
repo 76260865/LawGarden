@@ -37,7 +37,7 @@ public class NewsOfLawFragment extends Fragment {
     private ArrayList<News> mNewsList = new ArrayList<News>();
 
     private ListView mListLaw;
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
