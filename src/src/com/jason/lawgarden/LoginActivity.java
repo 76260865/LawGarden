@@ -109,9 +109,9 @@ public class LoginActivity extends Activity {
 
                 JsonUtil.sUser = mDbHelper.insertOrUpdateUser(user);
                 JsonUtil.updateUserSubjects(getApplicationContext());
-                JsonUtil.updateSubjects(getApplicationContext());
+//                JsonUtil.updateSubjects(getApplicationContext());
 
-                JsonUtil.updateNews(getApplicationContext());
+//                JsonUtil.updateNews(getApplicationContext());
 
                 // update the articles
                 // String lastUpdateTime = mDbHelper.getLastUpdateArticleTime();

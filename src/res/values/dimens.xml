@@ -13,5 +13,7 @@
     <dimen name="my_favorite_title_text_size">18sp</dimen>
     <dimen name="user_info_text_height">34dip</dimen>
     <dimen name="edit_text_height">28dip</dimen>
+    <color name="rbtn_text_select_color">#78AA84</color>
+    <color name="rbtn_text_normal_color">#999999</color>
 
 </resources>

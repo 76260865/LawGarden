@@ -75,6 +75,10 @@ public class LawsFragement extends Fragment {
 
     private Button btn_cancel;
 
+    private int mNormalColor;
+
+    private int mSelectColor;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +102,9 @@ public class LawsFragement extends Fragment {
 
         mAdapter = new LawsAdapter();
         mArticleAdapter = new ArticlesAdapter();
+
+        mNormalColor = getActivity().getResources().getColor(R.color.rbtn_text_normal_color);
+        mSelectColor = getActivity().getResources().getColor(R.color.rbtn_text_select_color);
     }
 
     @Override
@@ -153,6 +160,7 @@ public class LawsFragement extends Fragment {
 
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 switch (mRadioGroup.getCheckedRadioButtonId()) {
                 case R.id.rbtn_subject:
@@ -232,6 +240,9 @@ public class LawsFragement extends Fragment {
 
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
+            ((RadioButton) mRadioGroup.getChildAt(0)).setTextColor(mNormalColor);
+            ((RadioButton) mRadioGroup.getChildAt(1)).setTextColor(mNormalColor);
+            ((RadioButton) mRadioGroup.getChildAt(2)).setTextColor(mNormalColor);
             switch (checkedId) {
             case R.id.rbtn_subject:
                 mListLaw.setVisibility(View.VISIBLE);
@@ -241,6 +252,7 @@ public class LawsFragement extends Fragment {
 
                 mIsDetails = false;
                 new SubjectsAsyncTask().execute();
+                ((RadioButton) mRadioGroup.getChildAt(0)).setTextColor(mSelectColor);
                 break;
             case R.id.rbtn_article:
                 mListLaw.setVisibility(View.GONE);
@@ -249,6 +261,10 @@ public class LawsFragement extends Fragment {
                 mListArticle.setOnItemClickListener(mOnArticleItemClickListener);
 
                 new ArticlesAsyncTask().execute();
+                ((RadioButton) mRadioGroup.getChildAt(1)).setTextColor(mSelectColor);
+                break;
+            case R.id.rbtn_title_text:
+                ((RadioButton) mRadioGroup.getChildAt(2)).setTextColor(mSelectColor);
                 break;
             }
         }

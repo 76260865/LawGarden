@@ -240,7 +240,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
         return subjects;
@@ -271,7 +273,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
         return subjects;
@@ -300,7 +304,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
         return articles;
     }
@@ -336,7 +342,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         } catch (ParseException e) {
             Log.e(TAG, e.getMessage());
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
         return newsList;
     }
@@ -366,7 +374,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         } catch (ParseException e) {
             Log.e(TAG, e.getMessage());
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
         return news;
     }
@@ -396,7 +406,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
         return favorites;
@@ -413,7 +425,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
         return isFavorited;
     }
@@ -432,7 +446,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
         return article;
@@ -458,10 +474,31 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
         return user;
+    }
+
+    public boolean isExistSubject(Subject subject) {
+        Cursor cursor = null;
+
+        try {
+            cursor = mDataBase.query("subjects", null, "_id=?",
+                    new String[] { subject.getId() + "" }, null, null, null);
+            if (cursor.getCount() > 0) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return false;
     }
 
     public void insertSubjects(ArrayList<Subject> subjects) {
@@ -476,7 +513,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             values.put("last_update_time", subject.getLastUpdateTime());
             values.put("is_new", subject.isNew());
 
-            mDataBase.insert("subjects", null, values);
+            if (!isExistSubject(subject)) {
+                mDataBase.insert("subjects", null, values);
+            } else {
+                mDataBase.update("subjects", values, "_id = " + subject.getId(), null);
+            }
         }
     }
 
@@ -572,7 +613,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
         return false;
     }
@@ -618,7 +661,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
         return subjects;
@@ -645,7 +690,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
         return articles;
     }
@@ -671,7 +718,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
         return articles;
     }
@@ -687,7 +736,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
         return ret;
     }
