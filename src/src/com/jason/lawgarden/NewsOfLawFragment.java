@@ -1,9 +1,6 @@
 package com.jason.lawgarden;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -11,6 +8,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -31,6 +29,7 @@ import android.widget.Toast;
 import com.jason.lawgarden.db.DataBaseHelper;
 import com.jason.lawgarden.model.News;
 
+@SuppressLint("SimpleDateFormat")
 public class NewsOfLawFragment extends Fragment {
     private DataBaseHelper mDbHelper;
 
@@ -146,7 +145,7 @@ public class NewsOfLawFragment extends Fragment {
             if (bmpByte != null) {
                 bitmap = BitmapFactory.decodeByteArray(bmpByte, 0, bmpByte.length);// bitmap
             } else {
-                Toast.makeText(getActivity(), "Image error!", 1).show();
+                Toast.makeText(getActivity(), "Image error!", Toast.LENGTH_SHORT).show();
             }
 
             return bitmap;
@@ -184,15 +183,16 @@ public class NewsOfLawFragment extends Fragment {
         return outStream.toByteArray();
     }
 
-    private void saveFile(Bitmap bm, String fileName) throws IOException {
-        File dirFile = new File("/sdcard/lawgarden/");
-        if (!dirFile.exists()) {
-            dirFile.mkdir();
-        }
-        File myCaptureFile = new File("/sdcard/lawgarden/" + fileName);
-        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(myCaptureFile));
-        bm.compress(Bitmap.CompressFormat.JPEG, 80, bos);
-        bos.flush();
-        bos.close();
-    }
+    // private void saveFile(Bitmap bm, String fileName) throws IOException {
+    // File dirFile = new File("/sdcard/lawgarden/");
+    // if (!dirFile.exists()) {
+    // dirFile.mkdir();
+    // }
+    // File myCaptureFile = new File("/sdcard/lawgarden/" + fileName);
+    // BufferedOutputStream bos = new BufferedOutputStream(new
+    // FileOutputStream(myCaptureFile));
+    // bm.compress(Bitmap.CompressFormat.JPEG, 80, bos);
+    // bos.flush();
+    // bos.close();
+    // }
 }

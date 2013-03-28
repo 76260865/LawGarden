@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -29,6 +30,7 @@ import com.jason.lawgarden.model.User;
 import com.jason.lawgarden.model.UserSubjects;
 import com.jason.util.JsonUtil;
 
+@SuppressLint("SimpleDateFormat")
 public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DataBaseHelper";
 
@@ -437,7 +439,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public User getUserInfo(String userName) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         User user = new User();
         Cursor cursor = null;
 
@@ -503,6 +504,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     public void removeNewsByIds(int[] ids) {
         for (int id : ids) {
+            // TODO:comment this when release
             // mDataBase.delete("news", "_id = " + id, null);
         }
     }

@@ -16,7 +16,6 @@ import com.jason.util.JsonUtil;
 public class UserFragment extends Fragment {
     private DataBaseHelper mDbHelper;
     private User mUser;
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

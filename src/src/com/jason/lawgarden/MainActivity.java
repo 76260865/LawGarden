@@ -2,12 +2,6 @@ package com.jason.lawgarden;
 
 import com.jason.lawgarden.db.DataBaseHelper;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -151,10 +145,10 @@ public class MainActivity extends FragmentActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
-    private class MyAsyncTask extends AsyncTask {
+    private class MyAsyncTask extends AsyncTask<Void, Void, Void> {
 
         @Override
-        protected Object doInBackground(Object... params) {
+        protected Void doInBackground(Void... params) {
             // try {
             // JsonUtil.login("jason", "123456");
             // } catch (JSONException e) {

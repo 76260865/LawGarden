@@ -10,7 +10,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnKeyListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -31,7 +30,7 @@ import com.jason.lawgarden.model.Favorite;
 import com.jason.lawgarden.model.Subject;
 
 public class LawsFragement extends Fragment {
-    private static final String TAG = "LawsFragement";
+//    private static final String TAG = "LawsFragement";
 
     public static final String EXTRA_KEY_SUBJECT_ID = "extra_subject_id";
 
@@ -443,27 +442,6 @@ public class LawsFragement extends Fragment {
 
             txtTitle.setText(article.getTitle());
             return convertView;
-        }
-    }
-
-    private class ArticleAyncTask extends AsyncTask<Void, Void, ArrayList<Article>> {
-
-        @Override
-        protected ArrayList<Article> doInBackground(Void... params) {
-
-            // check if there is any articles:
-            mArticles = mDbHelper.getArticlesBySubjectId(mSubjectId);
-            return mArticles;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<Article> result) {
-            // TODO: hide or show the radio button
-            if (result != null && result.size() > 0) {
-                mRadioGroup.getChildAt(0).setVisibility(View.VISIBLE);
-                mRadioGroup.getChildAt(1).setVisibility(View.VISIBLE);
-            }
-            mArticleAdapter.notifyDataSetChanged();
         }
     }
 

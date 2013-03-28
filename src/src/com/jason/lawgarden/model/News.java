@@ -2,8 +2,6 @@ package com.jason.lawgarden.model;
 
 import java.util.Date;
 
-import android.graphics.Bitmap;
-
 public class News {
     private int _id;
 
