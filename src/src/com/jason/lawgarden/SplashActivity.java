@@ -15,8 +15,7 @@ public class SplashActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        DataBaseHelper dbHelper = new DataBaseHelper(getApplicationContext());
-        dbHelper.openDataBase();
+        DataBaseHelper dbHelper = DataBaseHelper.getSingleInstance(this);
         dbHelper.testDb();
 
     }

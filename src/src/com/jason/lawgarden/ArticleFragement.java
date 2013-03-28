@@ -31,7 +31,7 @@ public class ArticleFragement extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDbHelper = new DataBaseHelper(getActivity());
+        mDbHelper = DataBaseHelper.getSingleInstance(getActivity());
         mArticleId = getArguments().getInt(EXTRA_KEY_ARTICLE_ID);
 
     }
@@ -43,7 +43,7 @@ public class ArticleFragement extends Fragment {
         mTxtArticleTitle = (TextView) view.findViewById(R.id.txt_article_title);
         img_article_favorite = (ImageView) view.findViewById(R.id.img_article_favorite);
 
-        mTxtArticleTitle.setOnClickListener(mOnClickListener);
+        img_article_favorite.setOnClickListener(mOnClickListener);
 
         new ArticleAyncTask().execute();
         return view;
@@ -77,7 +77,6 @@ public class ArticleFragement extends Fragment {
 
         @Override
         protected Article doInBackground(Void... params) {
-            mDbHelper.openDataBase();
             mArticle = mDbHelper.getArticleById(mArticleId);
             mArticle.setFavorite(mDbHelper.isFavorited(mArticleId));
             return mArticle;

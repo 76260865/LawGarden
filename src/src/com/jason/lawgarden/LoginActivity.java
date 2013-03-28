@@ -43,8 +43,7 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
         mCheckBox = (CheckBox) findViewById(R.id.chk_remember_pwd);
 
-        mDbHelper = new DataBaseHelper(getApplicationContext());
-        mDbHelper.openDataBase();
+        mDbHelper = DataBaseHelper.getSingleInstance(this);
 
         mEditUserName = (EditText) findViewById(R.id.edit_user_name);
         mEditPwd = (EditText) findViewById(R.id.edit_pwd);

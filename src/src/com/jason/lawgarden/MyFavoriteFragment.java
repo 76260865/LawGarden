@@ -49,8 +49,7 @@ public class MyFavoriteFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDbHelper = new DataBaseHelper(getActivity());
-        mDbHelper.openDataBase();
+        mDbHelper = DataBaseHelper.getSingleInstance(getActivity());
 
         new FavoriteAsyncTask().execute();
     }

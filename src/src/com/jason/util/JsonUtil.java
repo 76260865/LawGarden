@@ -40,7 +40,7 @@ public class JsonUtil {
         }
         if (objectRet.getBoolean("ExecutionResult")) {
             Log.d(TAG, "register:sucess");
-            sAccessToken = objectRet.getString("AccessToken");
+//            sAccessToken = objectRet.getString("AccessToken");
             return true;
         }
         return false;
@@ -96,10 +96,8 @@ public class JsonUtil {
                 subjects.add(subject);
             }
             // add the subjects to db
-            DataBaseHelper dbHelper = new DataBaseHelper(context);
-            dbHelper.openDataBase();
+            DataBaseHelper dbHelper = DataBaseHelper.getSingleInstance(context);
             dbHelper.insertUserSubjects(subjects);
-            dbHelper.close();
         }
     }
 
@@ -107,8 +105,7 @@ public class JsonUtil {
 
     public static void updateSubjects(Context context) throws JSONException {
         Log.d(TAG, "updateSubjects");
-        DataBaseHelper dbHelper = new DataBaseHelper(context);
-        dbHelper.openDataBase();
+        DataBaseHelper dbHelper = DataBaseHelper.getSingleInstance(context);
         String lastUpdateSubjectTime = dbHelper.getLastUpdateSubjectTime();
 
         JSONObject object = new JSONObject();
@@ -150,13 +147,11 @@ public class JsonUtil {
             // remove the subjects by ids
             dbHelper.removeSubjectsByIds(removedIds);
         }
-        dbHelper.close();
     }
 
     public static void updateNews(Context context) throws JSONException {
         Log.d(TAG, "updateNews");
-        DataBaseHelper dbHelper = new DataBaseHelper(context);
-        dbHelper.openDataBase();
+        DataBaseHelper dbHelper = DataBaseHelper.getSingleInstance(context);
         String lastUpdateSubjectTime = dbHelper.getLastUpdateNewsTime();
 
         JSONObject object = new JSONObject();
@@ -201,14 +196,12 @@ public class JsonUtil {
             // remove the news by ids
             dbHelper.removeNewsByIds(removedIds);
         }
-        dbHelper.close();
     }
 
     public static int updateArticles(Context context, int PageIndex, String lastUpdateSubjectTime)
             throws JSONException {
         Log.d(TAG, "updateArticles");
-        DataBaseHelper dbHelper = new DataBaseHelper(context);
-        dbHelper.openDataBase();
+        DataBaseHelper dbHelper = DataBaseHelper.getSingleInstance(context);
         // String lastUpdateSubjectTime = dbHelper.getLastUpdateArticleTime();
 
         JSONObject object = new JSONObject();
@@ -250,7 +243,6 @@ public class JsonUtil {
             // remove the articles by ids
             dbHelper.removeArticlesByIds(removedIds);
         }
-        dbHelper.close();
 
         return objectRet.getInt("TotalPages");
     }

@@ -41,18 +41,35 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     private final Context mContext;
 
+    private static DataBaseHelper mDataBaseHelper;
+
     /**
      * Constructor Takes and keeps a reference of the passed context in order to
      * access to the application assets and resources.
      * 
      * @param context
      */
-    public DataBaseHelper(Context context) {
+    private DataBaseHelper(Context context) {
         super(context, null, null, 1);
         mContext = context;
         mDbPath = mContext.getFilesDir().getPath() + "/";
 
         createDataBase();
+    }
+
+    public static DataBaseHelper getSingleInstance(Context context) {
+        if (mDataBaseHelper == null) {
+            mDataBaseHelper = new DataBaseHelper(context);
+            mDataBaseHelper.openDataBase();
+        }
+        if (!mDataBaseHelper.isOpen()) {
+            mDataBaseHelper.openDataBase();
+        }
+        return mDataBaseHelper;
+    }
+
+    private boolean isOpen() {
+        return mDataBase.isOpen();
     }
 
     /**
@@ -199,7 +216,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             "is_new" };
 
     public ArrayList<Subject> getSubjectsByParentId(int parentId) {
-        openDataBase();
         ArrayList<Subject> subjects = new ArrayList<Subject>();
         Subject subject;
         Cursor cursor = null;
@@ -229,7 +245,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<Subject> getSubjectsByUserId(int userId) {
-        openDataBase();
         ArrayList<Subject> subjects = new ArrayList<Subject>();
         Subject subject;
         Cursor cursor = null;

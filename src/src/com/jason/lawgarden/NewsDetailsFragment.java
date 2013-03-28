@@ -35,8 +35,7 @@ public class NewsDetailsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mId = getArguments().getInt(EXTRA_KEY_NEWS_ID, 0);
-        mDbHelper = new DataBaseHelper(getActivity());
-        mDbHelper.openDataBase();
+        mDbHelper = DataBaseHelper.getSingleInstance(getActivity());
 
         mNews = mDbHelper.getNewsById(mId);
         mDateFormat = new SimpleDateFormat("yyy-MM-dd HH:mm");

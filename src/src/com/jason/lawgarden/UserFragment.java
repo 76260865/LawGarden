@@ -21,8 +21,7 @@ public class UserFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDbHelper = new DataBaseHelper(getActivity());
-        mDbHelper.openDataBase();
+        mDbHelper = DataBaseHelper.getSingleInstance(getActivity());
 
         // mUser = mDbHelper.getUserInfo();
         mUser = JsonUtil.sUser;

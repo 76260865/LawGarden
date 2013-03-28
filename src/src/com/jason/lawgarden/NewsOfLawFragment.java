@@ -43,8 +43,7 @@ public class NewsOfLawFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mDbHelper = new DataBaseHelper(getActivity());
-        mDbHelper.openDataBase();
+        mDbHelper = DataBaseHelper.getSingleInstance(getActivity());
         mNewsList = mDbHelper.getAllNews();
 
     }

@@ -75,7 +75,7 @@ public class LawsFragement extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mDbHelper = new DataBaseHelper(getActivity());
+        mDbHelper = DataBaseHelper.getSingleInstance(getActivity());
 
         Bundle bundle = getArguments();
         mSubjectId = bundle.getInt(EXTRA_KEY_SUBJECT_ID, -1);
@@ -101,7 +101,6 @@ public class LawsFragement extends Fragment {
         super.onResume();
         new MyFavoriteAyncTask().execute();
         // new ArticleAyncTask().execute();
-        // getActivity().getActionBar().setTitle(R.string.rtbn_law_data_text);
     }
 
     @Override

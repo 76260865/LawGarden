@@ -1,5 +1,7 @@
 package com.jason.lawgarden;
 
+import com.jason.lawgarden.db.DataBaseHelper;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -162,4 +164,11 @@ public class MainActivity extends FragmentActivity {
             return null;
         }
     }
+
+    @Override
+    public void onDestroy() {
+        DataBaseHelper.getSingleInstance(this).close();
+        super.onDestroy();
+    }
+
 }
