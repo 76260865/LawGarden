@@ -36,6 +36,7 @@ public class NewsOfLawFragment extends Fragment {
     private ArrayList<News> mNewsList = new ArrayList<News>();
 
     private ListView mListLaw;
+    @SuppressLint("SimpleDateFormat")
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     @Override

@@ -25,24 +25,28 @@
             android:id="@+id/rbtn_law_data"
             style="@style/RadioButton"
             android:drawableTop="@drawable/ic_menu_law_data"
+            android:paddingTop="5dip"
             android:text="@string/rtbn_law_data_text" />
 
         <RadioButton
             android:id="@+id/rbtn_law_news"
             style="@style/RadioButton"
             android:drawableTop="@drawable/ic_menu_news"
+            android:paddingTop="5dip"
             android:text="@string/rbtn_law_news_text" />
 
         <RadioButton
             android:id="@+id/rbtn_law_fav"
             style="@style/RadioButton"
             android:drawableTop="@drawable/ic_menu_icon_fav"
+            android:paddingTop="5dip"
             android:text="@string/rbtn_my_favorite_text" />
 
         <RadioButton
             android:id="@+id/rbtn_law_user"
             style="@style/RadioButton"
             android:drawableTop="@drawable/ic_menu_user"
+            android:paddingTop="5dip"
             android:text="@string/rbtn_personal_center_text" />
     </RadioGroup>
 

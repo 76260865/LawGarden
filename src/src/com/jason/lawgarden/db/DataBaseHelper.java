@@ -510,6 +510,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public void insertArticles(ArrayList<Article> articles) {
+        mDataBase.beginTransaction();
         for (Article article : articles) {
             ContentValues values = new ContentValues();
             values.put("_id", article.getId());
@@ -534,6 +535,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 mDataBase.insert("subjects_articles", null, valuesSubjectArticles);
             }
         }
+        mDataBase.setTransactionSuccessful();
+        mDataBase.endTransaction();
     }
 
     public void removeArticlesByIds(int[] ids) {

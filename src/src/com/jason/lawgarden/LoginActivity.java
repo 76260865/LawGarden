@@ -96,7 +96,7 @@ public class LoginActivity extends Activity {
                 JsonUtil.sAccessToken = JsonUtil.login(mUserName, mPwd);
 
                 if (TextUtils.isEmpty(JsonUtil.sAccessToken)) {
-                    return false;
+//                    return false;
                 }
 
                 // insert into db

@@ -12,5 +12,6 @@
     <dimen name="radio_button_favorite_height">29dip</dimen>
     <dimen name="my_favorite_title_text_size">18sp</dimen>
     <dimen name="user_info_text_height">34dip</dimen>
+    <dimen name="edit_text_height">28dip</dimen>
 
 </resources>

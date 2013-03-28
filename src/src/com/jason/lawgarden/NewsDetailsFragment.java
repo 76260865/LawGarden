@@ -2,6 +2,7 @@ package com.jason.lawgarden;
 
 import java.text.SimpleDateFormat;
 
+import android.annotation.SuppressLint;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.jason.lawgarden.db.DataBaseHelper;
 import com.jason.lawgarden.model.News;
 
+@SuppressLint("SimpleDateFormat")
 public class NewsDetailsFragment extends Fragment {
 
     public static final String EXTRA_KEY_NEWS_ID = "extra_key_news_id";

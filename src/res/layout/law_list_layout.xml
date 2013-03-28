@@ -11,17 +11,33 @@
         android:layout_marginRight="50dip"
         android:src="@drawable/top_logo" />
 
-    <EditText
-        android:id="@+id/edit_search"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dip"
-        android:layout_marginRight="5dip"
-        android:background="@drawable/top_search"
-        android:drawableLeft="@drawable/top_icon_search"
-        android:imeOptions="actionSearch"
-        android:inputType="text"
-        android:paddingLeft="10dip" />
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/edit_search"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dip"
+            android:layout_marginRight="5dip"
+            android:layout_weight="1"
+            android:background="@drawable/top_search"
+            android:drawableLeft="@drawable/top_icon_search"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:paddingLeft="10dip" />
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_cancel_text"
+            android:textColor="#78AA84"
+            android:textSize="15sp"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <RadioGroup
         android:id="@+id/rgrp_top"
@@ -34,13 +50,15 @@
         <RadioButton
             android:id="@+id/rbtn_subject"
             style="@style/RadioButtonCategory"
+            android:drawablePadding="5dip"
             android:text="@string/txt_pro_text" />
 
         <RadioButton
             android:id="@+id/rbtn_title_text"
             style="@style/RadioButtonCategory"
             android:drawableLeft="@drawable/tab_l_03"
-            android:text="@string/txt_title_text" />
+            android:text="@string/txt_title_text"
+            android:visibility="gone" />
 
         <RadioButton
             android:id="@+id/rbtn_article"

@@ -10,11 +10,14 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
+import android.view.View.OnFocusChangeListener;
+import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -30,7 +33,7 @@ import com.jason.lawgarden.model.Favorite;
 import com.jason.lawgarden.model.Subject;
 
 public class LawsFragement extends Fragment {
-//    private static final String TAG = "LawsFragement";
+    // private static final String TAG = "LawsFragement";
 
     public static final String EXTRA_KEY_SUBJECT_ID = "extra_subject_id";
 
@@ -69,6 +72,8 @@ public class LawsFragement extends Fragment {
     private ImageView mImageFavorite;
 
     private EditText mEditSearch;
+
+    private Button btn_cancel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -110,14 +115,18 @@ public class LawsFragement extends Fragment {
 
         mViewSubjectTitle = view.findViewById(R.id.linear_subject);
         mTxtSubjectName = (TextView) view.findViewById(R.id.txt_subject_title);
-        if (mSubjectId > 0) {
-            mViewSubjectTitle.setVisibility(View.VISIBLE);
-            mTxtSubjectName.setText(mSubjectName);
-        }
-
+        btn_cancel = (Button) view.findViewById(R.id.btn_cancel);
+        btn_cancel.setOnClickListener(mOnBtnCancelClickListener);
         mRadioGroup = (RadioGroup) view.findViewById(R.id.rgrp_top);
         mImageFavorite = (ImageView) view.findViewById(R.id.img_subject_favorite);
         mImageFavorite.setOnClickListener(mOnClickListener);
+
+        if (mSubjectId > 0) {
+            mViewSubjectTitle.setVisibility(View.VISIBLE);
+            mTxtSubjectName.setText(mSubjectName);
+        } else {
+            mRadioGroup.setVisibility(View.GONE);
+        }
         mImageFavorite.setImageResource(mIsFavorited ? R.drawable.list_start_sect
                 : R.drawable.list_start);
 
@@ -125,30 +134,56 @@ public class LawsFragement extends Fragment {
         ((RadioButton) mRadioGroup.getChildAt(0)).setChecked(true);
 
         mEditSearch = (EditText) view.findViewById(R.id.edit_search);
-        mEditSearch.setOnEditorActionListener(new OnEditorActionListener() {
+        mEditSearch.setOnEditorActionListener(mOnEditorActionListener);
+        mEditSearch.setOnFocusChangeListener(new OnFocusChangeListener() {
 
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    switch (mRadioGroup.getCheckedRadioButtonId()) {
-                    case R.id.rbtn_subject:
-                        new SearchLawsAsyncTask().execute();
-                        break;
-                    case R.id.rbtn_article:
-                        new SearchArticlesAsyncTask(false).execute();
-                        break;
-                    case R.id.rbtn_title_text:
-                        new SearchArticlesAsyncTask(true).execute();
-                        break;
-                    }
-                    new MyFavoriteAyncTask().execute();
-                    return true;
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    btn_cancel.setVisibility(View.VISIBLE);
+                    mRadioGroup.setVisibility(View.VISIBLE);
+                    mRadioGroup.getChildAt(1).setVisibility(View.VISIBLE);
                 }
-                return false;
             }
         });
         return view;
     }
+
+    private OnEditorActionListener mOnEditorActionListener = new OnEditorActionListener() {
+
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                switch (mRadioGroup.getCheckedRadioButtonId()) {
+                case R.id.rbtn_subject:
+                    new SearchLawsAsyncTask().execute();
+                    break;
+                case R.id.rbtn_article:
+                    new SearchArticlesAsyncTask(false).execute();
+                    break;
+                case R.id.rbtn_title_text:
+                    new SearchArticlesAsyncTask(true).execute();
+                    break;
+                }
+                new MyFavoriteAyncTask().execute();
+                return true;
+            }
+            return false;
+        }
+    };
+
+    private OnClickListener mOnBtnCancelClickListener = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            btn_cancel.setVisibility(View.GONE);
+            if (mSubjectId <= 0) {
+                mRadioGroup.setVisibility(View.GONE);
+            }
+            mEditSearch.clearFocus();
+            mRadioGroup.getChildAt(1).setVisibility(View.GONE);
+        }
+    };
 
     private class SearchLawsAsyncTask extends AsyncTask<Void, Void, Void> {
 
