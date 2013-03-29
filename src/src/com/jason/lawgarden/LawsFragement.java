@@ -261,10 +261,10 @@ public class LawsFragement extends Fragment {
                 mListArticle.setOnItemClickListener(mOnArticleItemClickListener);
 
                 new ArticlesAsyncTask().execute();
-                ((RadioButton) mRadioGroup.getChildAt(1)).setTextColor(mSelectColor);
+                ((RadioButton) mRadioGroup.getChildAt(2)).setTextColor(mSelectColor);
                 break;
             case R.id.rbtn_title_text:
-                ((RadioButton) mRadioGroup.getChildAt(2)).setTextColor(mSelectColor);
+                ((RadioButton) mRadioGroup.getChildAt(1)).setTextColor(mSelectColor);
                 break;
             }
         }
