@@ -8,17 +8,12 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_height"
         android:layout_gravity="center"
-        android:background="#EFEFEF"
+        android:background="@drawable/top_background"
         android:gravity="center"
         android:text="@string/txt_person_center"
         android:textColor="#5A7C7C"
         android:textSize="24sp"
         android:textStyle="bold" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dip"
-        android:background="#dedede" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -105,7 +100,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dip"
-                android:gravity="center"
                 android:textColor="#5A7C7C"
                 android:textIsSelectable="true"
                 android:textSize="15sp" />

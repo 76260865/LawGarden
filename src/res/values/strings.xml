@@ -12,7 +12,7 @@
     <string name="edit_input_password_hint_text">请输入密码</string>
     <string name="btn_login_text">登 录</string>
     <string name="chk_remember_password_text">记住密码</string>
-    <string name="txt_find_password_text">找回密码？</string>
+    <string name="txt_find_password_text"> 找回密码？</string>
     <string name="txt_full_text">全文</string>
     <string name="edit_search_key_word_hint_text">请输入查询关键字</string>
     <string name="search_type_full_txt">全文</string>

@@ -9,6 +9,8 @@
         android:layout_width="100dip"
         android:layout_height="100dip"
         android:layout_gravity="center"
+        android:layout_marginBottom="20dip"
+        android:layout_marginTop="20dip"
         android:src="@drawable/welcome_logo" />
 
     <EditText
@@ -80,5 +82,29 @@
         android:textColor="#78AA84"
         android:textSize="24sp"
         android:textStyle="bold" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/txt_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="20dip"
+            android:gravity="center"
+            android:text="\@2013 法艺花园" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/txt_bottom"
+            android:layout_marginBottom="20dip"
+            android:gravity="center"
+            android:src="@drawable/login_ad" />
+    </RelativeLayout>
 
 </LinearLayout>

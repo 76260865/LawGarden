@@ -26,6 +26,7 @@ import com.jason.lawgarden.model.Article;
 import com.jason.lawgarden.model.Favorite;
 import com.jason.lawgarden.model.News;
 import com.jason.lawgarden.model.Subject;
+import com.jason.lawgarden.model.SubjectArticle;
 import com.jason.lawgarden.model.User;
 import com.jason.lawgarden.model.UserSubjects;
 import com.jason.util.JsonUtil;
@@ -59,7 +60,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         createDataBase();
     }
 
-    public static DataBaseHelper getSingleInstance(Context context) {
+    public static synchronized DataBaseHelper getSingleInstance(Context context) {
         if (mDataBaseHelper == null) {
             mDataBaseHelper = new DataBaseHelper(context);
             mDataBaseHelper.openDataBase();
@@ -470,6 +471,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 user.setOverdueDate(new Date((long) cursor.getDouble(cursor
                         .getColumnIndex("overdue_date"))));
                 user.setAboutUs(cursor.getString(cursor.getColumnIndex("about_us")));
+                user.setToken(cursor.getString(cursor.getColumnIndex("token")));
             }
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
@@ -550,6 +552,45 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public boolean isExistArticle(Article article) {
+        Cursor cursor = null;
+
+        try {
+            cursor = mDataBase.query("articles_of_law", null, "_id=?",
+                    new String[] { article.getId() + "" }, null, null, null);
+            if (cursor.getCount() > 0) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return false;
+    }
+
+    public boolean isExistSubjectArticle(SubjectArticle article) {
+        Cursor cursor = null;
+
+        try {
+            cursor = mDataBase.query("subjects_articles", null, "article_id=? and subject_id=?",
+                    new String[] { article.getArticleId() + "", article.getSubjectId() + "" },
+                    null, null, null);
+            if (cursor.getCount() > 0) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return false;
+    }
+
     public void insertArticles(ArrayList<Article> articles) {
         mDataBase.beginTransaction();
         for (Article article : articles) {
@@ -563,7 +604,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             values.put("key_words", article.getKeyWords());
             values.put("subjects", article.getSubjects());
 
-            mDataBase.insert("articles_of_law", null, values);
+            if (!isExistArticle(article)) {
+                mDataBase.insert("articles_of_law", null, values);
+            } else {
+                mDataBase.update("articles_of_law", values, "_id=" + article.getId(), null);
+            }
 
             String[] subjectIds = article.getSubjects().split(",");
             for (String id : subjectIds) {
@@ -571,9 +616,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     continue;
                 }
                 ContentValues valuesSubjectArticles = new ContentValues();
-                valuesSubjectArticles.put("article_id", article.getId());
-                valuesSubjectArticles.put("subject_id", Integer.valueOf(id));
-                mDataBase.insert("subjects_articles", null, valuesSubjectArticles);
+                SubjectArticle subjectArticle = new SubjectArticle();
+                subjectArticle.setArticleId(article.getId());
+                subjectArticle.setSubjectId(Integer.valueOf(id));
+
+                if (!isExistSubjectArticle(subjectArticle)) {
+                    valuesSubjectArticles.put("article_id", article.getId());
+                    valuesSubjectArticles.put("subject_id", Integer.valueOf(id));
+
+                    mDataBase.insert("subjects_articles", null, valuesSubjectArticles);
+                }
             }
         }
         mDataBase.setTransactionSuccessful();
@@ -584,6 +636,26 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         for (int id : ids) {
             mDataBase.delete("articles_of_law", "_id = " + id, null);
         }
+    }
+
+    public void updateArticles(Article article) {
+        ContentValues values = new ContentValues();
+        values.put("_id", article.getId());
+        values.put("title", article.getTitle());
+        values.put("contents", article.getContents());
+        values.put("last_update_time", article.getLastUpdateTime());
+        values.put("level", article.getLevel());
+        values.put("is_new", article.isNew());
+        values.put("key_words", article.getKeyWords());
+        values.put("subjects", article.getSubjects());
+        mDataBase.update("articles_of_law", values, "_id=" + article.getId(), null);
+    }
+
+    public void updateSubject(Subject article) {
+        ContentValues values = new ContentValues();
+        values.put("_id", article.getId());
+        values.put("is_new", article.isNew());
+        mDataBase.update("subjects", values, "_id=" + article.getId(), null);
     }
 
     public void addFavorite(Favorite favorite) {
@@ -622,18 +694,20 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     public void insertUserSubjects(ArrayList<UserSubjects> subjects) {
         for (UserSubjects subject : subjects) {
-            if (!isExistUserSubjects(subject)) {
-                ContentValues values = new ContentValues();
-                values.put("_id", subject.getId());
-                values.put("user_id", JsonUtil.sUser.getId());
-                values.put("parent_id", subject.getParentId());
-                values.put("name", subject.getName());
-                values.put("description", subject.getDescription());
-                values.put("order_id", subject.getOrderId());
-                values.put("is_private", subject.getIsPrivate());
-                values.put("last_update_time", subject.getLastUpdateTime());
+            ContentValues values = new ContentValues();
+            values.put("_id", subject.getId());
+            values.put("user_id", JsonUtil.sUser.getId());
+            values.put("parent_id", subject.getParentId());
+            values.put("name", subject.getName());
+            values.put("description", subject.getDescription());
+            values.put("order_id", subject.getOrderId());
+            values.put("is_private", subject.getIsPrivate());
+            values.put("last_update_time", subject.getLastUpdateTime());
 
+            if (!isExistUserSubjects(subject)) {
                 mDataBase.insert("user_subject", null, values);
+            } else {
+                mDataBase.update("user_subject", values, "_id=" + subject.getId(), null);
             }
         }
     }

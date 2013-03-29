@@ -40,7 +40,7 @@ public class JsonUtil {
         }
         if (objectRet.getBoolean("ExecutionResult")) {
             Log.d(TAG, "register:sucess");
-//            sAccessToken = objectRet.getString("AccessToken");
+            // sAccessToken = objectRet.getString("AccessToken");
             return true;
         }
         return false;
@@ -132,6 +132,7 @@ public class JsonUtil {
                 subject.setName(obj.getString("Name"));
                 subject.setOrderId(obj.getInt("OrderId"));
                 subject.setParentId(obj.getInt("ParentId"));
+                subject.setNew(true);
 
                 subjects.add(subject);
             }
@@ -228,6 +229,7 @@ public class JsonUtil {
                 article.setLevel(obj.getInt("Level"));
                 article.setSubjects(obj.getString("Subjects"));
                 article.setTitle(obj.getString("Title"));
+                article.setNew(true);
 
                 articles.add(article);
             }

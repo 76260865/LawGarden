@@ -96,36 +96,32 @@ public class LoginActivity extends Activity {
                 JsonUtil.sAccessToken = JsonUtil.login(mUserName, mPwd);
 
                 if (TextUtils.isEmpty(JsonUtil.sAccessToken)) {
-//                    return false;
+                    return false;
                 }
 
                 // insert into db
                 User user = new User();
                 user.setUserName(mUserName);
-                user.setToken(mCheckBox.isChecked() ? JsonUtil.sAccessToken : "");
+                user.setToken(mCheckBox.isChecked() ? mEditPwd.getText().toString() : "");
                 user.setRememberPwd(mCheckBox.isChecked());
                 user.setPurchaseDate(new Date());
                 user.setOverdueDate(new Date());
 
                 JsonUtil.sUser = mDbHelper.insertOrUpdateUser(user);
                 JsonUtil.updateUserSubjects(getApplicationContext());
-//                JsonUtil.updateSubjects(getApplicationContext());
-
-//                JsonUtil.updateNews(getApplicationContext());
+                JsonUtil.updateSubjects(getApplicationContext());
+                JsonUtil.updateNews(getApplicationContext());
 
                 // update the articles
-                // String lastUpdateTime = mDbHelper.getLastUpdateArticleTime();
-                // int pageIndex = 0;
-                // int totalPages =
-                // JsonUtil.updateArticles(getApplicationContext(), pageIndex,
-                // lastUpdateTime);
-                // while (pageIndex < totalPages) {
-                // Log.d("LoginActivity", "pageIndex:" + pageIndex +
-                // "totalPages:" + totalPages);
-                // pageIndex++;
-                // JsonUtil.updateArticles(getApplicationContext(), pageIndex,
-                // lastUpdateTime);
-                // }
+                String lastUpdateTime = mDbHelper.getLastUpdateArticleTime();
+                int pageIndex = 0;
+                int totalPages = JsonUtil.updateArticles(getApplicationContext(), pageIndex,
+                        lastUpdateTime);
+                while (pageIndex < totalPages) {
+                    Log.d("LoginActivity", "pageIndex:" + pageIndex + "totalPages:" + totalPages);
+                    pageIndex++;
+                    JsonUtil.updateArticles(getApplicationContext(), pageIndex, lastUpdateTime);
+                }
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
             }
@@ -138,6 +134,7 @@ public class LoginActivity extends Activity {
             if (result) {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
+                finish();
             } else {
                 Toast.makeText(getApplicationContext(), "µÇÂ¼Ê§°Ü", Toast.LENGTH_SHORT).show();
             }

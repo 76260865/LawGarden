@@ -79,6 +79,8 @@ public class LawsFragement extends Fragment {
 
     private int mSelectColor;
 
+    private TextView txt_no_data;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,11 +119,13 @@ public class LawsFragement extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.law_list_layout, container, false);
+        View divider = view.findViewById(R.id.divider);
         mListLaw = (ListView) view.findViewById(R.id.list_law);
         mListArticle = (ListView) view.findViewById(R.id.list_articles);
 
         mViewSubjectTitle = view.findViewById(R.id.linear_subject);
         mTxtSubjectName = (TextView) view.findViewById(R.id.txt_subject_title);
+        txt_no_data = (TextView) view.findViewById(R.id.txt_no_data);
         btn_cancel = (Button) view.findViewById(R.id.btn_cancel);
         btn_cancel.setOnClickListener(mOnBtnCancelClickListener);
         mRadioGroup = (RadioGroup) view.findViewById(R.id.rgrp_top);
@@ -131,8 +135,10 @@ public class LawsFragement extends Fragment {
         if (mSubjectId > 0) {
             mViewSubjectTitle.setVisibility(View.VISIBLE);
             mTxtSubjectName.setText(mSubjectName);
+            divider.setVisibility(View.VISIBLE);
         } else {
             mRadioGroup.setVisibility(View.GONE);
+            divider.setVisibility(View.GONE);
         }
         mImageFavorite.setImageResource(mIsFavorited ? R.drawable.list_start_sect
                 : R.drawable.list_start);
@@ -240,6 +246,7 @@ public class LawsFragement extends Fragment {
 
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
+            txt_no_data.setVisibility(View.GONE);
             ((RadioButton) mRadioGroup.getChildAt(0)).setTextColor(mNormalColor);
             ((RadioButton) mRadioGroup.getChildAt(1)).setTextColor(mNormalColor);
             ((RadioButton) mRadioGroup.getChildAt(2)).setTextColor(mNormalColor);
@@ -285,6 +292,9 @@ public class LawsFragement extends Fragment {
 
         @Override
         protected void onPostExecute(Void result) {
+            if (mArticleAdapter.getCount() == 0) {
+                txt_no_data.setVisibility(View.VISIBLE);
+            }
             mAdapter.notifyDataSetChanged();
             new MyFavoriteAyncTask().execute();
         }
@@ -300,6 +310,9 @@ public class LawsFragement extends Fragment {
 
         @Override
         protected void onPostExecute(Void result) {
+            if (mArticleAdapter.getCount() == 0) {
+                txt_no_data.setVisibility(View.VISIBLE);
+            }
             mArticleAdapter.notifyDataSetChanged();
             new MyFavoriteAyncTask().execute();
         }
@@ -310,6 +323,12 @@ public class LawsFragement extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int postion, long id) {
             Subject subject = mSubjects.get(postion);
+
+            if (subject.isNew()) {
+                subject.setNew(false);
+                mDbHelper.updateSubject(subject);
+            }
+
             LawsFragement fragment = new LawsFragement();
 
             Bundle bundle = new Bundle();
@@ -337,6 +356,11 @@ public class LawsFragement extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int postion, long id) {
             Article article = mArticles.get(postion);
+            if (article.isNew()) {
+                article.setNew(false);
+                mDbHelper.updateArticles(article);
+            }
+
             Bundle bundle = new Bundle();
             bundle.putInt(ArticleFragement.EXTRA_KEY_ARTICLE_ID, article.getId());
             ArticleFragement fragment = new ArticleFragement();
