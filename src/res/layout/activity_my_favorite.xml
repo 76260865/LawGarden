@@ -45,7 +45,7 @@
             android:id="@+id/rbtn_article"
             style="@style/RadioButtonCategory"
             android:drawableLeft="@drawable/tab_l_03"
-            android:text="@string/txt_article_text" />
+            android:text="发条" />
     </RadioGroup>
 
     <ListView

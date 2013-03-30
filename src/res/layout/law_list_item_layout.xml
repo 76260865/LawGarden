@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginLeft="10dip"
     android:descendantFocusability="blocksDescendants"
     android:gravity="center"
     android:minHeight="40dip"
@@ -17,9 +18,11 @@
     <TextView
         android:id="@+id/txt_law_title"
         android:layout_width="0dip"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:ellipsize="end"
+        android:gravity="center_vertical"
         android:singleLine="true"
         android:textColor="@android:color/black"
         android:textSize="15sp" />

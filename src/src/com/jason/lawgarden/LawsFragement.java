@@ -292,7 +292,7 @@ public class LawsFragement extends Fragment {
 
         @Override
         protected void onPostExecute(Void result) {
-            if (mArticleAdapter.getCount() == 0) {
+            if (mAdapter.getCount() == 0) {
                 txt_no_data.setVisibility(View.VISIBLE);
             }
             mAdapter.notifyDataSetChanged();
