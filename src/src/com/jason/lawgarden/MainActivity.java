@@ -49,7 +49,7 @@ public class MainActivity extends FragmentActivity {
 
             switch (checkedId) {
             case R.id.rbtn_law_data:
-                LawsFragement lawsFragement = new LawsFragement();
+                LawsFragment lawsFragement = new LawsFragment();
                 addLawFragement(-1, null, lawsFragement);
                 // getActionBar().setTitle(R.string.rtbn_law_data_text);
                 break;
@@ -96,10 +96,10 @@ public class MainActivity extends FragmentActivity {
         super.onBackPressed();
     }
 
-    private void addLawFragement(int parentId, String name, LawsFragement fragment) {
+    private void addLawFragement(int parentId, String name, LawsFragment fragment) {
         Bundle bundle = new Bundle();
-        bundle.putInt(LawsFragement.EXTRA_KEY_SUBJECT_ID, parentId);
-        bundle.putString(LawsFragement.EXTRA_KEY_SUBJECT_NAME, name);
+        bundle.putInt(LawsFragment.EXTRA_KEY_SUBJECT_ID, parentId);
+        bundle.putString(LawsFragment.EXTRA_KEY_SUBJECT_NAME, name);
         fragment.setArguments(bundle);
 
         FragmentTransaction transaction = mFragmentManager.beginTransaction();

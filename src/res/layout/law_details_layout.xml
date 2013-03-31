@@ -7,9 +7,10 @@
     <LinearLayout
         android:id="@+id/linear_subject"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/title_height"
+        android:layout_height="wrap_content"
         android:background="@drawable/top_background"
         android:gravity="center"
+        android:minHeight="@dimen/title_height"
         android:orientation="horizontal" >
 
         <TextView
@@ -17,11 +18,9 @@
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:ellipsize="end"
             android:gravity="center"
-            android:singleLine="true"
             android:textColor="#5A7C7C"
-            android:textSize="@dimen/my_favorite_title_text_size" />
+            android:textSize="15sp" />
 
         <ImageView
             android:id="@+id/img_article_favorite"
@@ -29,19 +28,20 @@
             android:layout_height="match_parent"
             android:paddingLeft="10dip"
             android:paddingRight="10dip"
-            android:src="@drawable/list_start" />
+            android:src="@drawable/list_start"
+            android:visibility="gone" />
     </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dip" >
+        android:layout_height="wrap_content" >
 
         <TextView
             android:id="@+id/txt_article_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dip"
+            android:layout_marginBottom="10dip"
             android:textColor="@android:color/black"
             android:textIsSelectable="true"
             android:textSize="18sp" />

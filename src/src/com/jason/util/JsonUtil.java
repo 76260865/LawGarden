@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.jason.lawgarden.db.DataBaseHelper;
 import com.jason.lawgarden.model.Article;
@@ -27,7 +28,8 @@ public class JsonUtil {
 
     public static User sUser;
 
-    public static boolean register(String userName, String password) throws JSONException {
+    public static boolean register(Context context, String userName, String password)
+            throws JSONException {
         Log.d(TAG, "register");
         JSONObject object = new JSONObject();
         object.put("Username", userName);
@@ -42,6 +44,8 @@ public class JsonUtil {
             Log.d(TAG, "register:sucess");
             // sAccessToken = objectRet.getString("AccessToken");
             return true;
+        } else {
+            Toast.makeText(context, objectRet.getString("Message"), Toast.LENGTH_SHORT).show();
         }
         return false;
     }

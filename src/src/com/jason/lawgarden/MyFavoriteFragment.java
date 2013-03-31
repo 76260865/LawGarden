@@ -151,11 +151,11 @@ public class MyFavoriteFragment extends Fragment {
                     : mArticleFavoritesList.get(postion);
             if (favorite.getFavoriteType() == 0) {
                 Bundle bundle = new Bundle();
-                bundle.putInt(LawsFragement.EXTRA_KEY_SUBJECT_ID, favorite.getFavoriteId());
-                bundle.putString(LawsFragement.EXTRA_KEY_SUBJECT_NAME, favorite.getTitle());
-                bundle.putBoolean(LawsFragement.EXTRA_KEY_SUBJECT_IS_FAVORITED, true);
+                bundle.putInt(LawsFragment.EXTRA_KEY_SUBJECT_ID, favorite.getFavoriteId());
+                bundle.putString(LawsFragment.EXTRA_KEY_SUBJECT_NAME, favorite.getTitle());
+                bundle.putBoolean(LawsFragment.EXTRA_KEY_SUBJECT_IS_FAVORITED, true);
 
-                LawsFragement fragment = new LawsFragement();
+                LawsFragment fragment = new LawsFragment();
                 fragment.setArguments(bundle);
 
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager()
@@ -168,8 +168,9 @@ public class MyFavoriteFragment extends Fragment {
                 transaction.commit();
             } else {
                 Bundle bundle = new Bundle();
-                bundle.putInt(ArticleFragement.EXTRA_KEY_ARTICLE_ID, favorite.getFavoriteId());
-                bundle.putBoolean(LawsFragement.EXTRA_KEY_SUBJECT_IS_FAVORITED, true);
+                bundle.putString(ArticleFragement.EXTRA_KEY_ARTICLE_TITLE, favorite.getTitle());
+                // bundle.putBoolean(LawsFragment.EXTRA_KEY_SUBJECT_IS_FAVORITED,
+                // true);
 
                 ArticleFragement fragment = new ArticleFragement();
 

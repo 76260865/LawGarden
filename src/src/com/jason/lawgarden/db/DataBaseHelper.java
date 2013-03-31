@@ -298,6 +298,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
                 article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
                 article.setContents(cursor.getString(cursor.getColumnIndex("contents")));
+                article.setLastUpdateTime(cursor.getString(cursor
+                        .getColumnIndex("last_update_time")));
                 article.setNew(cursor.getInt(cursor.getColumnIndex("new")) == 0 ? false : true);
 
                 articles.add(article);
@@ -443,6 +445,32 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
                 article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
                 article.setContents(cursor.getString(cursor.getColumnIndex("contents")));
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return article;
+    }
+
+    public Article getArticleByTitle(String title) {
+        Article article = new Article();
+        article.setTitle(title);
+        article.setContents("  ");
+        Cursor cursor = null;
+
+        try {
+            cursor = mDataBase.query("articles_of_law", null, "title='" + title + "'", null, null,
+                    null, null);
+            while (cursor.moveToNext()) {
+                // article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
+                // article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                article.setContents(article.getContents()
+                        + cursor.getString(cursor.getColumnIndex("contents")));
             }
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
@@ -644,10 +672,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         values.put("title", article.getTitle());
         values.put("contents", article.getContents());
         values.put("last_update_time", article.getLastUpdateTime());
-        values.put("level", article.getLevel());
         values.put("is_new", article.isNew());
-        values.put("key_words", article.getKeyWords());
-        values.put("subjects", article.getSubjects());
         mDataBase.update("articles_of_law", values, "_id=" + article.getId(), null);
     }
 
@@ -663,7 +688,28 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         values.put("title", favorite.getTitle());
         values.put("favorite_type", favorite.getFavoriteType());
         values.put("favorite_id", favorite.getFavoriteId());
-        mDataBase.insert("favorites", null, values);
+        if (!isExistFavorite(favorite)) {
+            mDataBase.insert("favorites", null, values);
+        }
+    }
+
+    public boolean isExistFavorite(Favorite favorite) {
+        Cursor cursor = null;
+
+        try {
+            cursor = mDataBase.query("favorites", null, "title='" + favorite.getTitle() + "'",
+                    null, null, null, null);
+            if (cursor.getCount() > 0) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return false;
     }
 
     public void removeFavoriteByFavoriteIds(int[] ids) {

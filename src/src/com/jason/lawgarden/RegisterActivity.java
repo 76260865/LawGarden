@@ -62,7 +62,7 @@ public class RegisterActivity extends Activity {
         protected Boolean doInBackground(Void... params) {
 
             try {
-                return JsonUtil.register(userName, password);
+                return JsonUtil.register(RegisterActivity.this, userName, password);
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
                 return false;

@@ -17,6 +17,7 @@ import com.jason.lawgarden.model.Favorite;
 public class ArticleFragement extends Fragment {
 
     public static final String EXTRA_KEY_ARTICLE_ID = "extra_key_article_id";
+    public static final String EXTRA_KEY_ARTICLE_TITLE = "extra_key_article_title";
 
     private TextView mTxtLawContent;
     private TextView mTxtArticleTitle;
@@ -28,11 +29,14 @@ public class ArticleFragement extends Fragment {
 
     private int mArticleId;
 
+    private String mArticleTitle;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDbHelper = DataBaseHelper.getSingleInstance(getActivity());
         mArticleId = getArguments().getInt(EXTRA_KEY_ARTICLE_ID);
+        mArticleTitle = getArguments().getString(EXTRA_KEY_ARTICLE_TITLE);
 
     }
 
@@ -42,8 +46,9 @@ public class ArticleFragement extends Fragment {
         mTxtLawContent = (TextView) view.findViewById(R.id.txt_article_content);
         mTxtArticleTitle = (TextView) view.findViewById(R.id.txt_article_title);
         img_article_favorite = (ImageView) view.findViewById(R.id.img_article_favorite);
+        mTxtArticleTitle.setText(mArticleTitle);
 
-        img_article_favorite.setOnClickListener(mOnClickListener);
+//        img_article_favorite.setOnClickListener(mOnClickListener);
 
         new ArticleAyncTask().execute();
         return view;
@@ -77,8 +82,8 @@ public class ArticleFragement extends Fragment {
 
         @Override
         protected Article doInBackground(Void... params) {
-            mArticle = mDbHelper.getArticleById(mArticleId);
-            mArticle.setFavorite(mDbHelper.isFavorited(mArticleId));
+            mArticle = mDbHelper.getArticleByTitle(mArticleTitle);
+            // mArticle.setFavorite(mDbHelper.isFavorited(mArticleId));
             return mArticle;
         }
 
@@ -86,9 +91,10 @@ public class ArticleFragement extends Fragment {
         protected void onPostExecute(Article result) {
             mTxtArticleTitle.setText(result.getTitle());
             mTxtLawContent.setText(result.getContents());
-            img_article_favorite
-                    .setImageResource(mArticle.isFavorite() ? R.drawable.list_start_sect
-                            : R.drawable.list_start);
+            // img_article_favorite
+            // .setImageResource(mArticle.isFavorite() ?
+            // R.drawable.list_start_sect
+            // : R.drawable.list_start);
         }
     }
 
