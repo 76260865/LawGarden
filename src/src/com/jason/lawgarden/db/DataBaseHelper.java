@@ -774,6 +774,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 subject.setParentId(cursor.getInt(cursor.getColumnIndex("parent_id")));
                 subject.setName(cursor.getString(cursor.getColumnIndex("name")));
                 subject.setDescription(cursor.getString(cursor.getColumnIndex("description")));
+                subject.setLastUpdateTime(cursor.getString(cursor
+                        .getColumnIndex("last_update_time")));
                 subject.setNew(cursor.getInt(cursor.getColumnIndex("is_new")) == 0 ? false : true);
 
                 subjects.add(subject);
@@ -794,7 +796,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Article article;
         Cursor cursor = null;
         try {
-            cursor = mDataBase.rawQuery("SELECT * FROM articles_of_law WHERE contents LIKE ?",
+            cursor = mDataBase.rawQuery(
+                    "SELECT * FROM articles_of_law WHERE contents LIKE ? GROUP BY title",
                     new String[] { "%" + text + "%" });
 
             while (cursor.moveToNext()) {
@@ -804,6 +807,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
                 article.setContents(cursor.getString(cursor.getColumnIndex("contents")));
                 article.setNew(cursor.getInt(cursor.getColumnIndex("is_new")) == 0 ? false : true);
+                article.setLastUpdateTime(cursor.getString(cursor
+                        .getColumnIndex("last_update_time")));
 
                 articles.add(article);
             }
@@ -822,7 +827,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Article article;
         Cursor cursor = null;
         try {
-            cursor = mDataBase.rawQuery("SELECT * FROM articles_of_law WHERE title LIKE ?",
+            cursor = mDataBase.rawQuery(
+                    "SELECT MIN(_id), * FROM articles_of_law WHERE title LIKE ? GROUP BY title",
                     new String[] { "%" + text + "%" });
 
             while (cursor.moveToNext()) {
@@ -832,6 +838,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
                 article.setContents(cursor.getString(cursor.getColumnIndex("contents")));
                 article.setNew(cursor.getInt(cursor.getColumnIndex("is_new")) == 0 ? false : true);
+                article.setLastUpdateTime(cursor.getString(cursor
+                        .getColumnIndex("last_update_time")));
 
                 articles.add(article);
             }

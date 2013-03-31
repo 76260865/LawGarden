@@ -136,6 +136,17 @@ public class SearchFragment extends Fragment {
         }
     };
 
+    @Override
+    public void onDestroy() {
+        if (mSearchArticlesAsyncTask != null) {
+            mSearchArticlesAsyncTask.cancel(true);
+        }
+        if (mSearchLawsAsyncTask != null) {
+            mSearchLawsAsyncTask.cancel(true);
+        }
+        super.onDestroy();
+    }
+
     private OnClickListener mOnBtnCancelClickListener = new OnClickListener() {
 
         @Override
@@ -175,7 +186,6 @@ public class SearchFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
             if (!TextUtils.isEmpty(mEditSearch.getText())) {
-                mArticles.clear();
                 if (mIsTitle) {
                     mArticles = mDbHelper.searchArticlesByTitle(mEditSearch.getText() + "");
                 } else {
@@ -283,7 +293,7 @@ public class SearchFragment extends Fragment {
             }
 
             Bundle bundle = new Bundle();
-            bundle.putInt(ArticleFragement.EXTRA_KEY_ARTICLE_ID, article.getId());
+            bundle.putString(ArticleFragement.EXTRA_KEY_ARTICLE_TITLE, article.getTitle());
             ArticleFragement fragment = new ArticleFragement();
             fragment.setArguments(bundle);
 

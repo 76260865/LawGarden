@@ -59,7 +59,14 @@ public class LoginActivity extends Activity {
     public void onBtnLoginClick(View view) {
         mUserName = mEditUserName.getText().toString();
         mPwd = mEditPwd.getText().toString();
-        mProgressDialog = ProgressDialog.show(this, "", "Loading. Please wait...", true);
+        // mProgressDialog = ProgressDialog.show(this, "",
+        // "Loading. Please wait...", true);
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.setTitle("µÇÂ¼");
+        mProgressDialog.setMessage("ÇëµÈ´ý...");
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.show();
         new MyAsyncTask().execute();
     }
 
