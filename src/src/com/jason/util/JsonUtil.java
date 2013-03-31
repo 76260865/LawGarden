@@ -28,7 +28,7 @@ public class JsonUtil {
 
     public static User sUser;
 
-    public static boolean register(Context context, String userName, String password)
+    public static boolean register(String userName, String password, String[] message)
             throws JSONException {
         Log.d(TAG, "register");
         JSONObject object = new JSONObject();
@@ -43,9 +43,10 @@ public class JsonUtil {
         if (objectRet.getBoolean("ExecutionResult")) {
             Log.d(TAG, "register:sucess");
             // sAccessToken = objectRet.getString("AccessToken");
+            message[0] = "×¢²á³É¹¦";
             return true;
         } else {
-            Toast.makeText(context, objectRet.getString("Message"), Toast.LENGTH_SHORT).show();
+            message[0] = objectRet.getString("Message");
         }
         return false;
     }

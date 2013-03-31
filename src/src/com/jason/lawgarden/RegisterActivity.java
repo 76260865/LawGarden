@@ -58,11 +58,13 @@ public class RegisterActivity extends Activity {
 
     private class MyAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
+        private String[] message = new String[1];
+
         @Override
         protected Boolean doInBackground(Void... params) {
 
             try {
-                return JsonUtil.register(RegisterActivity.this, userName, password);
+                return JsonUtil.register(userName, password, message);
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
                 return false;
@@ -72,13 +74,12 @@ public class RegisterActivity extends Activity {
         @Override
         protected void onPostExecute(Boolean result) {
             mProgressDialog.dismiss();
+            Toast.makeText(getApplicationContext(), message[0], Toast.LENGTH_SHORT).show();
             if (result) {
                 // Intent intent = new Intent(RegisterActivity.this,
                 // LoginActivity.class);
                 // startActivity(intent);
                 finish();
-            } else {
-                Toast.makeText(getApplicationContext(), "×¢²áÊ§°Ü", Toast.LENGTH_SHORT).show();
             }
         }
 

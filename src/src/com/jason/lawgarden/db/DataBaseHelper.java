@@ -460,7 +460,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public Article getArticleByTitle(String title) {
         Article article = new Article();
         article.setTitle(title);
-        article.setContents("  ");
+        article.setContents("    ");
         Cursor cursor = null;
 
         try {
