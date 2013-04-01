@@ -48,7 +48,7 @@ public class ArticleFragement extends Fragment {
         img_article_favorite = (ImageView) view.findViewById(R.id.img_article_favorite);
         mTxtArticleTitle.setText(mArticleTitle);
 
-//        img_article_favorite.setOnClickListener(mOnClickListener);
+        img_article_favorite.setOnClickListener(mOnClickListener);
 
         new ArticleAyncTask().execute();
         return view;
@@ -83,7 +83,7 @@ public class ArticleFragement extends Fragment {
         @Override
         protected Article doInBackground(Void... params) {
             mArticle = mDbHelper.getArticleByTitle(mArticleTitle);
-            // mArticle.setFavorite(mDbHelper.isFavorited(mArticleId));
+            mArticle.setFavorite(mDbHelper.isFavoritedByTitle(mArticleTitle));
             return mArticle;
         }
 
@@ -91,10 +91,9 @@ public class ArticleFragement extends Fragment {
         protected void onPostExecute(Article result) {
             mTxtArticleTitle.setText(result.getTitle());
             mTxtLawContent.setText(result.getContents());
-            // img_article_favorite
-            // .setImageResource(mArticle.isFavorite() ?
-            // R.drawable.list_start_sect
-            // : R.drawable.list_start);
+            img_article_favorite
+                    .setImageResource(mArticle.isFavorite() ? R.drawable.list_start_sect
+                            : R.drawable.list_start);
         }
     }
 

@@ -6,7 +6,10 @@ import org.json.JSONException;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -26,6 +29,10 @@ public class LoginActivity extends Activity {
 
     private static final String TAG = "LoginActivity";
 
+    private static final String EXTRA_KEY_SHARE_REFS = "extra_key_share_refs";
+
+    private static final String EXTRA_KEY_IS_LOGINED = "extra_key_is_logined";
+
     private String mUserName;
 
     private String mPwd;
@@ -35,6 +42,8 @@ public class LoginActivity extends Activity {
     private DataBaseHelper mDbHelper;
     private EditText mEditUserName;
     private EditText mEditPwd;
+
+    private SharedPreferences mPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +61,17 @@ public class LoginActivity extends Activity {
         if (!NetworkUtil.isNetworkConnected(this)) {
             Toast.makeText(getApplicationContext(), "请先链接网络", Toast.LENGTH_SHORT).show();
         }
+
+        mPrefs = getSharedPreferences(EXTRA_KEY_SHARE_REFS, Context.MODE_PRIVATE);
+        if (mPrefs.getBoolean(EXTRA_KEY_IS_LOGINED, false)) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     private ProgressDialog mProgressDialog;
+    private boolean mIsCaneled = false;
 
     public void onBtnLoginClick(View view) {
         mUserName = mEditUserName.getText().toString();
@@ -63,9 +80,16 @@ public class LoginActivity extends Activity {
         // "Loading. Please wait...", true);
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        mProgressDialog.setTitle("登录");
-        mProgressDialog.setMessage("请等待...");
-        mProgressDialog.setCancelable(false);
+        mProgressDialog.setTitle("同步数据");
+        mProgressDialog.setMessage("正在更新数据...");
+        mProgressDialog.setButton(DialogInterface.BUTTON_POSITIVE, "取消",
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mIsCaneled = true;
+                    }
+                });
         mProgressDialog.show();
         new MyAsyncTask().execute();
     }
@@ -104,6 +128,8 @@ public class LoginActivity extends Activity {
 
                 if (TextUtils.isEmpty(JsonUtil.sAccessToken)) {
                     return false;
+                } else {
+                    mPrefs.edit().putBoolean(EXTRA_KEY_IS_LOGINED, true).commit();
                 }
 
                 // insert into db
@@ -115,19 +141,29 @@ public class LoginActivity extends Activity {
                 user.setOverdueDate(new Date());
 
                 JsonUtil.sUser = mDbHelper.insertOrUpdateUser(user);
-                JsonUtil.updateUserSubjects(getApplicationContext());
-                JsonUtil.updateSubjects(getApplicationContext());
-                JsonUtil.updateNews(getApplicationContext());
 
-                // update the articles
-                String lastUpdateTime = mDbHelper.getLastUpdateArticleTime();
-                int pageIndex = 0;
-                int totalPages = JsonUtil.updateArticles(getApplicationContext(), pageIndex,
-                        lastUpdateTime);
-                while (pageIndex < totalPages) {
-                    Log.d("LoginActivity", "pageIndex:" + pageIndex + "totalPages:" + totalPages);
-                    pageIndex++;
-                    JsonUtil.updateArticles(getApplicationContext(), pageIndex, lastUpdateTime);
+                if (!mIsCaneled) {
+                    JsonUtil.updateUserSubjects(getApplicationContext());
+                }
+                if (!mIsCaneled) {
+                    JsonUtil.updateSubjects(getApplicationContext());
+                }
+                if (!mIsCaneled) {
+                    JsonUtil.updateNews(getApplicationContext());
+                }
+
+                if (!mIsCaneled) {
+                    // update the articles
+                    String lastUpdateTime = mDbHelper.getLastUpdateArticleTime();
+                    int pageIndex = 0;
+                    int totalPages = JsonUtil.updateArticles(getApplicationContext(), pageIndex,
+                            lastUpdateTime);
+                    while (pageIndex < totalPages && !mIsCaneled) {
+                        Log.d("LoginActivity", "pageIndex:" + pageIndex + "totalPages:"
+                                + totalPages);
+                        pageIndex++;
+                        JsonUtil.updateArticles(getApplicationContext(), pageIndex, lastUpdateTime);
+                    }
                 }
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());

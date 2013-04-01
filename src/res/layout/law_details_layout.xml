@@ -28,8 +28,7 @@
             android:layout_height="match_parent"
             android:paddingLeft="10dip"
             android:paddingRight="10dip"
-            android:src="@drawable/list_start"
-            android:visibility="gone" />
+            android:src="@drawable/list_start" />
     </LinearLayout>
 
     <ScrollView

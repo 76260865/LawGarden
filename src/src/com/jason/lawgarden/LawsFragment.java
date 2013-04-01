@@ -241,7 +241,7 @@ public class LawsFragment extends Fragment {
                 txt_no_data.setVisibility(View.VISIBLE);
                 txt_no_data.setText("无发条信息!");
             }
-            new MyFavoriteAyncTask().execute();
+//            new MyFavoriteAyncTask().execute();
         }
     }
 
@@ -415,34 +415,35 @@ public class LawsFragment extends Fragment {
             TextView txtContent = (TextView) convertView.findViewById(R.id.txt_article_content);
             ImageView imgNew = (ImageView) convertView.findViewById(R.id.img_new);
             final ImageView imgFavorite = (ImageView) convertView.findViewById(R.id.img_favorite);
+            imgFavorite.setVisibility(View.GONE);
             if (article.isNew()) {
                 imgNew.setImageResource(R.drawable.news);
             } else {
                 imgNew.setImageBitmap(null);
             }
-            imgFavorite.setImageResource(article.isFavorite() ? R.drawable.list_start_sect
-                    : R.drawable.list_start);
-
-            imgFavorite.setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    if (article.isFavorite()) {
-                        mDbHelper.removeFavoriteByFavoriteIds(new int[] { article.getId() });
-                        article.setFavorite(false);
-                    } else {
-                        Favorite favorite = new Favorite();
-                        favorite.setFavoriteId(article.getId());
-                        favorite.setFavoriteType(1);
-                        favorite.setTitle(article.getTitle());
-
-                        mDbHelper.addFavorite(favorite);
-                        article.setFavorite(true);
-                    }
-                    imgFavorite.setImageResource(article.isFavorite() ? R.drawable.list_start_sect
-                            : R.drawable.list_start);
-                }
-            });
+//            imgFavorite.setImageResource(article.isFavorite() ? R.drawable.list_start_sect
+//                    : R.drawable.list_start);
+//
+//            imgFavorite.setOnClickListener(new OnClickListener() {
+//
+//                @Override
+//                public void onClick(View v) {
+//                    if (article.isFavorite()) {
+//                        mDbHelper.removeFavoriteByFavoriteIds(new int[] { article.getId() });
+//                        article.setFavorite(false);
+//                    } else {
+//                        Favorite favorite = new Favorite();
+//                        favorite.setFavoriteId(article.getId());
+//                        favorite.setFavoriteType(1);
+//                        favorite.setTitle(article.getTitle());
+//
+//                        mDbHelper.addFavorite(favorite);
+//                        article.setFavorite(true);
+//                    }
+//                    imgFavorite.setImageResource(article.isFavorite() ? R.drawable.list_start_sect
+//                            : R.drawable.list_start);
+//                }
+//            });
 
             txtTitle.setText(article.getTitle());
             txtContent.setText(article.getContents());

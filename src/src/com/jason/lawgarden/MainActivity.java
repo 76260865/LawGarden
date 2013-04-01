@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
@@ -34,10 +32,6 @@ public class MainActivity extends FragmentActivity {
         mRbtnLawData.setChecked(true);
         new MyAsyncTask().execute();
 
-        // getActionBar().setDisplayShowTitleEnabled(false);
-        // getActionBar().setDisplayUseLogoEnabled(false);
-        // getActionBar().setDisplayShowHomeEnabled(false);
-        // getActionBar().setBackgroundDrawable(null);
     }
 
     private OnCheckedChangeListener mOnCheckedChangeListener = new OnCheckedChangeListener() {
@@ -45,7 +39,6 @@ public class MainActivity extends FragmentActivity {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             popupAllFragmentStack();
-            invalidateOptionsMenu();
 
             switch (checkedId) {
             case R.id.rbtn_law_data:
@@ -113,36 +106,6 @@ public class MainActivity extends FragmentActivity {
 
         // Commit the transaction
         transaction.commit();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        switch (mRadioGroup.getCheckedRadioButtonId()) {
-        case R.id.rbtn_law_data:
-            menu.findItem(R.id.action_search).setVisible(true);
-            menu.findItem(R.id.item_edit).setVisible(false);
-            break;
-        case R.id.rbtn_law_news:
-            menu.findItem(R.id.action_search).setVisible(false);
-            menu.findItem(R.id.item_edit).setVisible(false);
-            break;
-        case R.id.rbtn_law_fav:
-            menu.findItem(R.id.action_search).setVisible(false);
-            menu.findItem(R.id.item_edit).setVisible(true);
-            break;
-        case R.id.rbtn_law_user:
-            menu.findItem(R.id.action_search).setVisible(false);
-            menu.findItem(R.id.item_edit).setVisible(false);
-            break;
-        }
-        return super.onPrepareOptionsMenu(menu);
     }
 
     private class MyAsyncTask extends AsyncTask<Void, Void, Void> {

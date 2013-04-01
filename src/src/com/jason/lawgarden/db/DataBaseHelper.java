@@ -435,6 +435,24 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return isFavorited;
     }
 
+    public boolean isFavoritedByTitle(String title) {
+        boolean isFavorited = false;
+        Cursor cursor = null;
+
+        try {
+            cursor = mDataBase.query("favorites", FAVORITE_PROJECTION, "title='" + title + "'",
+                    null, null, null, null);
+            isFavorited = cursor.getCount() > 0;
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return isFavorited;
+    }
+
     public Article getArticleById(int id) {
         Article article = new Article();
         Cursor cursor = null;
