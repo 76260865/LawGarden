@@ -105,34 +105,33 @@ public class SearchFragment extends Fragment {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                switch (mRadioGroup.getCheckedRadioButtonId()) {
-                case R.id.rbtn_subject:
-                    if (mSearchLawsAsyncTask != null) {
-                        mSearchLawsAsyncTask.cancel(true);
-                    }
-                    mSearchLawsAsyncTask = new SearchLawsAsyncTask();
-                    mSearchLawsAsyncTask.execute();
-                    break;
-                case R.id.rbtn_article:
-                    if (mSearchArticlesAsyncTask != null) {
-                        mSearchArticlesAsyncTask.cancel(true);
-                    }
-                    mSearchArticlesAsyncTask = new SearchArticlesAsyncTask(false);
-                    mSearchArticlesAsyncTask.execute();
-                    break;
-                case R.id.rbtn_title_text:
-                    if (mSearchArticlesAsyncTask != null) {
-                        mSearchArticlesAsyncTask.cancel(true);
-                    }
-                    mSearchArticlesAsyncTask = new SearchArticlesAsyncTask(true);
-                    mSearchArticlesAsyncTask.execute();
-                    break;
+            // if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            switch (mRadioGroup.getCheckedRadioButtonId()) {
+            case R.id.rbtn_subject:
+                if (mSearchLawsAsyncTask != null) {
+                    mSearchLawsAsyncTask.cancel(true);
                 }
-                new MyFavoriteAyncTask().execute();
-                return true;
+                mSearchLawsAsyncTask = new SearchLawsAsyncTask();
+                mSearchLawsAsyncTask.execute();
+                break;
+            case R.id.rbtn_article:
+                if (mSearchArticlesAsyncTask != null) {
+                    mSearchArticlesAsyncTask.cancel(true);
+                }
+                mSearchArticlesAsyncTask = new SearchArticlesAsyncTask(false);
+                mSearchArticlesAsyncTask.execute();
+                break;
+            case R.id.rbtn_title_text:
+                if (mSearchArticlesAsyncTask != null) {
+                    mSearchArticlesAsyncTask.cancel(true);
+                }
+                mSearchArticlesAsyncTask = new SearchArticlesAsyncTask(true);
+                mSearchArticlesAsyncTask.execute();
+                break;
             }
-            return false;
+            new MyFavoriteAyncTask().execute();
+            return true;
+            // }
         }
     };
 
