@@ -51,7 +51,7 @@ public class JsonUtil {
         return false;
     }
 
-    public static String login(String username, String password) throws JSONException {
+    public static JSONObject login(String username, String password) throws JSONException {
         Log.d(TAG, "login");
         Calendar calendar = Calendar.getInstance();
         calendar.set(1997, 2, 1);
@@ -66,10 +66,10 @@ public class JsonUtil {
             return null;
         }
         JSONObject objectRet = new JSONObject(appListString);
-        if (objectRet.getBoolean("ExecutionResult")) {
-            return objectRet.getString("AccessToken");
-        }
-        return null;
+        // if (objectRet.getBoolean("ExecutionResult")) {
+        // return objectRet.getString("AccessToken");
+        // }
+        return objectRet;
     }
 
     public static void updateUserSubjects(Context context) throws JSONException {

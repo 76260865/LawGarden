@@ -3,11 +3,11 @@ package com.jason.lawgarden;
 import java.util.Date;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -15,9 +15,13 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jason.lawgarden.db.DataBaseHelper;
@@ -56,42 +60,68 @@ public class LoginActivity extends Activity {
 
         mEditUserName = (EditText) findViewById(R.id.edit_user_name);
         mEditPwd = (EditText) findViewById(R.id.edit_pwd);
+        mPrefs = getSharedPreferences(EXTRA_KEY_SHARE_REFS, Context.MODE_PRIVATE);
         new QueryPwdTask().execute();
 
         if (!NetworkUtil.isNetworkConnected(this)) {
             Toast.makeText(getApplicationContext(), "请先链接网络", Toast.LENGTH_SHORT).show();
         }
-
-        mPrefs = getSharedPreferences(EXTRA_KEY_SHARE_REFS, Context.MODE_PRIVATE);
-        if (mPrefs.getBoolean(EXTRA_KEY_IS_LOGINED, false)) {
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
     }
 
     private ProgressDialog mProgressDialog;
     private boolean mIsCaneled = false;
+    private TextView mTxtLoadingInfo;
+    private Button mBtnOk;
+    private Button mBtnCancel;
+    private ProgressBar mProgressBar;
+    private ProgressBar mProgressLogin;
+    private MyAsyncTask mMyAsyncTask;
 
     public void onBtnLoginClick(View view) {
         mUserName = mEditUserName.getText().toString();
         mPwd = mEditPwd.getText().toString();
-        // mProgressDialog = ProgressDialog.show(this, "",
-        // "Loading. Please wait...", true);
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        mProgressDialog.setTitle("同步数据");
-        mProgressDialog.setMessage("正在更新数据...");
-        mProgressDialog.setButton(DialogInterface.BUTTON_POSITIVE, "取消",
-                new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mIsCaneled = true;
-                    }
-                });
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setCancelable(false);
         mProgressDialog.show();
-        new MyAsyncTask().execute();
+        mProgressDialog.setContentView(R.layout.loading_dialog_layout);
+        mBtnOk = (Button) mProgressDialog.findViewById(R.id.btn_ok);
+        mBtnCancel = (Button) mProgressDialog.findViewById(R.id.btn_cancel);
+        mTxtLoadingInfo = (TextView) mProgressDialog.findViewById(R.id.txt_loading_info);
+        mProgressBar = (ProgressBar) mProgressDialog.findViewById(R.id.progress_loading);
+        mProgressLogin = (ProgressBar) mProgressDialog.findViewById(R.id.progress_login);
+
+        mBtnOk.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mBtnOk.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.VISIBLE);
+                mBtnCancel.setVisibility(View.VISIBLE);
+                mProgressLogin.setVisibility(View.GONE);
+
+                mMyAsyncTask = new MyAsyncTask();
+                mMyAsyncTask.execute();
+            }
+        });
+        mBtnCancel.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mIsCaneled = true;
+                if (mMyAsyncTask == null) {
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    mMyAsyncTask.cancel(true);
+                }
+                Log.d("LoginActivity", "cancel");
+            }
+        });
+
+        mTxtLoadingInfo.setText("正在登录...");
+        new LoginPwdTask().execute();
     }
 
     public void onRegisterClick(View view) {
@@ -110,6 +140,13 @@ public class LoginActivity extends Activity {
         protected void onPostExecute(User result) {
             if (result != null) {
                 JsonUtil.sUser = result;
+                // if (mPrefs.getBoolean(EXTRA_KEY_IS_LOGINED, false)) {
+                // Intent intent = new Intent(LoginActivity.this,
+                // MainActivity.class);
+                // startActivity(intent);
+                // finish();
+                // return;
+                // }
                 mEditUserName.setText(result.getUserName());
                 mEditPwd.setText(result.getToken());
                 mCheckBox.setChecked(true);
@@ -117,58 +154,138 @@ public class LoginActivity extends Activity {
         }
     }
 
-    private class MyAsyncTask extends AsyncTask<Void, Void, Boolean> {
+    private class LoginPwdTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+                JSONObject object = JsonUtil.login(mUserName, mPwd);
+                if (object.getBoolean("ExecutionResult")) {
+                    JsonUtil.sAccessToken = object.getString("AccessToken");
+                } else {
+                    return object.getString("Message");
+                }
+            } catch (JSONException e) {
+                Log.e(TAG, e.getMessage());
+            }
+
+            if (TextUtils.isEmpty(JsonUtil.sAccessToken)) {
+                return null;
+            } else {
+                mPrefs.edit().putBoolean(EXTRA_KEY_IS_LOGINED, true).commit();
+            }
+
+            // insert into db
+            User user = new User();
+            user.setUserName(mUserName);
+            user.setToken(mCheckBox.isChecked() ? mEditPwd.getText().toString() : "");
+            user.setRememberPwd(mCheckBox.isChecked());
+            user.setPurchaseDate(new Date());
+            user.setOverdueDate(new Date());
+
+            JsonUtil.sUser = mDbHelper.insertOrUpdateUser(user);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (TextUtils.isEmpty(result)) {
+                mTxtLoadingInfo.setText("当前应用有更新数据，你是否要更新");
+                mProgressLogin.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.VISIBLE);
+                mBtnOk.setVisibility(View.VISIBLE);
+                mBtnCancel.setVisibility(View.VISIBLE);
+
+            } else {
+                mProgressDialog.dismiss();
+                Toast.makeText(getApplicationContext(), result + "", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    class Progress {
+        int progress;
+        int total = 100;
+        String message;
+    }
+
+    private class MyAsyncTask extends AsyncTask<Void, Progress, Boolean> {
+
+        @Override
+        protected void onProgressUpdate(Progress... values) {
+            Progress progress = values[0];
+            mProgressBar.setProgress(progress.progress);
+            mProgressBar.setMax(progress.total);
+            mTxtLoadingInfo.setText(progress.message);
+        }
 
         @Override
         protected Boolean doInBackground(Void... params) {
 
             try {
-                // JsonUtil.register();
-                JsonUtil.sAccessToken = JsonUtil.login(mUserName, mPwd);
-
-                if (TextUtils.isEmpty(JsonUtil.sAccessToken)) {
-                    return false;
-                } else {
-                    mPrefs.edit().putBoolean(EXTRA_KEY_IS_LOGINED, true).commit();
-                }
-
-                // insert into db
-                User user = new User();
-                user.setUserName(mUserName);
-                user.setToken(mCheckBox.isChecked() ? mEditPwd.getText().toString() : "");
-                user.setRememberPwd(mCheckBox.isChecked());
-                user.setPurchaseDate(new Date());
-                user.setOverdueDate(new Date());
-
-                JsonUtil.sUser = mDbHelper.insertOrUpdateUser(user);
-
+                Progress progress = new Progress();
                 if (!mIsCaneled) {
+                    progress.progress = 50;
+                    progress.message = "同步用户购买专题";
+                    publishProgress(progress);
                     JsonUtil.updateUserSubjects(getApplicationContext());
+                    progress.progress = 100;
+                    progress.message = "完成同步用户购买专题";
+                    publishProgress(progress);
                 }
                 if (!mIsCaneled) {
+                    progress.progress = 50;
+                    progress.message = "同步专题";
+                    publishProgress(progress);
                     JsonUtil.updateSubjects(getApplicationContext());
+                    progress.progress = 100;
+                    progress.message = "完成同步专题";
+                    publishProgress(progress);
                 }
                 if (!mIsCaneled) {
+                    progress.progress = 50;
+                    progress.message = "更新新闻";
+                    publishProgress(progress);
                     JsonUtil.updateNews(getApplicationContext());
+                    progress.progress = 100;
+                    progress.message = "新闻更新完成";
+                    publishProgress(progress);
                 }
 
                 if (!mIsCaneled) {
                     // update the articles
+                    progress.progress = 0;
+                    progress.message = "更新发条";
+                    publishProgress(progress);
                     String lastUpdateTime = mDbHelper.getLastUpdateArticleTime();
                     int pageIndex = 0;
                     int totalPages = JsonUtil.updateArticles(getApplicationContext(), pageIndex,
                             lastUpdateTime);
+                    progress.progress = 1;
+                    progress.total = totalPages;
                     while (pageIndex < totalPages && !mIsCaneled) {
                         Log.d("LoginActivity", "pageIndex:" + pageIndex + "totalPages:"
                                 + totalPages);
                         pageIndex++;
                         JsonUtil.updateArticles(getApplicationContext(), pageIndex, lastUpdateTime);
+                        progress.progress = pageIndex;
+                        progress.message = "更新发条";
+                        publishProgress(progress);
                     }
                 }
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
             }
             return true;
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         @Override
@@ -184,10 +301,6 @@ public class LoginActivity extends Activity {
             if (mCheckBox.isChecked()) {
 
             }
-            // JsonUtil.getUserSubjects(getApplicationContext());
-            // JsonUtil.updateSubjects(getApplicationContext());
-            // JsonUtil.updateNews(getApplicationContext());
-            // JsonUtil.updateArticles(getApplicationContext());
         }
 
     }
