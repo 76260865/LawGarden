@@ -249,6 +249,23 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return subjects;
     }
 
+    public boolean isSubjectAthorized(int userId, int parentId) {
+        Cursor cursor = null;
+
+        try {
+            cursor = mDataBase.query("user_subject", null, "user_id = ? AND parent_id=?",
+                    new String[] { userId + "", parentId + "" }, null, null, null);
+            return cursor.getCount() > 0;
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return false;
+    }
+
     public ArrayList<Subject> getSubjectsByUserId(int userId) {
         ArrayList<Subject> subjects = new ArrayList<Subject>();
         Subject subject;

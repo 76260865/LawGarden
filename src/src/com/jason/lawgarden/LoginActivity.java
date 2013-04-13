@@ -62,10 +62,6 @@ public class LoginActivity extends Activity {
         mEditPwd = (EditText) findViewById(R.id.edit_pwd);
         mPrefs = getSharedPreferences(EXTRA_KEY_SHARE_REFS, Context.MODE_PRIVATE);
         new QueryPwdTask().execute();
-
-        if (!NetworkUtil.isNetworkConnected(this)) {
-            Toast.makeText(getApplicationContext(), "«Îœ»¡¥Ω”Õ¯¬Á", Toast.LENGTH_SHORT).show();
-        }
     }
 
     private ProgressDialog mProgressDialog;
@@ -78,6 +74,10 @@ public class LoginActivity extends Activity {
     private MyAsyncTask mMyAsyncTask;
 
     public void onBtnLoginClick(View view) {
+        if (!NetworkUtil.isNetworkConnected(this)) {
+            Toast.makeText(getApplicationContext(), "«Îœ»¡¥Ω”Õ¯¬Á", Toast.LENGTH_SHORT).show();
+            return;
+        }
         mUserName = mEditUserName.getText().toString();
         mPwd = mEditPwd.getText().toString();
 
@@ -140,13 +140,12 @@ public class LoginActivity extends Activity {
         protected void onPostExecute(User result) {
             if (result != null) {
                 JsonUtil.sUser = result;
-                // if (mPrefs.getBoolean(EXTRA_KEY_IS_LOGINED, false)) {
-                // Intent intent = new Intent(LoginActivity.this,
-                // MainActivity.class);
-                // startActivity(intent);
-                // finish();
-                // return;
-                // }
+                if (mPrefs.getBoolean(EXTRA_KEY_IS_LOGINED, false)) {
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                    return;
+                }
                 mEditUserName.setText(result.getUserName());
                 mEditPwd.setText(result.getToken());
                 mCheckBox.setChecked(true);
