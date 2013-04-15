@@ -535,6 +535,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                         .getColumnIndex("overdue_date"))));
                 user.setAboutUs(cursor.getString(cursor.getColumnIndex("about_us")));
                 user.setToken(cursor.getString(cursor.getColumnIndex("token")));
+                user.setRememberPwd(cursor.getInt(cursor.getColumnIndex("is_remember_pwd")) == 1 ? true
+                        : false);
             }
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
@@ -918,7 +920,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             mDataBase.update("user_info", values, "user_name='" + user.getUserName() + "'", null);
         } else {
             ContentValues values = new ContentValues();
-            values.put("_id", user.getId());
             values.put("user_name", user.getUserName());
             values.put("token", user.getToken());
             values.put("purchase_date", user.getPurchaseDate().getTime());

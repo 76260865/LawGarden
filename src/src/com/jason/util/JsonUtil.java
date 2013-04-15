@@ -253,4 +253,58 @@ public class JsonUtil {
 
         return objectRet.getInt("TotalPages");
     }
+
+    public static boolean CheckSubjectUpdates(Context context) throws JSONException {
+        DataBaseHelper dbHelper = DataBaseHelper.getSingleInstance(context);
+        String lastUpdateSubjectTime = dbHelper.getLastUpdateSubjectTime();
+
+        JSONObject object = new JSONObject();
+        object.put("AccessToken", sAccessToken);
+        object.put("LastUpdateTime",
+                !TextUtils.isEmpty(lastUpdateSubjectTime) ? lastUpdateSubjectTime : sDATE_FOR_TEST);
+
+        String appListString = HttpUtil.doPost(SERVICE_URI + "/CheckSubjectUpdates", object);
+        JSONObject objectRet = new JSONObject(appListString);
+        if (objectRet.getBoolean("ExecutionResult")) {
+            return objectRet.getBoolean("UpdatesExist");
+        }
+
+        return false;
+    }
+
+    public static boolean CheckNewsUpdates(Context context) throws JSONException {
+        DataBaseHelper dbHelper = DataBaseHelper.getSingleInstance(context);
+        String lastUpdateSubjectTime = dbHelper.getLastUpdateNewsTime();
+
+        JSONObject object = new JSONObject();
+        object.put("AccessToken", sAccessToken);
+        object.put("LastUpdateTime",
+                !TextUtils.isEmpty(lastUpdateSubjectTime) ? lastUpdateSubjectTime : sDATE_FOR_TEST);
+
+        String appListString = HttpUtil.doPost(SERVICE_URI + "/CheckNewsUpdates", object);
+        JSONObject objectRet = new JSONObject(appListString);
+        if (objectRet.getBoolean("ExecutionResult")) {
+            return objectRet.getBoolean("UpdatesExist");
+        }
+
+        return false;
+    }
+
+    public static boolean CheckArticleUpdates(Context context) throws JSONException {
+        DataBaseHelper dbHelper = DataBaseHelper.getSingleInstance(context);
+        String lastUpdateSubjectTime = dbHelper.getLastUpdateArticleTime();
+
+        JSONObject object = new JSONObject();
+        object.put("AccessToken", sAccessToken);
+        object.put("LastUpdateTime",
+                !TextUtils.isEmpty(lastUpdateSubjectTime) ? lastUpdateSubjectTime : sDATE_FOR_TEST);
+
+        String appListString = HttpUtil.doPost(SERVICE_URI + "/CheckArticleUpdates", object);
+        JSONObject objectRet = new JSONObject(appListString);
+        if (objectRet.getBoolean("ExecutionResult")) {
+            return objectRet.getBoolean("UpdatesExist");
+        }
+
+        return false;
+    }
 }

@@ -81,6 +81,13 @@ public class LoginActivity extends Activity {
         mUserName = mEditUserName.getText().toString();
         mPwd = mEditPwd.getText().toString();
 
+        initDialog();
+
+        mTxtLoadingInfo.setText("正在登录...");
+        new LoginPwdTask().execute();
+    }
+
+    private void initDialog() {
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setCancelable(false);
         mProgressDialog.show();
@@ -119,9 +126,6 @@ public class LoginActivity extends Activity {
                 Log.d("LoginActivity", "cancel");
             }
         });
-
-        mTxtLoadingInfo.setText("正在登录...");
-        new LoginPwdTask().execute();
     }
 
     public void onRegisterClick(View view) {
@@ -131,8 +135,30 @@ public class LoginActivity extends Activity {
 
     private class QueryPwdTask extends AsyncTask<Void, Void, User> {
 
+        private boolean mHasUpdateData = false;
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            if (mProgressDialog == null) {
+                initDialog();
+            }
+            mTxtLoadingInfo.setText("正在检测是否有有更新");
+        }
+
         @Override
         protected User doInBackground(Void... params) {
+            JsonUtil.sUser = mDbHelper.getRememberedUser();
+            if (JsonUtil.sUser != null) {
+                JsonUtil.sAccessToken = JsonUtil.sUser.getToken();
+                publishProgress();
+            }
+            try {
+                mHasUpdateData = JsonUtil.CheckSubjectUpdates(getApplicationContext())
+                        || JsonUtil.CheckNewsUpdates(getApplicationContext())
+                        || JsonUtil.CheckArticleUpdates(getApplicationContext());
+            } catch (JSONException e) {
+                Log.e(TAG, e.getMessage());
+            }
             return mDbHelper.getRememberedUser();
         }
 
@@ -140,15 +166,26 @@ public class LoginActivity extends Activity {
         protected void onPostExecute(User result) {
             if (result != null) {
                 JsonUtil.sUser = result;
-                if (mPrefs.getBoolean(EXTRA_KEY_IS_LOGINED, false)) {
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                    return;
-                }
+
                 mEditUserName.setText(result.getUserName());
                 mEditPwd.setText(result.getToken());
                 mCheckBox.setChecked(true);
+
+                if (mPrefs.getBoolean(EXTRA_KEY_IS_LOGINED, false)) {
+                    if (mHasUpdateData) {
+                        if (mProgressDialog == null) {
+                            initDialog();
+                        }
+                        mBtnOk.setVisibility(View.VISIBLE);
+                        mBtnCancel.setVisibility(View.VISIBLE);
+                        mTxtLoadingInfo.setText("当前应用有更新，是否同步?");
+                    } else {
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                    return;
+                }
             }
         }
     }
@@ -177,7 +214,7 @@ public class LoginActivity extends Activity {
             // insert into db
             User user = new User();
             user.setUserName(mUserName);
-            user.setToken(mCheckBox.isChecked() ? mEditPwd.getText().toString() : "");
+            user.setToken(mCheckBox.isChecked() ? JsonUtil.sAccessToken : "");
             user.setRememberPwd(mCheckBox.isChecked());
             user.setPurchaseDate(new Date());
             user.setOverdueDate(new Date());
