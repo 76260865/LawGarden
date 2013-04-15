@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#F7FAF8"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1.0"
+        android:orientation="horizontal" >
+
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="500dip"
+            android:layout_height="fill_parent" >
+        </FrameLayout>
+
+        <fragment
+            android:id="@+id/fragment_detail"
+            android:name="com.jason.lawgarden.ArticleFragement"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+    </LinearLayout>
+
+    <RadioGroup
+        android:id="@+id/rgp_bottom"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/rbtn_law_data"
+            style="@style/RadioButton"
+            android:drawableTop="@drawable/ic_menu_law_data"
+            android:paddingTop="5dip"
+            android:text="@string/rtbn_law_data_text" />
+
+        <RadioButton
+            android:id="@+id/rbtn_law_news"
+            style="@style/RadioButton"
+            android:drawableTop="@drawable/ic_menu_news"
+            android:paddingTop="5dip"
+            android:text="@string/rbtn_law_news_text" />
+
+        <RadioButton
+            android:id="@+id/rbtn_law_fav"
+            style="@style/RadioButton"
+            android:drawableTop="@drawable/ic_menu_icon_fav"
+            android:paddingTop="5dip"
+            android:text="@string/rbtn_my_favorite_text" />
+
+        <RadioButton
+            android:id="@+id/rbtn_law_user"
+            style="@style/RadioButton"
+            android:drawableTop="@drawable/ic_menu_user"
+            android:paddingTop="5dip"
+            android:text="@string/rbtn_personal_center_text" />
+    </RadioGroup>
+
+</LinearLayout>

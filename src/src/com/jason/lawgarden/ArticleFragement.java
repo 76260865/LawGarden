@@ -27,7 +27,7 @@ public class ArticleFragement extends Fragment {
 
     private Article mArticle;
 
-    private int mArticleId;
+    private int mArticleId = -1;
 
     private String mArticleTitle;
 
@@ -35,8 +35,11 @@ public class ArticleFragement extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDbHelper = DataBaseHelper.getSingleInstance(getActivity());
-        mArticleId = getArguments().getInt(EXTRA_KEY_ARTICLE_ID);
-        mArticleTitle = getArguments().getString(EXTRA_KEY_ARTICLE_TITLE);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            mArticleId = bundle.getInt(EXTRA_KEY_ARTICLE_ID);
+            mArticleTitle = bundle.getString(EXTRA_KEY_ARTICLE_TITLE);
+        }
 
     }
 
