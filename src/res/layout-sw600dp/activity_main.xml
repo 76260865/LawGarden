@@ -15,15 +15,17 @@
 
         <FrameLayout
             android:id="@+id/fragment_container"
-            android:layout_width="500dip"
-            android:layout_height="fill_parent" >
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" >
         </FrameLayout>
 
         <fragment
             android:id="@+id/fragment_detail"
             android:name="com.jason.lawgarden.ArticleFragement"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="2" />
     </LinearLayout>
 
     <RadioGroup

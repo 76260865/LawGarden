@@ -6,18 +6,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
-import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -25,7 +22,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 
 import com.jason.lawgarden.db.DataBaseHelper;
 import com.jason.lawgarden.model.Article;
@@ -79,6 +75,10 @@ public class LawsFragment extends Fragment {
 
     private TextView txt_no_data;
 
+    private boolean isDuralPane = false;
+
+    private ArticleFragement mArticleFragment;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +116,8 @@ public class LawsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.law_list_layout, container, false);
+        mArticleFragment = (ArticleFragement) getActivity().getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_detail);
         View divider = view.findViewById(R.id.divider);
         mListLaw = (ListView) view.findViewById(R.id.list_law);
         mListLaw.setAdapter(mAdapter);
@@ -241,7 +243,7 @@ public class LawsFragment extends Fragment {
                 txt_no_data.setVisibility(View.VISIBLE);
                 txt_no_data.setText("无发条信息!");
             }
-//            new MyFavoriteAyncTask().execute();
+            // new MyFavoriteAyncTask().execute();
         }
     }
 
@@ -286,6 +288,12 @@ public class LawsFragment extends Fragment {
             if (article.isNew()) {
                 article.setNew(false);
                 mDbHelper.updateArticles(article);
+            }
+
+            if (mArticleFragment != null) {
+                // Tablet:
+                mArticleFragment.updateContent(article.getId(), article.getTitle());
+                return;
             }
 
             Bundle bundle = new Bundle();
@@ -421,29 +429,32 @@ public class LawsFragment extends Fragment {
             } else {
                 imgNew.setImageBitmap(null);
             }
-//            imgFavorite.setImageResource(article.isFavorite() ? R.drawable.list_start_sect
-//                    : R.drawable.list_start);
-//
-//            imgFavorite.setOnClickListener(new OnClickListener() {
-//
-//                @Override
-//                public void onClick(View v) {
-//                    if (article.isFavorite()) {
-//                        mDbHelper.removeFavoriteByFavoriteIds(new int[] { article.getId() });
-//                        article.setFavorite(false);
-//                    } else {
-//                        Favorite favorite = new Favorite();
-//                        favorite.setFavoriteId(article.getId());
-//                        favorite.setFavoriteType(1);
-//                        favorite.setTitle(article.getTitle());
-//
-//                        mDbHelper.addFavorite(favorite);
-//                        article.setFavorite(true);
-//                    }
-//                    imgFavorite.setImageResource(article.isFavorite() ? R.drawable.list_start_sect
-//                            : R.drawable.list_start);
-//                }
-//            });
+            // imgFavorite.setImageResource(article.isFavorite() ?
+            // R.drawable.list_start_sect
+            // : R.drawable.list_start);
+            //
+            // imgFavorite.setOnClickListener(new OnClickListener() {
+            //
+            // @Override
+            // public void onClick(View v) {
+            // if (article.isFavorite()) {
+            // mDbHelper.removeFavoriteByFavoriteIds(new int[] { article.getId()
+            // });
+            // article.setFavorite(false);
+            // } else {
+            // Favorite favorite = new Favorite();
+            // favorite.setFavoriteId(article.getId());
+            // favorite.setFavoriteType(1);
+            // favorite.setTitle(article.getTitle());
+            //
+            // mDbHelper.addFavorite(favorite);
+            // article.setFavorite(true);
+            // }
+            // imgFavorite.setImageResource(article.isFavorite() ?
+            // R.drawable.list_start_sect
+            // : R.drawable.list_start);
+            // }
+            // });
 
             txtTitle.setText(article.getTitle());
             txtContent.setText(article.getContents());
