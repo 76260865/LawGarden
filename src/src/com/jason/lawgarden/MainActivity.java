@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
@@ -19,6 +20,8 @@ public class MainActivity extends FragmentActivity {
 
     private RadioButton mRbtnLawData;
 
+    private ArticleFragement mArticleFragement;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +33,9 @@ public class MainActivity extends FragmentActivity {
         mRadioGroup.setOnCheckedChangeListener(mOnCheckedChangeListener);
         mRbtnLawData = (RadioButton) findViewById(R.id.rbtn_law_data);
         mRbtnLawData.setChecked(true);
+
+        mArticleFragement = (ArticleFragement) mFragmentManager
+                .findFragmentById(R.id.fragment_detail);
         new MyAsyncTask().execute();
 
     }
@@ -42,11 +48,17 @@ public class MainActivity extends FragmentActivity {
 
             switch (checkedId) {
             case R.id.rbtn_law_data:
+                if (mArticleFragement != null) {
+                    mArticleFragement.getView().setVisibility(View.VISIBLE);
+                }
                 LawsFragment lawsFragement = new LawsFragment();
                 addLawFragement(-1, null, lawsFragement);
                 // getActionBar().setTitle(R.string.rtbn_law_data_text);
                 break;
             case R.id.rbtn_law_fav:
+                if (mArticleFragement != null) {
+                    mArticleFragement.getView().setVisibility(View.GONE);
+                }
                 MyFavoriteFragment favoriteFragment = new MyFavoriteFragment();
                 FragmentTransaction favoriteTransaction = mFragmentManager.beginTransaction();
                 favoriteTransaction.replace(R.id.fragment_container, favoriteFragment);
@@ -55,6 +67,9 @@ public class MainActivity extends FragmentActivity {
                 // getActionBar().setTitle(R.string.rbtn_my_favorite_text);
                 break;
             case R.id.rbtn_law_news:
+                if (mArticleFragement != null) {
+                    mArticleFragement.getView().setVisibility(View.GONE);
+                }
                 NewsOfLawFragment newsFragment = new NewsOfLawFragment();
                 FragmentTransaction newsTransaction = mFragmentManager.beginTransaction();
                 newsTransaction.replace(R.id.fragment_container, newsFragment);
@@ -63,6 +78,9 @@ public class MainActivity extends FragmentActivity {
                 // getActionBar().setTitle(R.string.rbtn_law_news_text);
                 break;
             case R.id.rbtn_law_user:
+                if (mArticleFragement != null) {
+                    mArticleFragement.getView().setVisibility(View.GONE);
+                }
                 UserFragment userFragment = new UserFragment();
                 FragmentTransaction userTransaction = mFragmentManager.beginTransaction();
                 userTransaction.replace(R.id.fragment_container, userFragment);

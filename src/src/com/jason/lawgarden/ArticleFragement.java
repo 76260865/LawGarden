@@ -57,6 +57,13 @@ public class ArticleFragement extends Fragment {
         return view;
     }
 
+    public void updateContent(int articleId, String articleTitle) {
+        mArticleId = articleId;
+        mArticleTitle = articleTitle;
+        mTxtArticleTitle.setText(mArticleTitle);
+        new ArticleAyncTask().execute();
+    }
+
     private OnClickListener mOnClickListener = new OnClickListener() {
 
         @Override
