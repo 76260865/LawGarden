@@ -64,6 +64,14 @@ public class ArticleFragement extends Fragment {
         new ArticleAyncTask().execute();
     }
 
+    public void clearContent() {
+        mArticleId = -1;
+        mArticleTitle = "";
+        mTxtArticleTitle.setText(null);
+        mTxtLawContent.setText(null);
+        img_article_favorite.setImageBitmap(null);
+    }
+
     private OnClickListener mOnClickListener = new OnClickListener() {
 
         @Override

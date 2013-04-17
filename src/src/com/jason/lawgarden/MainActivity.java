@@ -49,6 +49,7 @@ public class MainActivity extends FragmentActivity {
             switch (checkedId) {
             case R.id.rbtn_law_data:
                 if (mArticleFragement != null) {
+                    mArticleFragement.clearContent();
                     mArticleFragement.getView().setVisibility(View.VISIBLE);
                 }
                 LawsFragment lawsFragement = new LawsFragment();

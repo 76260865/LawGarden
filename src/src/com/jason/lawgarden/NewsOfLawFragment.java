@@ -15,6 +15,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -136,17 +138,17 @@ public class NewsOfLawFragment extends Fragment {
         protected Bitmap doInBackground(Void... params) {
             Bitmap bitmap = null;
             try {
-                bmpByte = getImage(mNews.getUri());
-                // saveFile(bitmap, mNews.getId() + ".jpg");
-                mNews.setBmpByte(bmpByte);
-                mDbHelper.updateNews(mNews);
+                if (TextUtils.isEmpty(mNews.getUri())) {
+                    bmpByte = getImage(mNews.getUri());
+                    // saveFile(bitmap, mNews.getId() + ".jpg");
+                    mNews.setBmpByte(bmpByte);
+                    mDbHelper.updateNews(mNews);
+                }
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e("NewsOfLawFragment", e.getMessage());
             }
             if (bmpByte != null) {
                 bitmap = BitmapFactory.decodeByteArray(bmpByte, 0, bmpByte.length);// bitmap
-            } else {
-                Toast.makeText(getActivity(), "Image error!", Toast.LENGTH_SHORT).show();
             }
 
             return bitmap;
