@@ -150,14 +150,23 @@ public class LoginActivity extends Activity {
             JsonUtil.sUser = mDbHelper.getRememberedUser();
             if (JsonUtil.sUser != null) {
                 JsonUtil.sAccessToken = JsonUtil.sUser.getToken();
-                publishProgress();
             }
-            try {
-                mHasUpdateData = JsonUtil.CheckSubjectUpdates(getApplicationContext())
-                        || JsonUtil.CheckNewsUpdates(getApplicationContext())
-                        || JsonUtil.CheckArticleUpdates(getApplicationContext());
-            } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+            if (NetworkUtil.isNetworkConnected(getApplicationContext())) {
+                publishProgress();
+                try {
+                    JSONObject object = JsonUtil.ValidateToken(getApplicationContext());
+
+                    if (object.getBoolean("ExecutionResult")) {
+                        if (!object.getBoolean("Valid")) {
+                            // token is invalid
+                            return null;
+                        }
+                    }
+
+                    mHasUpdateData = JsonUtil.CheckAllUpdates(getApplicationContext());
+                } catch (JSONException e) {
+                    Log.e(TAG, e.getMessage());
+                }
             }
             return mDbHelper.getRememberedUser();
         }
@@ -180,11 +189,18 @@ public class LoginActivity extends Activity {
                         mBtnCancel.setVisibility(View.VISIBLE);
                         mTxtLoadingInfo.setText("当前应用有更新，是否同步?");
                     } else {
+                        if (mProgressDialog != null) {
+                            mProgressDialog.dismiss();
+                        }
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
                     }
                     return;
+                }
+            } else {
+                if (mProgressDialog != null) {
+                    mProgressDialog.dismiss();
                 }
             }
         }

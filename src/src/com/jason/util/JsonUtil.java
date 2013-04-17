@@ -307,4 +307,39 @@ public class JsonUtil {
 
         return false;
     }
+
+    public static boolean CheckAllUpdates(Context context) throws JSONException {
+        DataBaseHelper dbHelper = DataBaseHelper.getSingleInstance(context);
+        String LastUpdateTimeOfNews = dbHelper.getLastUpdateNewsTime();
+        String LastUpdateTimeOfSubjects = dbHelper.getLastUpdateSubjectTime();
+        String LastUpdateTimeOfArticles = dbHelper.getLastUpdateArticleTime();
+
+        JSONObject object = new JSONObject();
+        object.put("AccessToken", sAccessToken);
+        object.put("LastUpdateTimeOfNews", LastUpdateTimeOfNews);
+        object.put("LastUpdateTimeOfSubjects", LastUpdateTimeOfSubjects);
+        object.put("LastUpdateTimeOfArticles", LastUpdateTimeOfArticles);
+
+        String appListString = HttpUtil.doPost(SERVICE_URI + "/CheckAllUpdates", object);
+        JSONObject objectRet = new JSONObject(appListString);
+        if (objectRet.getBoolean("ExecutionResult")) {
+            return objectRet.getBoolean("NewsUpdatesExist")
+                    || objectRet.getBoolean("SubjectUpdatesExist")
+                    || objectRet.getBoolean("ArticleUpdatesExist");
+        }
+
+        return false;
+    }
+
+    public static JSONObject ValidateToken(Context context) throws JSONException {
+
+        JSONObject object = new JSONObject();
+        object.put("AccessToken", sAccessToken);
+
+        String appListString = HttpUtil.doPost(SERVICE_URI + "/ValidateToken", object);
+        JSONObject objectRet = new JSONObject(appListString);
+
+        return objectRet;
+    }
+
 }

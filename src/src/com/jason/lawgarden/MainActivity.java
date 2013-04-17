@@ -1,15 +1,23 @@
 package com.jason.lawgarden;
 
 import com.jason.lawgarden.db.DataBaseHelper;
+import com.jason.lawgarden.model.User;
+import com.jason.util.JsonUtil;
 
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
 public class MainActivity extends FragmentActivity {
@@ -81,13 +89,14 @@ public class MainActivity extends FragmentActivity {
             case R.id.rbtn_law_user:
                 if (mArticleFragement != null) {
                     mArticleFragement.getView().setVisibility(View.GONE);
+                    showDialog();
+                } else {
+                    UserFragment userFragment = new UserFragment();
+                    FragmentTransaction userTransaction = mFragmentManager.beginTransaction();
+                    userTransaction.replace(R.id.fragment_container, userFragment);
+                    userTransaction.addToBackStack(null);
+                    userTransaction.commit();
                 }
-                UserFragment userFragment = new UserFragment();
-                FragmentTransaction userTransaction = mFragmentManager.beginTransaction();
-                userTransaction.replace(R.id.fragment_container, userFragment);
-                userTransaction.addToBackStack(null);
-                userTransaction.commit();
-                // getActionBar().setTitle(R.string.rbtn_personal_center_text);
                 break;
             }
         }
@@ -147,4 +156,62 @@ public class MainActivity extends FragmentActivity {
         super.onDestroy();
     }
 
+    void showDialog() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        DialogFragment newFragment = MyDialogFragment.newInstance(mRbtnLawData);
+        newFragment.show(ft, "dialog");
+    }
+
+    public static class MyDialogFragment extends DialogFragment {
+
+        private User mUser;
+
+        private RadioButton mRbtnLawData;
+
+        /**
+         * Create a new instance of MyDialogFragment, providing "num" as an
+         * argument.
+         */
+        static MyDialogFragment newInstance(RadioButton mRbtnLawData) {
+            MyDialogFragment f = new MyDialogFragment();
+            f.mRbtnLawData = f.mRbtnLawData;
+            return f;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                Bundle savedInstanceState) {
+            mUser = JsonUtil.sUser;
+            View view = inflater.inflate(R.layout.user_info_layout, container, false);
+            TextView txtUserName = (TextView) view.findViewById(R.id.txt_user_name);
+            TextView txtServiceType = (TextView) view.findViewById(R.id.txt_service_type);
+            TextView txtPurchaseDate = (TextView) view.findViewById(R.id.txt_purchase_date);
+            TextView txtOverdueDate = (TextView) view.findViewById(R.id.txt_overdue_date);
+            TextView txtAboutUs = (TextView) view.findViewById(R.id.txt_about_us_content);
+
+            txtUserName.setText(getString(R.string.txt_user_name_format_text, mUser.getUserName()));
+            txtServiceType.setText(getString(R.string.txt_service_type_format_text,
+                    mUser.getServiceType()));
+            // txtPurchaseDate.setText(getString(R.string.txt_purchase_date_format_text,
+            // mSimpleDateFormat.format(mUser.getPurchaseDate())));
+            // txtOverdueDate.setText(getString(R.string.txt_overdue_date_format_text,
+            // mSimpleDateFormat.format(mUser.getOverdueDate())));
+            txtAboutUs.setText(mUser.getAboutUs());
+            return view;
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            super.onDismiss(dialog);
+            mRbtnLawData.setChecked(true);
+        }
+
+    }
 }

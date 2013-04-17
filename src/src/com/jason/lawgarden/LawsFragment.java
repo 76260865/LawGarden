@@ -257,6 +257,7 @@ public class LawsFragment extends Fragment {
                 subject.setNew(false);
                 mDbHelper.updateSubject(subject);
             }
+            // TODO: check if it is buyed, toast a message if not
 
             LawsFragment fragment = new LawsFragment();
 
