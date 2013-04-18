@@ -112,10 +112,11 @@ public class NewsOfLawFragment extends Fragment {
             txtContent.setText(news.getContent());
             txtTime.setText(sdf.format(news.getCrateTime()));
             txtFrom.setText(news.getFrom());
-            if (news.getBmpByte() != null) {
+            if (news.getBmpByte() != null && news.getBmpByte().length > 0) {
                 imgNews.setImageBitmap(BitmapFactory.decodeByteArray(news.getBmpByte(), 0,
                         news.getBmpByte().length));
             } else {
+                imgNews.setVisibility(View.GONE);
                 new BitmapAyncTask(imgNews, news).execute();
             }
 
@@ -138,7 +139,7 @@ public class NewsOfLawFragment extends Fragment {
         protected Bitmap doInBackground(Void... params) {
             Bitmap bitmap = null;
             try {
-                if (TextUtils.isEmpty(mNews.getUri())) {
+                if (!TextUtils.isEmpty(mNews.getUri())) {
                     bmpByte = getImage(mNews.getUri());
                     // saveFile(bitmap, mNews.getId() + ".jpg");
                     mNews.setBmpByte(bmpByte);
@@ -156,8 +157,13 @@ public class NewsOfLawFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Bitmap result) {
-            mNews.setBmpByte(bmpByte);
-            mImageView.setImageBitmap(result);
+            if (bmpByte != null && bmpByte.length > 0) {
+                mNews.setBmpByte(bmpByte);
+                mImageView.setImageBitmap(result);
+                mImageView.setVisibility(View.VISIBLE);
+            } else {
+                mImageView.setVisibility(View.GONE);
+            }
         }
 
     }

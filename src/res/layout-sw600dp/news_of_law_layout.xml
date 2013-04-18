@@ -16,6 +16,7 @@
         android:layout_height="match_parent"
         android:divider="#dedede"
         android:dividerHeight="1dip"
+        android:cacheColorHint="#00000000"
         android:listSelector="@drawable/item_selector" />
 
 </LinearLayout>

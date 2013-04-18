@@ -156,7 +156,7 @@ public class LoginActivity extends Activity {
                 JsonUtil.sAccessToken = JsonUtil.sUser.getToken();
             }
             if (NetworkUtil.isNetworkConnected(getApplicationContext())) {
-                publishProgress();
+//                publishProgress();
                 try {
                     JSONObject object = JsonUtil.ValidateToken(getApplicationContext());
 

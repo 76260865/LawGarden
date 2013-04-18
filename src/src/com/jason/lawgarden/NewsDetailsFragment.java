@@ -56,8 +56,19 @@ public class NewsDetailsFragment extends Fragment {
         mTxtTime.setText(mDateFormat.format(mNews.getCrateTime()));
         txt_from.setText(mNews.getFrom());
         txt_content.setText(mNews.getContent());
-        imgNews.setImageBitmap(BitmapFactory.decodeByteArray(mNews.getBmpByte(), 0,
-                mNews.getBmpByte().length));
+        if (mNews.getBmpByte() != null && mNews.getBmpByte().length > 0) {
+            imgNews.setImageBitmap(BitmapFactory.decodeByteArray(mNews.getBmpByte(), 0,
+                    mNews.getBmpByte().length));
+        } else {
+            imgNews.setVisibility(View.GONE);
+        }
         return view;
     }
+
+    @Override
+    public void onDetach() {
+        imgNews.setImageBitmap(null);
+        super.onDetach();
+    }
+    
 }

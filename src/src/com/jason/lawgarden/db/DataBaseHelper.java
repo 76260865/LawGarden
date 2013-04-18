@@ -376,7 +376,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         try {
             cursor = mDataBase
-                    .query("news", NEWS_PROJECTION, null, null, null, null, "create_time");
+                    .query("news", NEWS_PROJECTION, "_id = " + id, null, null, null, "create_time");
             if (cursor.moveToFirst()) {
                 news = new News();
 
