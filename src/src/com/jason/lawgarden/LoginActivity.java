@@ -20,6 +20,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,12 +50,15 @@ public class LoginActivity extends Activity {
 
     private SharedPreferences mPrefs;
 
+    private ImageView mImgWelcome;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_login);
         mCheckBox = (CheckBox) findViewById(R.id.chk_remember_pwd);
+        mImgWelcome = (ImageView) findViewById(R.id.img_welcome);
 
         mDbHelper = DataBaseHelper.getSingleInstance(this);
 
@@ -75,7 +79,7 @@ public class LoginActivity extends Activity {
 
     public void onBtnLoginClick(View view) {
         if (!NetworkUtil.isNetworkConnected(this)) {
-            Toast.makeText(getApplicationContext(), "ÇëÏÈÁ´½ÓÍøÂç", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½", Toast.LENGTH_SHORT).show();
             return;
         }
         mUserName = mEditUserName.getText().toString();
@@ -83,7 +87,7 @@ public class LoginActivity extends Activity {
 
         initDialog();
 
-        mTxtLoadingInfo.setText("ÕıÔÚµÇÂ¼...");
+        mTxtLoadingInfo.setText("ï¿½ï¿½ï¿½Úµï¿½Â¼...");
         new LoginPwdTask().execute();
     }
 
@@ -142,7 +146,7 @@ public class LoginActivity extends Activity {
             if (mProgressDialog == null) {
                 initDialog();
             }
-            mTxtLoadingInfo.setText("ÕıÔÚ¼ì²âÊÇ·ñÓĞÓĞ¸üĞÂ");
+            mTxtLoadingInfo.setText("ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½Ğ¸ï¿½ï¿½ï¿½");
         }
 
         @Override
@@ -187,7 +191,7 @@ public class LoginActivity extends Activity {
                         }
                         mBtnOk.setVisibility(View.VISIBLE);
                         mBtnCancel.setVisibility(View.VISIBLE);
-                        mTxtLoadingInfo.setText("µ±Ç°Ó¦ÓÃÓĞ¸üĞÂ£¬ÊÇ·ñÍ¬²½?");
+                        mTxtLoadingInfo.setText("ï¿½ï¿½Ç°Ó¦ï¿½ï¿½ï¿½Ğ¸ï¿½ï¿½Â£ï¿½ï¿½Ç·ï¿½Í¬ï¿½ï¿½?");
                     } else {
                         if (mProgressDialog != null) {
                             mProgressDialog.dismiss();
@@ -202,6 +206,8 @@ public class LoginActivity extends Activity {
                 if (mProgressDialog != null) {
                     mProgressDialog.dismiss();
                 }
+                Toast.makeText(getApplicationContext(), "è¯·é‡æ–°ç™»å½•", Toast.LENGTH_LONG).show();
+                mImgWelcome.setVisibility(View.GONE);
             }
         }
     }
@@ -243,7 +249,7 @@ public class LoginActivity extends Activity {
         @Override
         protected void onPostExecute(String result) {
             if (TextUtils.isEmpty(result)) {
-                mTxtLoadingInfo.setText("µ±Ç°Ó¦ÓÃÓĞ¸üĞÂÊı¾İ£¬ÄãÊÇ·ñÒª¸üĞÂ");
+                mTxtLoadingInfo.setText("ï¿½ï¿½Ç°Ó¦ï¿½ï¿½ï¿½Ğ¸ï¿½ï¿½ï¿½ï¿½ï¿½İ£ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Òªï¿½ï¿½ï¿½ï¿½");
                 mProgressLogin.setVisibility(View.GONE);
                 mProgressBar.setVisibility(View.VISIBLE);
                 mBtnOk.setVisibility(View.VISIBLE);
@@ -279,36 +285,36 @@ public class LoginActivity extends Activity {
                 Progress progress = new Progress();
                 if (!mIsCaneled) {
                     progress.progress = 50;
-                    progress.message = "Í¬²½ÓÃ»§¹ºÂò×¨Ìâ";
+                    progress.message = "Í¬ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½×¨ï¿½ï¿½";
                     publishProgress(progress);
                     JsonUtil.updateUserSubjects(getApplicationContext());
                     progress.progress = 100;
-                    progress.message = "Íê³ÉÍ¬²½ÓÃ»§¹ºÂò×¨Ìâ";
+                    progress.message = "ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½×¨ï¿½ï¿½";
                     publishProgress(progress);
                 }
                 if (!mIsCaneled) {
                     progress.progress = 50;
-                    progress.message = "Í¬²½×¨Ìâ";
+                    progress.message = "Í¬ï¿½ï¿½×¨ï¿½ï¿½";
                     publishProgress(progress);
                     JsonUtil.updateSubjects(getApplicationContext());
                     progress.progress = 100;
-                    progress.message = "Íê³ÉÍ¬²½×¨Ìâ";
+                    progress.message = "ï¿½ï¿½ï¿½Í¬ï¿½ï¿½×¨ï¿½ï¿½";
                     publishProgress(progress);
                 }
                 if (!mIsCaneled) {
                     progress.progress = 50;
-                    progress.message = "¸üĞÂĞÂÎÅ";
+                    progress.message = "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½";
                     publishProgress(progress);
                     JsonUtil.updateNews(getApplicationContext());
                     progress.progress = 100;
-                    progress.message = "ĞÂÎÅ¸üĞÂÍê³É";
+                    progress.message = "ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½";
                     publishProgress(progress);
                 }
 
                 if (!mIsCaneled) {
                     // update the articles
                     progress.progress = 0;
-                    progress.message = "¸üĞÂ·¢Ìõ";
+                    progress.message = "ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½";
                     publishProgress(progress);
                     String lastUpdateTime = mDbHelper.getLastUpdateArticleTime();
                     int pageIndex = 0;
@@ -322,7 +328,7 @@ public class LoginActivity extends Activity {
                         pageIndex++;
                         JsonUtil.updateArticles(getApplicationContext(), pageIndex, lastUpdateTime);
                         progress.progress = pageIndex;
-                        progress.message = "¸üĞÂ·¢Ìõ";
+                        progress.message = "ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½";
                         publishProgress(progress);
                     }
                 }
@@ -348,7 +354,7 @@ public class LoginActivity extends Activity {
                 startActivity(intent);
                 finish();
             } else {
-                Toast.makeText(getApplicationContext(), "µÇÂ¼Ê§°Ü", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "ï¿½ï¿½Â¼Ê§ï¿½ï¿½", Toast.LENGTH_SHORT).show();
             }
             if (mCheckBox.isChecked()) {
 

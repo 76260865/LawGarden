@@ -30,6 +30,7 @@ public class ArticleFragement extends Fragment {
     private int mArticleId = -1;
 
     private String mArticleTitle;
+    private View linear_subject;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,8 @@ public class ArticleFragement extends Fragment {
         mTxtArticleTitle.setText(mArticleTitle);
 
         img_article_favorite.setOnClickListener(mOnClickListener);
+        linear_subject = view.findViewById(R.id.linear_subject);
+        linear_subject.setVisibility(View.GONE);
 
         new ArticleAyncTask().execute();
         return view;
@@ -61,6 +64,7 @@ public class ArticleFragement extends Fragment {
         mArticleId = articleId;
         mArticleTitle = articleTitle;
         mTxtArticleTitle.setText(mArticleTitle);
+        linear_subject.setVisibility(View.VISIBLE);
         new ArticleAyncTask().execute();
     }
 
@@ -70,6 +74,7 @@ public class ArticleFragement extends Fragment {
         mTxtArticleTitle.setText(null);
         mTxtLawContent.setText(null);
         img_article_favorite.setImageBitmap(null);
+        linear_subject.setVisibility(View.GONE);
     }
 
     private OnClickListener mOnClickListener = new OnClickListener() {

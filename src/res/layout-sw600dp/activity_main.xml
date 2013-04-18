@@ -7,6 +7,52 @@
     android:focusableInTouchMode="true"
     android:orientation="vertical" >
 
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_menu_bg" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dip"
+            android:src="@drawable/top_logo" />
+
+        <RadioGroup
+            android:id="@+id/rgp_bottom"
+            android:layout_width="250dip"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/rbtn_law_data"
+                style="@style/RadioButton"
+                android:drawableTop="@drawable/ic_menu_law_data"
+                android:paddingTop="10dip" />
+
+            <RadioButton
+                android:id="@+id/rbtn_law_news"
+                style="@style/RadioButton"
+                android:drawableTop="@drawable/ic_menu_news"
+                android:paddingTop="10dip" />
+
+            <RadioButton
+                android:id="@+id/rbtn_law_fav"
+                style="@style/RadioButton"
+                android:drawableTop="@drawable/ic_menu_icon_fav"
+                android:paddingTop="10dip" />
+
+            <RadioButton
+                android:id="@+id/rbtn_law_user"
+                style="@style/RadioButton"
+                android:drawableTop="@drawable/ic_menu_user"
+                android:paddingTop="10dip" />
+        </RadioGroup>
+    </RelativeLayout>
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="0dip"
@@ -27,41 +73,5 @@
             android:layout_height="fill_parent"
             android:layout_weight="2" />
     </LinearLayout>
-
-    <RadioGroup
-        android:id="@+id/rgp_bottom"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal" >
-
-        <RadioButton
-            android:id="@+id/rbtn_law_data"
-            style="@style/RadioButton"
-            android:drawableTop="@drawable/ic_menu_law_data"
-            android:paddingTop="5dip"
-            android:text="@string/rtbn_law_data_text" />
-
-        <RadioButton
-            android:id="@+id/rbtn_law_news"
-            style="@style/RadioButton"
-            android:drawableTop="@drawable/ic_menu_news"
-            android:paddingTop="5dip"
-            android:text="@string/rbtn_law_news_text" />
-
-        <RadioButton
-            android:id="@+id/rbtn_law_fav"
-            style="@style/RadioButton"
-            android:drawableTop="@drawable/ic_menu_icon_fav"
-            android:paddingTop="5dip"
-            android:text="@string/rbtn_my_favorite_text" />
-
-        <RadioButton
-            android:id="@+id/rbtn_law_user"
-            style="@style/RadioButton"
-            android:drawableTop="@drawable/ic_menu_user"
-            android:paddingTop="5dip"
-            android:text="@string/rbtn_personal_center_text" />
-    </RadioGroup>
 
 </LinearLayout>

@@ -69,8 +69,10 @@ public class MainActivity extends FragmentActivity {
                     mArticleFragement.getView().setVisibility(View.GONE);
                 }
                 MyFavoriteFragment favoriteFragment = new MyFavoriteFragment();
-                FragmentTransaction favoriteTransaction = mFragmentManager.beginTransaction();
-                favoriteTransaction.replace(R.id.fragment_container, favoriteFragment);
+                FragmentTransaction favoriteTransaction = mFragmentManager
+                        .beginTransaction();
+                favoriteTransaction.replace(R.id.fragment_container,
+                        favoriteFragment);
                 favoriteTransaction.addToBackStack(null);
                 favoriteTransaction.commit();
                 // getActionBar().setTitle(R.string.rbtn_my_favorite_text);
@@ -80,7 +82,8 @@ public class MainActivity extends FragmentActivity {
                     mArticleFragement.getView().setVisibility(View.GONE);
                 }
                 NewsOfLawFragment newsFragment = new NewsOfLawFragment();
-                FragmentTransaction newsTransaction = mFragmentManager.beginTransaction();
+                FragmentTransaction newsTransaction = mFragmentManager
+                        .beginTransaction();
                 newsTransaction.replace(R.id.fragment_container, newsFragment);
                 newsTransaction.addToBackStack(null);
                 newsTransaction.commit();
@@ -92,8 +95,10 @@ public class MainActivity extends FragmentActivity {
                     showDialog();
                 } else {
                     UserFragment userFragment = new UserFragment();
-                    FragmentTransaction userTransaction = mFragmentManager.beginTransaction();
-                    userTransaction.replace(R.id.fragment_container, userFragment);
+                    FragmentTransaction userTransaction = mFragmentManager
+                            .beginTransaction();
+                    userTransaction.replace(R.id.fragment_container,
+                            userFragment);
                     userTransaction.addToBackStack(null);
                     userTransaction.commit();
                 }
@@ -117,7 +122,8 @@ public class MainActivity extends FragmentActivity {
         super.onBackPressed();
     }
 
-    private void addLawFragement(int parentId, String name, LawsFragment fragment) {
+    private void addLawFragement(int parentId, String name,
+            LawsFragment fragment) {
         Bundle bundle = new Bundle();
         bundle.putInt(LawsFragment.EXTRA_KEY_SUBJECT_ID, parentId);
         bundle.putString(LawsFragment.EXTRA_KEY_SUBJECT_NAME, name);
@@ -189,15 +195,23 @@ public class MainActivity extends FragmentActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             mUser = JsonUtil.sUser;
-            View view = inflater.inflate(R.layout.user_info_layout, container, false);
-            TextView txtUserName = (TextView) view.findViewById(R.id.txt_user_name);
-            TextView txtServiceType = (TextView) view.findViewById(R.id.txt_service_type);
-            TextView txtPurchaseDate = (TextView) view.findViewById(R.id.txt_purchase_date);
-            TextView txtOverdueDate = (TextView) view.findViewById(R.id.txt_overdue_date);
-            TextView txtAboutUs = (TextView) view.findViewById(R.id.txt_about_us_content);
+            View view = inflater.inflate(R.layout.user_info_layout, container,
+                    false);
+            TextView txtUserName = (TextView) view
+                    .findViewById(R.id.txt_user_name);
+            TextView txtServiceType = (TextView) view
+                    .findViewById(R.id.txt_service_type);
+            TextView txtPurchaseDate = (TextView) view
+                    .findViewById(R.id.txt_purchase_date);
+            TextView txtOverdueDate = (TextView) view
+                    .findViewById(R.id.txt_overdue_date);
+            TextView txtAboutUs = (TextView) view
+                    .findViewById(R.id.txt_about_us_content);
 
-            txtUserName.setText(getString(R.string.txt_user_name_format_text, mUser.getUserName()));
-            txtServiceType.setText(getString(R.string.txt_service_type_format_text,
+            txtUserName.setText(getString(R.string.txt_user_name_format_text,
+                    mUser.getUserName()));
+            txtServiceType.setText(getString(
+                    R.string.txt_service_type_format_text,
                     mUser.getServiceType()));
             // txtPurchaseDate.setText(getString(R.string.txt_purchase_date_format_text,
             // mSimpleDateFormat.format(mUser.getPurchaseDate())));
@@ -210,7 +224,9 @@ public class MainActivity extends FragmentActivity {
         @Override
         public void onDismiss(DialogInterface dialog) {
             super.onDismiss(dialog);
-            mRbtnLawData.setChecked(true);
+            if (mRbtnLawData != null) {
+                mRbtnLawData.setChecked(true);
+            }
         }
 
     }
