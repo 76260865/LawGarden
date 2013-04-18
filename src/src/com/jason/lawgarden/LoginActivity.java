@@ -79,7 +79,7 @@ public class LoginActivity extends Activity {
 
     public void onBtnLoginClick(View view) {
         if (!NetworkUtil.isNetworkConnected(this)) {
-            Toast.makeText(getApplicationContext(), "������������", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "请先链接网络", Toast.LENGTH_SHORT).show();
             return;
         }
         mUserName = mEditUserName.getText().toString();
@@ -87,7 +87,7 @@ public class LoginActivity extends Activity {
 
         initDialog();
 
-        mTxtLoadingInfo.setText("���ڵ�¼...");
+        mTxtLoadingInfo.setText("正在登陆...");
         new LoginPwdTask().execute();
     }
 
@@ -146,7 +146,7 @@ public class LoginActivity extends Activity {
             if (mProgressDialog == null) {
                 initDialog();
             }
-            mTxtLoadingInfo.setText("���ڼ���Ƿ����и���");
+            mTxtLoadingInfo.setText("正在同步服务器。。。");
         }
 
         @Override
@@ -156,7 +156,7 @@ public class LoginActivity extends Activity {
                 JsonUtil.sAccessToken = JsonUtil.sUser.getToken();
             }
             if (NetworkUtil.isNetworkConnected(getApplicationContext())) {
-//                publishProgress();
+                // publishProgress();
                 try {
                     JSONObject object = JsonUtil.ValidateToken(getApplicationContext());
 
@@ -191,7 +191,7 @@ public class LoginActivity extends Activity {
                         }
                         mBtnOk.setVisibility(View.VISIBLE);
                         mBtnCancel.setVisibility(View.VISIBLE);
-                        mTxtLoadingInfo.setText("��ǰӦ���и��£��Ƿ�ͬ��?");
+                        mTxtLoadingInfo.setText("当前应用有更新，是否需要更新?");
                     } else {
                         if (mProgressDialog != null) {
                             mProgressDialog.dismiss();
@@ -206,7 +206,7 @@ public class LoginActivity extends Activity {
                 if (mProgressDialog != null) {
                     mProgressDialog.dismiss();
                 }
-                Toast.makeText(getApplicationContext(), "请重新登录", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "token已过期，请重新登陆", Toast.LENGTH_LONG).show();
                 mImgWelcome.setVisibility(View.GONE);
             }
         }
@@ -249,7 +249,7 @@ public class LoginActivity extends Activity {
         @Override
         protected void onPostExecute(String result) {
             if (TextUtils.isEmpty(result)) {
-                mTxtLoadingInfo.setText("��ǰӦ���и�����ݣ����Ƿ�Ҫ����");
+                mTxtLoadingInfo.setText("当前应用有更新数据，你是否要更新？");
                 mProgressLogin.setVisibility(View.GONE);
                 mProgressBar.setVisibility(View.VISIBLE);
                 mBtnOk.setVisibility(View.VISIBLE);
@@ -285,36 +285,36 @@ public class LoginActivity extends Activity {
                 Progress progress = new Progress();
                 if (!mIsCaneled) {
                     progress.progress = 50;
-                    progress.message = "ͬ���û�����ר��";
+                    progress.message = "同步用户购买专题";
                     publishProgress(progress);
                     JsonUtil.updateUserSubjects(getApplicationContext());
                     progress.progress = 100;
-                    progress.message = "���ͬ���û�����ר��";
+                    progress.message = "完成同步用户购买专题";
                     publishProgress(progress);
                 }
                 if (!mIsCaneled) {
                     progress.progress = 50;
-                    progress.message = "ͬ��ר��";
+                    progress.message = "同步专题";
                     publishProgress(progress);
                     JsonUtil.updateSubjects(getApplicationContext());
                     progress.progress = 100;
-                    progress.message = "���ͬ��ר��";
+                    progress.message = "完成同步专题";
                     publishProgress(progress);
                 }
                 if (!mIsCaneled) {
                     progress.progress = 50;
-                    progress.message = "��������";
+                    progress.message = "更新新闻";
                     publishProgress(progress);
                     JsonUtil.updateNews(getApplicationContext());
                     progress.progress = 100;
-                    progress.message = "���Ÿ������";
+                    progress.message = "新闻更新完成";
                     publishProgress(progress);
                 }
 
                 if (!mIsCaneled) {
                     // update the articles
                     progress.progress = 0;
-                    progress.message = "���·���";
+                    progress.message = "更新发条";
                     publishProgress(progress);
                     String lastUpdateTime = mDbHelper.getLastUpdateArticleTime();
                     int pageIndex = 0;
@@ -328,7 +328,7 @@ public class LoginActivity extends Activity {
                         pageIndex++;
                         JsonUtil.updateArticles(getApplicationContext(), pageIndex, lastUpdateTime);
                         progress.progress = pageIndex;
-                        progress.message = "���·���";
+                        progress.message = "更新发条";
                         publishProgress(progress);
                     }
                 }
@@ -354,7 +354,7 @@ public class LoginActivity extends Activity {
                 startActivity(intent);
                 finish();
             } else {
-                Toast.makeText(getApplicationContext(), "��¼ʧ��", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "登录失败", Toast.LENGTH_SHORT).show();
             }
             if (mCheckBox.isChecked()) {
 
