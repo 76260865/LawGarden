@@ -314,7 +314,7 @@ public class LoginActivity extends Activity {
                 if (!mIsCaneled) {
                     // update the articles
                     progress.progress = 0;
-                    progress.message = "更新发条";
+                    progress.message = "更新法条";
                     publishProgress(progress);
                     String lastUpdateTime = mDbHelper.getLastUpdateArticleTime();
                     int pageIndex = 0;
@@ -328,7 +328,7 @@ public class LoginActivity extends Activity {
                         pageIndex++;
                         JsonUtil.updateArticles(getApplicationContext(), pageIndex, lastUpdateTime);
                         progress.progress = pageIndex;
-                        progress.message = "更新发条";
+                        progress.message = "更新法条";
                         publishProgress(progress);
                     }
                 }

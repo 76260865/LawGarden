@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -77,7 +79,11 @@ public class LawsFragment extends Fragment {
 
     private boolean isDuralPane = false;
 
-    private ArticleFragement mArticleFragment;
+    private FragmentManager mFragmentManager;
+
+    private ArticleFragement mArticleFragement;
+
+    private ArticleListFragment mArticleListFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,15 +96,11 @@ public class LawsFragment extends Fragment {
         mSubjectName = bundle.getString(EXTRA_KEY_SUBJECT_NAME);
         mIsFavorited = bundle.getBoolean(EXTRA_KEY_SUBJECT_IS_FAVORITED);
 
-        // mSubjects = mSubjectId == -1 ?
-        // mDbHelper.getSubjectsByUserId(JsonUtil.sUser.getId())
-        // : mDbHelper.getSubjectsByParentId(mSubjectId);
-        // if (mSubjects.size() == 0) {
-        // // the last subject, need load the articles
-        // // mSubjectCallBack.onLastSubjectItemClick(mSubjectId);
-        // mArticles = mDbHelper.getArticlesBySubjectId(mSubjectId);
-        // mIsDetails = true;
-        // }
+        mFragmentManager = getActivity().getSupportFragmentManager();
+        mArticleListFragment = (ArticleListFragment) mFragmentManager
+                .findFragmentById(R.id.fragment_detail_article_list);
+        mArticleFragement = (ArticleFragement) mFragmentManager
+                .findFragmentById(R.id.fragment_detail_article);
 
         mAdapter = new LawsAdapter();
         mArticleAdapter = new ArticlesAdapter();
@@ -116,8 +118,6 @@ public class LawsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.law_list_layout, container, false);
-        mArticleFragment = (ArticleFragement) getActivity().getSupportFragmentManager()
-                .findFragmentById(R.id.fragment_detail);
         View divider = view.findViewById(R.id.divider);
         mListLaw = (ListView) view.findViewById(R.id.list_law);
         mListLaw.setAdapter(mAdapter);
@@ -237,11 +237,11 @@ public class LawsFragment extends Fragment {
             if (mAdapter.getCount() == 0 && mArticleAdapter.getCount() == 0 && mIsDetails) {
                 mRadioGroup.setVisibility(View.GONE);
                 txt_no_data.setVisibility(View.VISIBLE);
-                txt_no_data.setText("无专题和发条信息!");
+                txt_no_data.setText("娌℃湁鍙戞潯鏁版嵁!");
                 return;
             } else if (mArticleAdapter.getCount() == 0 && mIsDetails) {
                 txt_no_data.setVisibility(View.VISIBLE);
-                txt_no_data.setText("无发条信息!");
+                txt_no_data.setText("娌℃湁鍙戞潯鏁版嵁!");
             }
             // new MyFavoriteAyncTask().execute();
         }
@@ -259,6 +259,21 @@ public class LawsFragment extends Fragment {
             }
             // TODO: check if it is buyed, toast a message if not
 
+            if (mArticleListFragment == null) {
+                // phone
+                addLawsFragment(subject);
+            } else if (mArticleListFragment != null) {
+                // need show the article in the details pane for tablet
+                if (mDbHelper.getSubjectsByParentId(subject.getId()).size() > 0) {
+                    addLawsFragment(subject);
+                }
+                if (mDbHelper.isExistArticlesInSubject(subject.getId())) {
+                    mArticleListFragment.updateContent(subject.getId());
+                }
+            }
+        }
+
+        private void addLawsFragment(Subject subject) {
             LawsFragment fragment = new LawsFragment();
 
             Bundle bundle = new Bundle();
@@ -291,9 +306,9 @@ public class LawsFragment extends Fragment {
                 mDbHelper.updateArticles(article);
             }
 
-            if (mArticleFragment != null) {
+            if (mArticleFragement != null) {
                 // Tablet:
-                mArticleFragment.updateContent(article.getId(), article.getTitle());
+                mArticleFragement.updateContent(article.getId(), article.getTitle());
                 return;
             }
 

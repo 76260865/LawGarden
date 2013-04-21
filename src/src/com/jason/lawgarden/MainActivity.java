@@ -1,9 +1,5 @@
 package com.jason.lawgarden;
 
-import com.jason.lawgarden.db.DataBaseHelper;
-import com.jason.lawgarden.model.User;
-import com.jason.util.JsonUtil;
-
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,13 +8,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.TextView;
+
+import com.jason.lawgarden.db.DataBaseHelper;
+import com.jason.lawgarden.model.User;
+import com.jason.util.JsonUtil;
 
 public class MainActivity extends FragmentActivity {
 
@@ -29,6 +30,8 @@ public class MainActivity extends FragmentActivity {
     private RadioButton mRbtnLawData;
 
     private ArticleFragement mArticleFragement;
+
+    private ArticleListFragment mArticleListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +45,16 @@ public class MainActivity extends FragmentActivity {
         mRbtnLawData = (RadioButton) findViewById(R.id.rbtn_law_data);
         mRbtnLawData.setChecked(true);
 
+        mArticleListFragment = (ArticleListFragment) mFragmentManager
+                .findFragmentById(R.id.fragment_detail_article_list);
         mArticleFragement = (ArticleFragement) mFragmentManager
-                .findFragmentById(R.id.fragment_detail);
+                .findFragmentById(R.id.fragment_detail_article);
+
+//        if (mArticleListFragment != null) {
+//            mArticleFragement.clearContent();
+//            mArticleFragement.getView().setVisibility(View.GONE);
+//            mArticleListFragment.getView().setVisibility(View.VISIBLE);
+//        }
         new MyAsyncTask().execute();
 
     }
@@ -56,13 +67,14 @@ public class MainActivity extends FragmentActivity {
 
             switch (checkedId) {
             case R.id.rbtn_law_data:
-                if (mArticleFragement != null) {
+                if (mArticleListFragment != null) {
+                    Log.d("xxxxx", "mArticleListFragment!=null");
                     mArticleFragement.clearContent();
-                    mArticleFragement.getView().setVisibility(View.VISIBLE);
+                    mArticleFragement.getView().setVisibility(View.GONE);
+                    mArticleListFragment.getView().setVisibility(View.VISIBLE);
                 }
                 LawsFragment lawsFragement = new LawsFragment();
                 addLawFragement(-1, null, lawsFragement);
-                // getActionBar().setTitle(R.string.rtbn_law_data_text);
                 break;
             case R.id.rbtn_law_fav:
                 if (mArticleFragement != null) {
@@ -73,7 +85,6 @@ public class MainActivity extends FragmentActivity {
                 favoriteTransaction.replace(R.id.fragment_container, favoriteFragment);
                 favoriteTransaction.addToBackStack(null);
                 favoriteTransaction.commit();
-                // getActionBar().setTitle(R.string.rbtn_my_favorite_text);
                 break;
             case R.id.rbtn_law_news:
                 if (mArticleFragement != null) {
@@ -84,7 +95,6 @@ public class MainActivity extends FragmentActivity {
                 newsTransaction.replace(R.id.fragment_container, newsFragment);
                 newsTransaction.addToBackStack(null);
                 newsTransaction.commit();
-                // getActionBar().setTitle(R.string.rbtn_law_news_text);
                 break;
             case R.id.rbtn_law_user:
                 if (mArticleFragement != null) {

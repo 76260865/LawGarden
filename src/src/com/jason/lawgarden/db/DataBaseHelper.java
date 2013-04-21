@@ -331,6 +331,24 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return articles;
     }
 
+    public boolean isExistArticlesInSubject(int subjectId) {
+        boolean ret = false;
+        Cursor cursor = null;
+        try {
+            cursor = mDataBase.rawQuery(SQL_SELECT_ARTICLES_BY_SUBJECTID, new String[] { subjectId
+                    + "" });
+
+            ret = cursor.getCount() > 0;
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return ret;
+    }
+
     private static final String[] NEWS_PROJECTION = { "_id", "title", "content", "create_time",
             "uri", "came_from", "img_byte" };
 
@@ -375,8 +393,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase
-                    .query("news", NEWS_PROJECTION, "_id = " + id, null, null, null, "create_time");
+            cursor = mDataBase.query("news", NEWS_PROJECTION, "_id = " + id, null, null, null,
+                    "create_time");
             if (cursor.moveToFirst()) {
                 news = new News();
 

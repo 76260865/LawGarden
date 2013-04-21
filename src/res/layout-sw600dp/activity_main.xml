@@ -67,11 +67,19 @@
         </FrameLayout>
 
         <fragment
-            android:id="@+id/fragment_detail"
+            android:id="@+id/fragment_detail_article_list"
+            android:name="com.jason.lawgarden.ArticleListFragment"
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="2" />
+
+        <fragment
+            android:id="@+id/fragment_detail_article"
             android:name="com.jason.lawgarden.ArticleFragement"
             android:layout_width="0dip"
             android:layout_height="fill_parent"
             android:layout_weight="2" />
+        <!-- need use articlefragment, articlelistfragement and newsfragment favoritefragemt... -->
     </LinearLayout>
 
 </LinearLayout>
