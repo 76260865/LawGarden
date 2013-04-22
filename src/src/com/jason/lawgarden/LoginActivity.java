@@ -160,6 +160,9 @@ public class LoginActivity extends Activity {
                 try {
                     JSONObject object = JsonUtil.ValidateToken(getApplicationContext());
 
+                    if ( object == null ) {
+                        return null;
+                    }
                     if (object.getBoolean("ExecutionResult")) {
                         if (!object.getBoolean("Valid")) {
                             // token is invalid
@@ -216,22 +219,25 @@ public class LoginActivity extends Activity {
 
         @Override
         protected String doInBackground(Void... params) {
-            try {
-                JSONObject object = JsonUtil.login(mUserName, mPwd);
-                if (object.getBoolean("ExecutionResult")) {
-                    JsonUtil.sAccessToken = object.getString("AccessToken");
-                } else {
-                    return object.getString("Message");
-                }
-            } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
-            }
-
-            if (TextUtils.isEmpty(JsonUtil.sAccessToken)) {
-                return null;
-            } else {
-                mPrefs.edit().putBoolean(EXTRA_KEY_IS_LOGINED, true).commit();
-            }
+//            try {
+//                JSONObject object = JsonUtil.login(mUserName, mPwd);
+//                if (object == null) {
+//                    return "服务器异常";
+//                }
+//                if (object.getBoolean("ExecutionResult")) {
+//                    JsonUtil.sAccessToken = object.getString("AccessToken");
+//                } else {
+//                    return object.getString("Message");
+//                }
+//            } catch (JSONException e) {
+//                Log.e(TAG, e.getMessage());
+//            }
+//
+//            if (TextUtils.isEmpty(JsonUtil.sAccessToken)) {
+//                return null;
+//            } else {
+//                mPrefs.edit().putBoolean(EXTRA_KEY_IS_LOGINED, true).commit();
+//            }
 
             // insert into db
             User user = new User();

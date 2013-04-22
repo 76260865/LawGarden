@@ -3,6 +3,8 @@ package com.jason.lawgarden;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,6 +34,12 @@ public class ArticleFragement extends Fragment {
     private String mArticleTitle;
     private View linear_subject;
 
+    private FragmentManager mFragmentManager;
+
+    private ArticleFragement mArticleFragement;
+
+    private ArticleListFragment mArticleListFragment;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +66,17 @@ public class ArticleFragement extends Fragment {
 
         new ArticleAyncTask().execute();
         return view;
+    }
+
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mFragmentManager = getActivity().getSupportFragmentManager();
+        mArticleListFragment = (ArticleListFragment) mFragmentManager
+                .findFragmentById(R.id.fragment_detail_article_list);
+        mArticleFragement = (ArticleFragement) mFragmentManager
+                .findFragmentById(R.id.fragment_detail_article);
     }
 
     public void updateContent(int articleId, String articleTitle) {
@@ -117,6 +136,7 @@ public class ArticleFragement extends Fragment {
             img_article_favorite
                     .setImageResource(mArticle.isFavorite() ? R.drawable.list_start_sect
                             : R.drawable.list_start);
+            linear_subject.setVisibility(View.VISIBLE);
         }
     }
 

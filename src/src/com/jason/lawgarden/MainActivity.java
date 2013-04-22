@@ -40,21 +40,16 @@ public class MainActivity extends FragmentActivity {
 
         mFragmentManager = getSupportFragmentManager();
 
-        mRadioGroup = (RadioGroup) findViewById(R.id.rgp_bottom);
-        mRadioGroup.setOnCheckedChangeListener(mOnCheckedChangeListener);
-        mRbtnLawData = (RadioButton) findViewById(R.id.rbtn_law_data);
-        mRbtnLawData.setChecked(true);
-
         mArticleListFragment = (ArticleListFragment) mFragmentManager
                 .findFragmentById(R.id.fragment_detail_article_list);
         mArticleFragement = (ArticleFragement) mFragmentManager
                 .findFragmentById(R.id.fragment_detail_article);
 
-//        if (mArticleListFragment != null) {
-//            mArticleFragement.clearContent();
-//            mArticleFragement.getView().setVisibility(View.GONE);
-//            mArticleListFragment.getView().setVisibility(View.VISIBLE);
-//        }
+        mRadioGroup = (RadioGroup) findViewById(R.id.rgp_bottom);
+        mRadioGroup.setOnCheckedChangeListener(mOnCheckedChangeListener);
+        mRbtnLawData = (RadioButton) findViewById(R.id.rbtn_law_data);
+        mRbtnLawData.setChecked(true);
+
         new MyAsyncTask().execute();
 
     }
@@ -78,7 +73,8 @@ public class MainActivity extends FragmentActivity {
                 break;
             case R.id.rbtn_law_fav:
                 if (mArticleFragement != null) {
-                    mArticleFragement.getView().setVisibility(View.GONE);
+                    mArticleListFragment.getView().setVisibility(View.GONE);
+                    mArticleFragement.getView().setVisibility(View.VISIBLE);
                 }
                 MyFavoriteFragment favoriteFragment = new MyFavoriteFragment();
                 FragmentTransaction favoriteTransaction = mFragmentManager.beginTransaction();
@@ -88,6 +84,7 @@ public class MainActivity extends FragmentActivity {
                 break;
             case R.id.rbtn_law_news:
                 if (mArticleFragement != null) {
+                    mArticleListFragment.getView().setVisibility(View.GONE);
                     mArticleFragement.getView().setVisibility(View.GONE);
                 }
                 NewsOfLawFragment newsFragment = new NewsOfLawFragment();
@@ -98,6 +95,7 @@ public class MainActivity extends FragmentActivity {
                 break;
             case R.id.rbtn_law_user:
                 if (mArticleFragement != null) {
+                    mArticleListFragment.getView().setVisibility(View.GONE);
                     mArticleFragement.getView().setVisibility(View.GONE);
                     // showDialog();
                 }

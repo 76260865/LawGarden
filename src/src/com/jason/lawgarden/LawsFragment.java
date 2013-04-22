@@ -31,7 +31,7 @@ import com.jason.lawgarden.model.Favorite;
 import com.jason.lawgarden.model.Subject;
 
 public class LawsFragment extends Fragment {
-    // private static final String TAG = "LawsFragement";
+     private static final String TAG = "LawsFragement";
 
     public static final String EXTRA_KEY_SUBJECT_ID = "extra_subject_id";
 
@@ -96,12 +96,6 @@ public class LawsFragment extends Fragment {
         mSubjectName = bundle.getString(EXTRA_KEY_SUBJECT_NAME);
         mIsFavorited = bundle.getBoolean(EXTRA_KEY_SUBJECT_IS_FAVORITED);
 
-        mFragmentManager = getActivity().getSupportFragmentManager();
-        mArticleListFragment = (ArticleListFragment) mFragmentManager
-                .findFragmentById(R.id.fragment_detail_article_list);
-        mArticleFragement = (ArticleFragement) mFragmentManager
-                .findFragmentById(R.id.fragment_detail_article);
-
         mAdapter = new LawsAdapter();
         mArticleAdapter = new ArticlesAdapter();
 
@@ -110,8 +104,29 @@ public class LawsFragment extends Fragment {
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mFragmentManager = getActivity().getSupportFragmentManager();
+        mArticleListFragment = (ArticleListFragment) mFragmentManager
+                .findFragmentById(R.id.fragment_detail_article_list);
+        mArticleFragement = (ArticleFragement) mFragmentManager
+                .findFragmentById(R.id.fragment_detail_article);
+        Log.d(TAG, "mArticleFragement:"+mArticleFragement);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        //tablet
+        if(mArticleListFragment!=null) {
+            mArticleListFragment.getView().setVisibility(View.VISIBLE);
+            mArticleFragement.getView().setVisibility(View.GONE);
+            if (mDbHelper.isExistArticlesInSubject(mSubjectId)) {
+                mArticleListFragment.updateContent(mSubjectId);
+            } else {
+                mArticleListFragment.clearContent();
+            }
+        }
         new MyFavoriteAyncTask().execute();
     }
 
@@ -237,11 +252,11 @@ public class LawsFragment extends Fragment {
             if (mAdapter.getCount() == 0 && mArticleAdapter.getCount() == 0 && mIsDetails) {
                 mRadioGroup.setVisibility(View.GONE);
                 txt_no_data.setVisibility(View.VISIBLE);
-                txt_no_data.setText("没有发条数据!");
+                txt_no_data.setText("没有法条数据!");
                 return;
             } else if (mArticleAdapter.getCount() == 0 && mIsDetails) {
                 txt_no_data.setVisibility(View.VISIBLE);
-                txt_no_data.setText("没有发条数据!");
+                txt_no_data.setText("没有法条数据!");
             }
             // new MyFavoriteAyncTask().execute();
         }
@@ -267,6 +282,9 @@ public class LawsFragment extends Fragment {
                 if (mDbHelper.getSubjectsByParentId(subject.getId()).size() > 0) {
                     addLawsFragment(subject);
                 }
+                mArticleFragement.getView().setVisibility(View.GONE);
+                mArticleListFragment.getView().setVisibility(View.VISIBLE);
+
                 if (mDbHelper.isExistArticlesInSubject(subject.getId())) {
                     mArticleListFragment.updateContent(subject.getId());
                 }

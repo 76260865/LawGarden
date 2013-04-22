@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_height"
+        android:layout_gravity="center"
+        android:background="@drawable/top_background"
+        android:gravity="center"
+        android:text="@string/txt_person_center"
+        android:textColor="#5A7C7C"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="10dip"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/txt_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/user_info_text_height"
+                android:gravity="center"
+                android:textColor="#5A7C7C"
+                android:textIsSelectable="true"
+                android:textSize="18sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dip"
+                android:background="#dedede" />
+
+            <TextView
+                android:id="@+id/txt_service_type"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/user_info_text_height"
+                android:gravity="center"
+                android:textColor="#5A7C7C"
+                android:textIsSelectable="true"
+                android:textSize="18sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dip"
+                android:background="#dedede" />
+
+            <TextView
+                android:id="@+id/txt_purchase_date"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/user_info_text_height"
+                android:gravity="center"
+                android:textColor="#5A7C7C"
+                android:textIsSelectable="true"
+                android:textSize="18sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dip"
+                android:background="#dedede" />
+
+            <TextView
+                android:id="@+id/txt_overdue_date"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/user_info_text_height"
+                android:gravity="center"
+                android:textColor="#5A7C7C"
+                android:textIsSelectable="true"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/txt_about_us"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/user_info_text_height"
+                android:gravity="center"
+                android:text="@string/txt_about_us_text"
+                android:textColor="#5A7C7C"
+                android:textIsSelectable="true"
+                android:textSize="18sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dip"
+                android:background="#dedede" />
+
+            <TextView
+                android:id="@+id/txt_about_us_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dip"
+                android:textColor="#5A7C7C"
+                android:textIsSelectable="true"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

@@ -43,7 +43,7 @@ public class JsonUtil {
         if (objectRet.getBoolean("ExecutionResult")) {
             Log.d(TAG, "register:sucess");
             // sAccessToken = objectRet.getString("AccessToken");
-            message[0] = "×¢²á³É¹¦";
+            message[0] = "×¢ï¿½ï¿½É¹ï¿½";
             return true;
         } else {
             message[0] = objectRet.getString("Message");
@@ -337,9 +337,11 @@ public class JsonUtil {
         object.put("AccessToken", sAccessToken);
 
         String appListString = HttpUtil.doPost(SERVICE_URI + "/ValidateToken", object);
-        JSONObject objectRet = new JSONObject(appListString);
+        if (!TextUtils.isEmpty(appListString)) {
+            return  new JSONObject(appListString);
+        }
 
-        return objectRet;
+        return null;
     }
 
 }

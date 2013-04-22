@@ -798,6 +798,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public void insertUserSubjects(ArrayList<UserSubjects> subjects) {
+        mDataBase.beginTransaction();
         for (UserSubjects subject : subjects) {
             ContentValues values = new ContentValues();
             values.put("_id", subject.getId());
@@ -809,12 +810,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             values.put("is_private", subject.getIsPrivate());
             values.put("last_update_time", subject.getLastUpdateTime());
 
-            if (!isExistUserSubjects(subject)) {
-                mDataBase.insert("user_subject", null, values);
-            } else {
-                mDataBase.update("user_subject", values, "_id=" + subject.getId(), null);
-            }
+            mDataBase.delete("user_subject", null, null);
+            mDataBase.insert("user_subject", null, values);
         }
+        mDataBase.setTransactionSuccessful();
+        mDataBase.endTransaction();
     }
 
     public ArrayList<Subject> searchSubjects(String text) {

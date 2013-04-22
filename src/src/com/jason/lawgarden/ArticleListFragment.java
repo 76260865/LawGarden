@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class ArticleListFragment extends Fragment {
+    private static final String TAG = "ArticleListFragment";
     public static final String EXTRA_KEY_SUBJECT_ID = "extra_subject_id";
 
     public static final String EXTRA_KEY_SUBJECT_NAME = "extra_subject_name";
@@ -55,11 +57,17 @@ public class ArticleListFragment extends Fragment {
             mSubjectId = bundle.getInt(EXTRA_KEY_SUBJECT_ID, -1);
         }
 
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         mFragmentManager = getActivity().getSupportFragmentManager();
         mArticleListFragment = (ArticleListFragment) mFragmentManager
                 .findFragmentById(R.id.fragment_detail_article_list);
         mArticleFragement = (ArticleFragement) mFragmentManager
                 .findFragmentById(R.id.fragment_detail_article);
+        Log.d(TAG, "mArticleFragement:"+mArticleFragement);
     }
 
     @Override
@@ -118,6 +126,13 @@ public class ArticleListFragment extends Fragment {
     public void updateContent(int subjectId) {
         mSubjectId = subjectId;
         new ArticlesAsyncTask().execute();
+        txt_no_data.setVisibility(View.GONE);
+    }
+
+    public void clearContent() {
+        mArticles.clear();
+        mArticleAdapter.notifyDataSetChanged();
+        txt_no_data.setVisibility(View.VISIBLE);
     }
 
     private OnItemClickListener mOnArticleItemClickListener = new OnItemClickListener() {
@@ -151,11 +166,11 @@ public class ArticleListFragment extends Fragment {
             mArticleAdapter.notifyDataSetChanged();
             if (mArticleAdapter.getCount() == 0) {
                 txt_no_data.setVisibility(View.VISIBLE);
-                txt_no_data.setText("没有发条数据!");
+                txt_no_data.setText("没有法条数据!");
                 return;
             } else if (mArticleAdapter.getCount() == 0) {
                 txt_no_data.setVisibility(View.VISIBLE);
-                txt_no_data.setText("没有发条数据!");
+                txt_no_data.setText("没有法条数据!");
             }
         }
     }

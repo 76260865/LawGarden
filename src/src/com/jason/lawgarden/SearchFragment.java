@@ -6,8 +6,10 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,6 +67,12 @@ public class SearchFragment extends Fragment {
 
     private SearchArticlesAsyncTask mSearchArticlesAsyncTask;
 
+    private FragmentManager mFragmentManager;
+
+    private ArticleFragement mArticleFragement;
+
+    private ArticleListFragment mArticleListFragment;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +106,24 @@ public class SearchFragment extends Fragment {
         mEditSearch.setOnEditorActionListener(mOnEditorActionListener);
         mEditSearch.requestFocus();
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mFragmentManager = getActivity().getSupportFragmentManager();
+        mArticleListFragment = (ArticleListFragment) mFragmentManager
+                .findFragmentById(R.id.fragment_detail_article_list);
+        mArticleFragement = (ArticleFragement) mFragmentManager
+                .findFragmentById(R.id.fragment_detail_article);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mArticleListFragment != null) {
+            mArticleListFragment.clearContent();
+        }
     }
 
     private OnEditorActionListener mOnEditorActionListener = new OnEditorActionListener() {
@@ -259,6 +285,24 @@ public class SearchFragment extends Fragment {
                 mDbHelper.updateSubject(subject);
             }
 
+            if (mArticleListFragment == null) {
+                // phone
+                addLawsFragment(subject);
+            } else if (mArticleListFragment != null) {
+                // need show the article in the details pane for tablet
+                if (mDbHelper.getSubjectsByParentId(subject.getId()).size() > 0) {
+                    addLawsFragment(subject);
+                }
+                mArticleFragement.getView().setVisibility(View.GONE);
+                mArticleListFragment.getView().setVisibility(View.VISIBLE);
+
+                if (mDbHelper.isExistArticlesInSubject(subject.getId())) {
+                    mArticleListFragment.updateContent(subject.getId());
+                }
+            }
+        }
+
+        private void addLawsFragment(Subject subject) {
             LawsFragment fragment = new LawsFragment();
 
             Bundle bundle = new Bundle();

@@ -18,7 +18,7 @@
     <string name="search_type_full_txt">全文</string>
     <string name="txt_pro_text">专题</string>
     <string name="txt_title_text">标题</string>
-    <string name="txt_article_text">法条</string>
+    <string name="txt_article_text">法规</string>
     <string name="txt_user_name_format_text">用户名    :%s</string>
     <string name="txt_service_type_format_text">服务类型：%s</string>
     <string name="txt_purchase_date_format_text">购买时间：%s</string>

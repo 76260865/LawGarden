@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -44,6 +46,12 @@ public class MyFavoriteFragment extends Fragment {
 
     private static final int TYPE_ARTICLE = 1;
 
+    private FragmentManager mFragmentManager;
+
+    private ArticleFragement mArticleFragement;
+
+    private ArticleListFragment mArticleListFragment;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,14 +61,15 @@ public class MyFavoriteFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_my_favorite, null);
         mListFavorite = (ListView) view.findViewById(R.id.list_law);
         mListFavorite.setOnItemClickListener(mOnItemClickListener);
 
         mRadioGroup = (RadioGroup) view.findViewById(R.id.rgrp_top);
         mRadioGroup.setOnCheckedChangeListener(mOnCheckedChangeListener);
-        ((RadioButton) mRadioGroup.getChildAt(0)).setChecked(true);
+        ((RadioButton) mRadioGroup.getChildAt(1)).setChecked(true);
 
         mImageFavorite = (ImageView) view.findViewById(R.id.img_favorite);
         mImageFavorite.setImageResource(mInEditMode ? R.drawable.usercenter_ok
@@ -69,6 +78,35 @@ public class MyFavoriteFragment extends Fragment {
 
         return view;
     }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mFragmentManager = getActivity().getSupportFragmentManager();
+        mArticleListFragment = (ArticleListFragment) mFragmentManager
+                .findFragmentById(R.id.fragment_detail_article_list);
+        mArticleFragement = (ArticleFragement) mFragmentManager
+                .findFragmentById(R.id.fragment_detail_article);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mArticleListFragment != null) {
+            mArticleListFragment.getView().setVisibility(View.GONE);
+            if (((RadioButton) mRadioGroup.getChildAt(0)).isChecked()) {
+                mArticleFragement.clearContent();
+            } else {
+                if (mArticleFavoritesList.size() > 0) {
+                    Favorite favorite = mArticleFavoritesList.get(0);
+                    mArticleFragement.updateContent(favorite.getFavoriteId(),
+                            favorite.getTitle());
+                }
+            }
+            mArticleFragement.getView().setVisibility(View.VISIBLE);
+        }
+    }
+
 
     private OnClickListener mOnClickListener = new OnClickListener() {
 
@@ -80,7 +118,8 @@ public class MyFavoriteFragment extends Fragment {
                     Favorite favorite = mFavoritesList.get(i);
                     if (!favorite.isFavorited()) {
                         mDbHelper
-                                .removeFavoriteByFavoriteIds(new int[] { favorite.getFavoriteId() });
+                                .removeFavoriteByFavoriteIds(new int[] { favorite
+                                        .getFavoriteId() });
                         mFavoritesList.remove(favorite);
                     }
                 }
@@ -89,14 +128,16 @@ public class MyFavoriteFragment extends Fragment {
                     Favorite favorite = mArticleFavoritesList.get(i);
                     if (!favorite.isFavorited()) {
                         mDbHelper
-                                .removeFavoriteByFavoriteIds(new int[] { favorite.getFavoriteId() });
+                                .removeFavoriteByFavoriteIds(new int[] { favorite
+                                        .getFavoriteId() });
                         mArticleFavoritesList.remove(favorite);
                     }
                 }
             }
             mInEditMode = !mInEditMode;
-            mImageFavorite.setImageResource(mInEditMode ? R.drawable.usercenter_ok
-                    : R.drawable.usercenter_edit);
+            mImageFavorite
+                    .setImageResource(mInEditMode ? R.drawable.usercenter_ok
+                            : R.drawable.usercenter_edit);
             mFavoriteAdapter.notifyDataSetChanged();
         }
     };
@@ -120,6 +161,11 @@ public class MyFavoriteFragment extends Fragment {
         @Override
         protected void onPostExecute(Void result) {
             mFavoriteAdapter.notifyDataSetChanged();
+            if (mArticleFragement != null && mArticleFavoritesList.size() > 0) {
+                Favorite favorite = mArticleFavoritesList.get(0);
+                mArticleFragement.updateContent(favorite.getFavoriteId(),
+                        favorite.getTitle());
+            }
         }
     }
 
@@ -146,20 +192,24 @@ public class MyFavoriteFragment extends Fragment {
     private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
 
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int postion, long id) {
-            Favorite favorite = mCurrentType == TYPE_SUBJECTS ? mFavoritesList.get(postion)
-                    : mArticleFavoritesList.get(postion);
+        public void onItemClick(AdapterView<?> parent, View view, int postion,
+                long id) {
+            Favorite favorite = mCurrentType == TYPE_SUBJECTS ? mFavoritesList
+                    .get(postion) : mArticleFavoritesList.get(postion);
             if (favorite.getFavoriteType() == 0) {
                 Bundle bundle = new Bundle();
-                bundle.putInt(LawsFragment.EXTRA_KEY_SUBJECT_ID, favorite.getFavoriteId());
-                bundle.putString(LawsFragment.EXTRA_KEY_SUBJECT_NAME, favorite.getTitle());
-                bundle.putBoolean(LawsFragment.EXTRA_KEY_SUBJECT_IS_FAVORITED, true);
+                bundle.putInt(LawsFragment.EXTRA_KEY_SUBJECT_ID,
+                        favorite.getFavoriteId());
+                bundle.putString(LawsFragment.EXTRA_KEY_SUBJECT_NAME,
+                        favorite.getTitle());
+                bundle.putBoolean(LawsFragment.EXTRA_KEY_SUBJECT_IS_FAVORITED,
+                        true);
 
                 LawsFragment fragment = new LawsFragment();
                 fragment.setArguments(bundle);
 
-                FragmentTransaction transaction = getActivity().getSupportFragmentManager()
-                        .beginTransaction();
+                FragmentTransaction transaction = getActivity()
+                        .getSupportFragmentManager().beginTransaction();
 
                 transaction.replace(R.id.fragment_container, fragment);
                 transaction.addToBackStack(null);
@@ -167,23 +217,29 @@ public class MyFavoriteFragment extends Fragment {
                 // Commit the transaction
                 transaction.commit();
             } else {
-                Bundle bundle = new Bundle();
-                bundle.putString(ArticleFragement.EXTRA_KEY_ARTICLE_TITLE, favorite.getTitle());
-                // bundle.putBoolean(LawsFragment.EXTRA_KEY_SUBJECT_IS_FAVORITED,
-                // true);
+                if (mArticleListFragment == null) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(ArticleFragement.EXTRA_KEY_ARTICLE_TITLE,
+                            favorite.getTitle());
+                    // bundle.putBoolean(LawsFragment.EXTRA_KEY_SUBJECT_IS_FAVORITED,
+                    // true);
 
-                ArticleFragement fragment = new ArticleFragement();
+                    ArticleFragement fragment = new ArticleFragement();
 
-                fragment.setArguments(bundle);
+                    fragment.setArguments(bundle);
 
-                FragmentTransaction transaction = getActivity().getSupportFragmentManager()
-                        .beginTransaction();
+                    FragmentTransaction transaction = getActivity()
+                            .getSupportFragmentManager().beginTransaction();
 
-                transaction.replace(R.id.fragment_container, fragment);
-                transaction.addToBackStack(null);
+                    transaction.replace(R.id.fragment_container, fragment);
+                    transaction.addToBackStack(null);
 
-                // Commit the transaction
-                transaction.commit();
+                    // Commit the transaction
+                    transaction.commit();
+                } else {
+                    mArticleFragement.updateContent(favorite.getFavoriteId(),
+                            favorite.getTitle());
+                }
             }
         }
     };
@@ -226,14 +282,18 @@ public class MyFavoriteFragment extends Fragment {
                         R.layout.my_favorites_item_layout, null);
             }
 
-            final Favorite favorite = mType == TYPE_SUBJECTS ? mFavoritesList.get(position)
-                    : mArticleFavoritesList.get(position);
-            TextView txtTitle = (TextView) convertView.findViewById(R.id.txt_law_title);
-            final ImageView imgFavorite = (ImageView) convertView.findViewById(R.id.img_favorite);
+            final Favorite favorite = mType == TYPE_SUBJECTS ? mFavoritesList
+                    .get(position) : mArticleFavoritesList.get(position);
+            TextView txtTitle = (TextView) convertView
+                    .findViewById(R.id.txt_law_title);
+            final ImageView imgFavorite = (ImageView) convertView
+                    .findViewById(R.id.img_favorite);
             txtTitle.setText(favorite.getTitle());
-            imgFavorite.setVisibility(mInEditMode ? View.VISIBLE : View.INVISIBLE);
-            imgFavorite.setImageResource(favorite.isFavorited() ? R.drawable.list_start_sect
-                    : R.drawable.list_start);
+            imgFavorite.setVisibility(mInEditMode ? View.VISIBLE
+                    : View.INVISIBLE);
+            imgFavorite
+                    .setImageResource(favorite.isFavorited() ? R.drawable.list_start_sect
+                            : R.drawable.list_start);
             imgFavorite.setOnClickListener(new OnClickListener() {
 
                 @Override
