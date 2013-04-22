@@ -154,13 +154,15 @@ public class LoginActivity extends Activity {
             JsonUtil.sUser = mDbHelper.getRememberedUser();
             if (JsonUtil.sUser != null) {
                 JsonUtil.sAccessToken = JsonUtil.sUser.getToken();
+            } else {
+                return null;
             }
             if (NetworkUtil.isNetworkConnected(getApplicationContext())) {
                 // publishProgress();
                 try {
                     JSONObject object = JsonUtil.ValidateToken(getApplicationContext());
 
-                    if ( object == null ) {
+                    if (object == null) {
                         return null;
                     }
                     if (object.getBoolean("ExecutionResult")) {
@@ -209,7 +211,6 @@ public class LoginActivity extends Activity {
                 if (mProgressDialog != null) {
                     mProgressDialog.dismiss();
                 }
-                Toast.makeText(getApplicationContext(), "token已过期，请重新登陆", Toast.LENGTH_LONG).show();
                 mImgWelcome.setVisibility(View.GONE);
             }
         }
@@ -217,27 +218,27 @@ public class LoginActivity extends Activity {
 
     private class LoginPwdTask extends AsyncTask<Void, Void, String> {
 
+        private boolean mHasUpdateData = false;
+
         @Override
         protected String doInBackground(Void... params) {
-//            try {
-//                JSONObject object = JsonUtil.login(mUserName, mPwd);
-//                if (object == null) {
-//                    return "服务器异常";
-//                }
-//                if (object.getBoolean("ExecutionResult")) {
-//                    JsonUtil.sAccessToken = object.getString("AccessToken");
-//                } else {
-//                    return object.getString("Message");
-//                }
-//            } catch (JSONException e) {
-//                Log.e(TAG, e.getMessage());
-//            }
-//
-//            if (TextUtils.isEmpty(JsonUtil.sAccessToken)) {
-//                return null;
-//            } else {
-//                mPrefs.edit().putBoolean(EXTRA_KEY_IS_LOGINED, true).commit();
-//            }
+            try {
+                JSONObject object = JsonUtil.login(mUserName, mPwd);
+                if (object == null) {
+                    return "服务器异常";
+                }
+                if (object.getBoolean("ExecutionResult")) {
+                    JsonUtil.sAccessToken = object.getString("AccessToken");
+                } else {
+                    return object.getString("Message");
+                }
+            } catch (JSONException e) {
+                Log.e(TAG, e.getMessage());
+            }
+
+            if (!TextUtils.isEmpty(JsonUtil.sAccessToken)) {
+                mPrefs.edit().putBoolean(EXTRA_KEY_IS_LOGINED, true).commit();
+            }
 
             // insert into db
             User user = new User();
@@ -249,12 +250,17 @@ public class LoginActivity extends Activity {
 
             JsonUtil.sUser = mDbHelper.insertOrUpdateUser(user);
 
+            try {
+                mHasUpdateData = JsonUtil.CheckAllUpdates(getApplicationContext());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return null;
         }
 
         @Override
         protected void onPostExecute(String result) {
-            if (TextUtils.isEmpty(result)) {
+            if (mHasUpdateData) {
                 mTxtLoadingInfo.setText("当前应用有更新数据，你是否要更新？");
                 mProgressLogin.setVisibility(View.GONE);
                 mProgressBar.setVisibility(View.VISIBLE);
@@ -262,8 +268,15 @@ public class LoginActivity extends Activity {
                 mBtnCancel.setVisibility(View.VISIBLE);
 
             } else {
+                if (!TextUtils.isEmpty(result)) {
+                    Toast.makeText(getApplicationContext(), result + "", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 mProgressDialog.dismiss();
-                Toast.makeText(getApplicationContext(), result + "", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
             }
         }
     }

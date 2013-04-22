@@ -17,11 +17,11 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
@@ -29,9 +29,10 @@ import com.jason.lawgarden.db.DataBaseHelper;
 import com.jason.lawgarden.model.Article;
 import com.jason.lawgarden.model.Favorite;
 import com.jason.lawgarden.model.Subject;
+import com.jason.util.JsonUtil;
 
 public class LawsFragment extends Fragment {
-     private static final String TAG = "LawsFragement";
+    private static final String TAG = "LawsFragement";
 
     public static final String EXTRA_KEY_SUBJECT_ID = "extra_subject_id";
 
@@ -77,8 +78,6 @@ public class LawsFragment extends Fragment {
 
     private TextView txt_no_data;
 
-    private boolean isDuralPane = false;
-
     private FragmentManager mFragmentManager;
 
     private ArticleFragement mArticleFragement;
@@ -111,14 +110,14 @@ public class LawsFragment extends Fragment {
                 .findFragmentById(R.id.fragment_detail_article_list);
         mArticleFragement = (ArticleFragement) mFragmentManager
                 .findFragmentById(R.id.fragment_detail_article);
-        Log.d(TAG, "mArticleFragement:"+mArticleFragement);
+        Log.d(TAG, "mArticleFragement:" + mArticleFragement);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        //tablet
-        if(mArticleListFragment!=null) {
+        // tablet
+        if (mArticleListFragment != null) {
             mArticleListFragment.getView().setVisibility(View.VISIBLE);
             mArticleFragement.getView().setVisibility(View.GONE);
             if (mDbHelper.isExistArticlesInSubject(mSubjectId)) {
@@ -273,6 +272,10 @@ public class LawsFragment extends Fragment {
                 mDbHelper.updateSubject(subject);
             }
             // TODO: check if it is buyed, toast a message if not
+            if (!mDbHelper.isAuthorized(subject.getId(), JsonUtil.sUser.getId())) {
+                Toast.makeText(getActivity(), "请先购买此专题", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             if (mArticleListFragment == null) {
                 // phone
@@ -405,6 +408,10 @@ public class LawsFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
+                    if (!mDbHelper.isAuthorized(subject.getId(), JsonUtil.sUser.getId())) {
+                        Toast.makeText(getActivity(), "请先购买此专题", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     if (subject.isFavorited()) {
                         mDbHelper.removeFavoriteByFavoriteIds(new int[] { subject.getId() });
                         subject.setFavorited(false);
@@ -463,32 +470,6 @@ public class LawsFragment extends Fragment {
             } else {
                 imgNew.setImageBitmap(null);
             }
-            // imgFavorite.setImageResource(article.isFavorite() ?
-            // R.drawable.list_start_sect
-            // : R.drawable.list_start);
-            //
-            // imgFavorite.setOnClickListener(new OnClickListener() {
-            //
-            // @Override
-            // public void onClick(View v) {
-            // if (article.isFavorite()) {
-            // mDbHelper.removeFavoriteByFavoriteIds(new int[] { article.getId()
-            // });
-            // article.setFavorite(false);
-            // } else {
-            // Favorite favorite = new Favorite();
-            // favorite.setFavoriteId(article.getId());
-            // favorite.setFavoriteType(1);
-            // favorite.setTitle(article.getTitle());
-            //
-            // mDbHelper.addFavorite(favorite);
-            // article.setFavorite(true);
-            // }
-            // imgFavorite.setImageResource(article.isFavorite() ?
-            // R.drawable.list_start_sect
-            // : R.drawable.list_start);
-            // }
-            // });
 
             txtTitle.setText(article.getTitle());
             txtContent.setText(article.getContents());
