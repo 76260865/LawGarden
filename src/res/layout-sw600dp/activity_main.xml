@@ -66,6 +66,11 @@
             android:layout_weight="1" >
         </FrameLayout>
 
+        <View
+            android:layout_width="1dip"
+            android:layout_height="fill_parent"
+            android:background="#dedede" />
+
         <fragment
             android:id="@+id/fragment_detail_article_list"
             android:name="com.jason.lawgarden.ArticleListFragment"

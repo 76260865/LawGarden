@@ -1073,6 +1073,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             }
         }
 
-        return ret;
+        //TODO: return ret;
+        return true;
     }
 }

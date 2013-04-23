@@ -114,6 +114,16 @@ public class LawsFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        // tablet
+        if (mArticleListFragment != null) {
+            mArticleListFragment.getView().setVisibility(View.GONE);
+            mArticleFragement.getView().setVisibility(View.GONE);
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         // tablet
