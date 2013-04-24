@@ -240,6 +240,14 @@ public class LawsFragment extends Fragment {
                 txt_no_data.setVisibility(View.VISIBLE);
                 mRadioGroup.getChildAt(0).setEnabled(false);
                 mRadioGroup.check(R.id.rbtn_article);
+                mRadioGroup.setVisibility(View.GONE);
+                mTxtSubjectName.setOnClickListener(new OnClickListener(){
+
+                    @Override
+                    public void onClick(View v) {
+                        mFragmentManager.popBackStack();
+                    }
+                });
                 return;
             }
             txt_no_data.setVisibility(View.GONE);

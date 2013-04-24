@@ -268,12 +268,12 @@ public class LoginActivity extends Activity {
                 mBtnCancel.setVisibility(View.VISIBLE);
 
             } else {
+                mProgressDialog.dismiss();
                 if (!TextUtils.isEmpty(result)) {
                     Toast.makeText(getApplicationContext(), result + "", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                mProgressDialog.dismiss();
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
