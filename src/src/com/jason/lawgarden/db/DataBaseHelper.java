@@ -225,7 +225,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         try {
             cursor = mDataBase.query("subjects", SUBJECTS_PROJECTION, "parent_id=" + parentId,
-                    null, null, null, null);
+                    null, null, null, "_id ASC");
 
             while (cursor.moveToNext()) {
                 subject = new Subject();
@@ -274,7 +274,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         try {
             cursor = mDataBase
                     .rawQuery(
-                            "SELECT subjects.* FROM subjects JOIN user_subject ON subjects._id=user_subject.parent_id WHERE user_id=?",
+                            "SELECT subjects.* FROM subjects JOIN user_subject ON subjects._id=user_subject.parent_id WHERE user_id=? ORDER BY subjects._id ASC",
                             new String[] { "" + userId });
 
             while (cursor.moveToNext()) {
@@ -299,7 +299,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return subjects;
     }
 
-    private static final String SQL_SELECT_ARTICLES_BY_SUBJECTID = "SELECT *, articles_of_law.is_new as new FROM subjects_articles JOIN articles_of_law ON subjects_articles.article_id=articles_of_law._id WHERE subject_id =?";
+    private static final String SQL_SELECT_ARTICLES_BY_SUBJECTID = "SELECT *, articles_of_law.is_new as new FROM subjects_articles JOIN articles_of_law ON subjects_articles.article_id=articles_of_law._id WHERE subject_id =? ORDER BY articles_of_law._id ASC";
 
     public ArrayList<Article> getArticlesBySubjectId(int SubjectId) {
         ArrayList<Article> articles = new ArrayList<Article>();
@@ -429,7 +429,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         try {
             cursor = mDataBase
-                    .query("favorites", FAVORITE_PROJECTION, null, null, null, null, null);
+                    .query("favorites", FAVORITE_PROJECTION, null, null, null, null, "favorite_id ASC");
             while (cursor.moveToNext()) {
                 favorite = new Favorite();
 
@@ -827,7 +827,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             // cursor =
             // mDataBase.rawQuery("SELECT * FROM subjects WHERE name LIKE ?",
             // new String[] { "%" + text + "%" });
-            String query = "SELECT * FROM subjects JOIN user_subject ON subjects._id = user_subject._id WHERE subjects.name LIKE ?";
+            String query = "SELECT * FROM subjects JOIN user_subject ON subjects._id = user_subject._id WHERE subjects.name LIKE ? ORDER BY subjects._id ASC";
             cursor = mDataBase.rawQuery(query, new String[] { "%" + text + "%" });
             while (cursor.moveToNext()) {
                 subject = new Subject();
@@ -858,8 +858,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Article article;
         Cursor cursor = null;
         try {
+            // TODO need filter by user authorized
             cursor = mDataBase.rawQuery(
-                    "SELECT * FROM articles_of_law WHERE contents LIKE ? GROUP BY title",
+                    "SELECT * FROM articles_of_law WHERE contents LIKE ? GROUP BY title ORDER BY _id ASC",
                     new String[] { "%" + text + "%" });
 
             while (cursor.moveToNext()) {
@@ -889,8 +890,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Article article;
         Cursor cursor = null;
         try {
+            // TODO need filter by user authorized
             cursor = mDataBase.rawQuery(
-                    "SELECT MIN(_id), * FROM articles_of_law WHERE title LIKE ? GROUP BY title",
+                    "SELECT MIN(_id), * FROM articles_of_law WHERE title LIKE ? GROUP BY title ORDER BY _id ASC",
                     new String[] { "%" + text + "%" });
 
             while (cursor.moveToNext()) {
