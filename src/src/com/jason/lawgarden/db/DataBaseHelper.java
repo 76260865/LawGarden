@@ -1,5 +1,6 @@
 package com.jason.lawgarden.db;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -108,7 +109,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         try {
             String myPath = mDbPath + DB_NAME;
-            checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+            File file = new File(myPath);
+            if (file.exists()) {
+                checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+            }
 
         } catch (SQLiteException e) {
             // database does't exist yet.
@@ -428,8 +432,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase
-                    .query("favorites", FAVORITE_PROJECTION, null, null, null, null, "favorite_id ASC");
+            cursor = mDataBase.query("favorites", FAVORITE_PROJECTION, null, null, null, null,
+                    "favorite_id ASC");
             while (cursor.moveToNext()) {
                 favorite = new Favorite();
 
@@ -854,17 +858,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     private static final String queryArticlesByText = "SELECT articles_of_law.* FROM articles_of_law INNER JOIN subjects_articles ON articles_of_law._id = subjects_articles.article_id JOIN user_subject ON subjects_articles.subject_id = user_subject._id WHERE articles_of_law.contents LIKE ? GROUP BY title ORDER BY articles_of_law._id ASC";
+
     public ArrayList<Article> searchArticles(String text) {
         ArrayList<Article> articles = new ArrayList<Article>();
         Article article;
         Cursor cursor = null;
         try {
             // TODO need filter by user authorized
-//            cursor = mDataBase.rawQuery(
-//                    "SELECT * FROM articles_of_law WHERE contents LIKE ? GROUP BY title ORDER BY _id ASC",
-//                    new String[] { "%" + text + "%" });
-            cursor = mDataBase.rawQuery(queryArticlesByText, new String[] { "%"
-                    + text + "%" });
+            // cursor = mDataBase.rawQuery(
+            // "SELECT * FROM articles_of_law WHERE contents LIKE ? GROUP BY title ORDER BY _id ASC",
+            // new String[] { "%" + text + "%" });
+            cursor = mDataBase.rawQuery(queryArticlesByText, new String[] { "%" + text + "%" });
 
             while (cursor.moveToNext()) {
                 article = new Article();
@@ -889,15 +893,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     private static final String queryArticlesByTitle = "SELECT articles_of_law.* FROM articles_of_law INNER JOIN subjects_articles ON articles_of_law._id = subjects_articles.article_id JOIN user_subject ON subjects_articles.subject_id = user_subject._id WHERE articles_of_law.title LIKE ? GROUP BY title ORDER BY articles_of_law._id ASC";
+
     public ArrayList<Article> searchArticlesByTitle(String text) {
         ArrayList<Article> articles = new ArrayList<Article>();
         Article article;
         Cursor cursor = null;
         try {
             // TODO need filter by user authorized
-//            cursor = mDataBase.rawQuery(
-//                    "SELECT MIN(_id), * FROM articles_of_law WHERE title LIKE ? GROUP BY title ORDER BY _id ASC",
-//                    new String[] { "%" + text + "%" });
+            // cursor = mDataBase.rawQuery(
+            // "SELECT MIN(_id), * FROM articles_of_law WHERE title LIKE ? GROUP BY title ORDER BY _id ASC",
+            // new String[] { "%" + text + "%" });
             cursor = mDataBase.rawQuery(queryArticlesByTitle, new String[] { "%" + text + "%" });
 
             while (cursor.moveToNext()) {
@@ -1065,23 +1070,32 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean isAuthorized(int subjectId, int userId) {
-        boolean ret = false;
+        boolean ret = true;
         Cursor cursor = null;
+        Cursor cursor2 = null;
         try {
-            cursor = mDataBase.query("user_subject", null, "_id = ?", new String[] {
-                    subjectId + "" }, null, null, null);
 
-            ret = cursor.getCount() > 0;
+            cursor2 = mDataBase.query("subjects", null, "parent_id = ?", new String[] { subjectId
+                    + "" }, null, null, null);
+            if (cursor2.getCount() == 0) {
+                cursor = mDataBase.query("user_subject", null, "_id = ?", new String[] { subjectId
+                        + "" }, null, null, null);
+                ret = cursor.getCount() > 0;
+            }
+
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
         } finally {
             if (cursor != null) {
                 cursor.close();
             }
+            if (cursor2 != null) {
+                cursor2.close();
+            }
         }
 
-        //TODO:
+        // TODO:
         return ret;
-//        return true;
+        // return true;
     }
 }

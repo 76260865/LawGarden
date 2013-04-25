@@ -39,7 +39,7 @@ public class UserFragment extends Fragment {
                 mSimpleDateFormat.format(mUser.getPurchaseDate())));
         txtOverdueDate.setText(getString(R.string.txt_overdue_date_format_text,
                 mSimpleDateFormat.format(mUser.getOverdueDate())));
-        txtAboutUs.setText(mUser.getAboutUs());
+//        txtAboutUs.setText(mUser.getAboutUs());
         return view;
     }
 

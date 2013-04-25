@@ -89,6 +89,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dip"
                 android:textColor="#5A7C7C"
+                android:autoLink="all"
+                android:text="@string/txt_about_us"
                 android:textIsSelectable="true"
                 android:textSize="15sp" />
         </LinearLayout>

@@ -34,5 +34,9 @@
     <string name="text_register_text">注册 | </string>
     <string name="txt_person_center">个人中心</string>
     <string name="btn_cancel_text">取消</string>
+    <string name="txt_about_us">\t法艺花园，集法律数据与法律新闻于一体，电脑、平板、手机跨平台通用的法律查询系统。\n
+\t法艺花园，独创“法条重构”模式——拆解法规、专题重构，致力于提供法律人用得上、当事人看得懂的法律数据。\n\
+\t 法艺花园，由法艺科技联合多个律所进行数据维护，全力把中国庞大的成文法森林装点成一座法律花园。\n\n
+www.lawyer1981.com</string>
 
 </resources>

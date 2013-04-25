@@ -42,11 +42,11 @@ public class RegisterActivity extends Activity {
         if (TextUtils.isEmpty(mEditUserName.getText())
                 || TextUtils.isEmpty(mEditPassword.getText())
                 || TextUtils.isEmpty(mEditPasswordConfirm.getText())) {
-            Toast.makeText(getApplicationContext(), "«Î ‰»Îœ‡πÿ–≈œ¢", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "ËæìÂÖ•‰ø°ÊÅØ‰∏çËÉΩ‰∏∫Á©∫", Toast.LENGTH_SHORT).show();
             return;
         }
         if (!mEditPassword.getText().toString().equals(mEditPasswordConfirm.getText().toString())) {
-            Toast.makeText(getApplicationContext(), "¡Ω¥Œ ‰»Î√‹¬Î≤ªÕ¨", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "‰∏§Ê¨°ÂØÜÁ†Å‰∏ç‰∏ÄÊ†∑", Toast.LENGTH_SHORT).show();
             return;
         }
         mProgressDialog = ProgressDialog.show(this, "", "Loading. Please wait...", true);
