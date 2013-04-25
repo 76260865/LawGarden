@@ -91,14 +91,22 @@ public class JsonUtil {
                 JSONObject obj = array.getJSONObject(i);
                 UserSubjects subject = new UserSubjects();
                 subject.setDescription(obj.getString("Description"));
-                // subject.setId(obj.getInt("Id"));
+                subject.setId(obj.getInt("Id"));
                 subject.setIsPrivate(obj.getBoolean("IsPrivate") ? 1 : 0);
                 subject.setLastUpdateTime(obj.getString("LastUpdateTime"));
                 subject.setName(obj.getString("Name"));
                 subject.setOrderId(obj.getInt("OrderId"));
-                subject.setParentId(obj.getInt("Id"));
+                subject.setParentId(obj.getInt("ParentId"));
 
                 subjects.add(subject);
+                JSONArray descendantsArray = obj.getJSONArray("Descendants");
+                for (int j = 0; j < descendantsArray.length(); j++) {
+                    UserSubjects subjectDesc = new UserSubjects();
+                    subjectDesc.setId(descendantsArray.getInt(j));
+                    subjectDesc.setParentId(subject.getId());
+
+                    subjects.add(subjectDesc);
+                }
             }
             // add the subjects to db
             DataBaseHelper dbHelper = DataBaseHelper.getSingleInstance(context);
@@ -313,6 +321,11 @@ public class JsonUtil {
         String LastUpdateTimeOfNews = dbHelper.getLastUpdateNewsTime();
         String LastUpdateTimeOfSubjects = dbHelper.getLastUpdateSubjectTime();
         String LastUpdateTimeOfArticles = dbHelper.getLastUpdateArticleTime();
+        if (TextUtils.isEmpty(LastUpdateTimeOfNews) 
+                || TextUtils.isEmpty(LastUpdateTimeOfSubjects)
+                ||TextUtils.isEmpty(LastUpdateTimeOfArticles)) {
+            return true;
+        }
 
         JSONObject object = new JSONObject();
         object.put("AccessToken", sAccessToken);

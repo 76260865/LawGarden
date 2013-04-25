@@ -343,6 +343,7 @@ public class LawsFragment extends Fragment {
             if (article.isNew()) {
                 article.setNew(false);
                 mDbHelper.updateArticles(article);
+                
             }
 
             if (mArticleFragement != null) {
@@ -418,6 +419,8 @@ public class LawsFragment extends Fragment {
             final ImageView imgFavorite = (ImageView) convertView.findViewById(R.id.img_favorite);
             if (subject.isNew()) {
                 imgNew.setImageResource(R.drawable.news);
+            } else {
+                imgNew.setImageBitmap(null);
             }
             imgFavorite.setImageResource(subject.isFavorited() ? R.drawable.list_start_sect
                     : R.drawable.list_start);

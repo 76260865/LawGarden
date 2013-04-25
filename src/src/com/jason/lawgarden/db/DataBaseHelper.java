@@ -798,6 +798,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public void insertUserSubjects(ArrayList<UserSubjects> subjects) {
+        mDataBase.delete("user_subject", null, null);
         mDataBase.beginTransaction();
         for (UserSubjects subject : subjects) {
             ContentValues values = new ContentValues();
@@ -810,7 +811,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             values.put("is_private", subject.getIsPrivate());
             values.put("last_update_time", subject.getLastUpdateTime());
 
-            mDataBase.delete("user_subject", null, null);
             mDataBase.insert("user_subject", null, values);
         }
         mDataBase.setTransactionSuccessful();
@@ -827,7 +827,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             // cursor =
             // mDataBase.rawQuery("SELECT * FROM subjects WHERE name LIKE ?",
             // new String[] { "%" + text + "%" });
-            String query = "SELECT * FROM subjects JOIN user_subject ON subjects._id = user_subject._id WHERE subjects.name LIKE ? ORDER BY subjects._id ASC";
+            String query = "SELECT subjects.* FROM subjects JOIN user_subject ON subjects._id = user_subject._id WHERE subjects.name LIKE ? ORDER BY subjects._id ASC";
             cursor = mDataBase.rawQuery(query, new String[] { "%" + text + "%" });
             while (cursor.moveToNext()) {
                 subject = new Subject();
@@ -853,15 +853,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return subjects;
     }
 
+    private static final String queryArticlesByText = "SELECT articles_of_law.* FROM articles_of_law INNER JOIN subjects_articles ON articles_of_law._id = subjects_articles.article_id JOIN user_subject ON subjects_articles.subject_id = user_subject._id WHERE articles_of_law.contents LIKE ? GROUP BY title ORDER BY articles_of_law._id ASC";
     public ArrayList<Article> searchArticles(String text) {
         ArrayList<Article> articles = new ArrayList<Article>();
         Article article;
         Cursor cursor = null;
         try {
             // TODO need filter by user authorized
-            cursor = mDataBase.rawQuery(
-                    "SELECT * FROM articles_of_law WHERE contents LIKE ? GROUP BY title ORDER BY _id ASC",
-                    new String[] { "%" + text + "%" });
+//            cursor = mDataBase.rawQuery(
+//                    "SELECT * FROM articles_of_law WHERE contents LIKE ? GROUP BY title ORDER BY _id ASC",
+//                    new String[] { "%" + text + "%" });
+            cursor = mDataBase.rawQuery(queryArticlesByText, new String[] { "%"
+                    + text + "%" });
 
             while (cursor.moveToNext()) {
                 article = new Article();
@@ -885,15 +888,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return articles;
     }
 
+    private static final String queryArticlesByTitle = "SELECT articles_of_law.* FROM articles_of_law INNER JOIN subjects_articles ON articles_of_law._id = subjects_articles.article_id JOIN user_subject ON subjects_articles.subject_id = user_subject._id WHERE articles_of_law.title LIKE ? GROUP BY title ORDER BY articles_of_law._id ASC";
     public ArrayList<Article> searchArticlesByTitle(String text) {
         ArrayList<Article> articles = new ArrayList<Article>();
         Article article;
         Cursor cursor = null;
         try {
             // TODO need filter by user authorized
-            cursor = mDataBase.rawQuery(
-                    "SELECT MIN(_id), * FROM articles_of_law WHERE title LIKE ? GROUP BY title ORDER BY _id ASC",
-                    new String[] { "%" + text + "%" });
+//            cursor = mDataBase.rawQuery(
+//                    "SELECT MIN(_id), * FROM articles_of_law WHERE title LIKE ? GROUP BY title ORDER BY _id ASC",
+//                    new String[] { "%" + text + "%" });
+            cursor = mDataBase.rawQuery(queryArticlesByTitle, new String[] { "%" + text + "%" });
 
             while (cursor.moveToNext()) {
                 article = new Article();
@@ -1063,8 +1068,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         boolean ret = false;
         Cursor cursor = null;
         try {
-            cursor = mDataBase.query("user_subject", null, "user_id=? AND _id = ?", new String[] {
-                    subjectId + "", userId + "" }, null, null, null);
+            cursor = mDataBase.query("user_subject", null, "_id = ?", new String[] {
+                    subjectId + "" }, null, null, null);
 
             ret = cursor.getCount() > 0;
         } catch (SQLException ex) {
@@ -1075,7 +1080,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             }
         }
 
-        //TODO: return ret;
-        return true;
+        //TODO:
+        return ret;
+//        return true;
     }
 }

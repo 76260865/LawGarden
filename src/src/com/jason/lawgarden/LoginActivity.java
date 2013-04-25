@@ -64,7 +64,8 @@ public class LoginActivity extends Activity {
 
         mEditUserName = (EditText) findViewById(R.id.edit_user_name);
         mEditPwd = (EditText) findViewById(R.id.edit_pwd);
-        mPrefs = getSharedPreferences(EXTRA_KEY_SHARE_REFS, Context.MODE_PRIVATE);
+        mPrefs = getSharedPreferences(EXTRA_KEY_SHARE_REFS,
+                Context.MODE_PRIVATE);
         new QueryPwdTask().execute();
     }
 
@@ -79,7 +80,8 @@ public class LoginActivity extends Activity {
 
     public void onBtnLoginClick(View view) {
         if (!NetworkUtil.isNetworkConnected(this)) {
-            Toast.makeText(getApplicationContext(), "请先链接网络", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "请先链接网络",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
         mUserName = mEditUserName.getText().toString();
@@ -98,9 +100,12 @@ public class LoginActivity extends Activity {
         mProgressDialog.setContentView(R.layout.loading_dialog_layout);
         mBtnOk = (Button) mProgressDialog.findViewById(R.id.btn_ok);
         mBtnCancel = (Button) mProgressDialog.findViewById(R.id.btn_cancel);
-        mTxtLoadingInfo = (TextView) mProgressDialog.findViewById(R.id.txt_loading_info);
-        mProgressBar = (ProgressBar) mProgressDialog.findViewById(R.id.progress_loading);
-        mProgressLogin = (ProgressBar) mProgressDialog.findViewById(R.id.progress_login);
+        mTxtLoadingInfo = (TextView) mProgressDialog
+                .findViewById(R.id.txt_loading_info);
+        mProgressBar = (ProgressBar) mProgressDialog
+                .findViewById(R.id.progress_loading);
+        mProgressLogin = (ProgressBar) mProgressDialog
+                .findViewById(R.id.progress_login);
 
         mBtnOk.setOnClickListener(new OnClickListener() {
 
@@ -121,7 +126,8 @@ public class LoginActivity extends Activity {
             public void onClick(View v) {
                 mIsCaneled = true;
                 if (mMyAsyncTask == null) {
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    Intent intent = new Intent(LoginActivity.this,
+                            MainActivity.class);
                     startActivity(intent);
                     finish();
                 } else {
@@ -158,9 +164,10 @@ public class LoginActivity extends Activity {
                 return null;
             }
             if (NetworkUtil.isNetworkConnected(getApplicationContext())) {
-                // publishProgress();
+//                publishProgress();
                 try {
-                    JSONObject object = JsonUtil.ValidateToken(getApplicationContext());
+                    JSONObject object = JsonUtil
+                            .ValidateToken(getApplicationContext());
 
                     if (object == null) {
                         return null;
@@ -169,10 +176,13 @@ public class LoginActivity extends Activity {
                         if (!object.getBoolean("Valid")) {
                             // token is invalid
                             return null;
+                        } else {
+                            JsonUtil.updateUserSubjects(getApplicationContext());
                         }
                     }
 
-                    mHasUpdateData = JsonUtil.CheckAllUpdates(getApplicationContext());
+                    mHasUpdateData = JsonUtil
+                            .CheckAllUpdates(getApplicationContext());
                 } catch (JSONException e) {
                     Log.e(TAG, e.getMessage());
                 }
@@ -189,24 +199,23 @@ public class LoginActivity extends Activity {
                 mEditPwd.setText(result.getToken());
                 mCheckBox.setChecked(true);
 
-                if (mPrefs.getBoolean(EXTRA_KEY_IS_LOGINED, false)) {
-                    if (mHasUpdateData) {
-                        if (mProgressDialog == null) {
-                            initDialog();
-                        }
-                        mBtnOk.setVisibility(View.VISIBLE);
-                        mBtnCancel.setVisibility(View.VISIBLE);
-                        mTxtLoadingInfo.setText("当前应用有更新，是否需要更新?");
-                    } else {
-                        if (mProgressDialog != null) {
-                            mProgressDialog.dismiss();
-                        }
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
+                if (mHasUpdateData) {
+                    if (mProgressDialog == null) {
+                        initDialog();
                     }
-                    return;
+                    mBtnOk.setVisibility(View.VISIBLE);
+                    mBtnCancel.setVisibility(View.VISIBLE);
+                    mTxtLoadingInfo.setText("当前应用有更新，是否需要更新?");
+                } else {
+                    if (mProgressDialog != null) {
+                        mProgressDialog.dismiss();
+                    }
+                    Intent intent = new Intent(LoginActivity.this,
+                            MainActivity.class);
+                    startActivity(intent);
+                    finish();
                 }
+                return;
             } else {
                 if (mProgressDialog != null) {
                     mProgressDialog.dismiss();
@@ -251,7 +260,8 @@ public class LoginActivity extends Activity {
             JsonUtil.sUser = mDbHelper.insertOrUpdateUser(user);
 
             try {
-                mHasUpdateData = JsonUtil.CheckAllUpdates(getApplicationContext());
+                mHasUpdateData = JsonUtil
+                        .CheckAllUpdates(getApplicationContext());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -270,11 +280,13 @@ public class LoginActivity extends Activity {
             } else {
                 mProgressDialog.dismiss();
                 if (!TextUtils.isEmpty(result)) {
-                    Toast.makeText(getApplicationContext(), result + "", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), result + "",
+                            Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                Intent intent = new Intent(LoginActivity.this,
+                        MainActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -335,17 +347,19 @@ public class LoginActivity extends Activity {
                     progress.progress = 0;
                     progress.message = "更新法条";
                     publishProgress(progress);
-                    String lastUpdateTime = mDbHelper.getLastUpdateArticleTime();
+                    String lastUpdateTime = mDbHelper
+                            .getLastUpdateArticleTime();
                     int pageIndex = 0;
-                    int totalPages = JsonUtil.updateArticles(getApplicationContext(), pageIndex,
-                            lastUpdateTime);
+                    int totalPages = JsonUtil.updateArticles(
+                            getApplicationContext(), pageIndex, lastUpdateTime);
                     progress.progress = 1;
                     progress.total = totalPages;
                     while (pageIndex < totalPages && !mIsCaneled) {
-                        Log.d("LoginActivity", "pageIndex:" + pageIndex + "totalPages:"
-                                + totalPages);
+                        Log.d("LoginActivity", "pageIndex:" + pageIndex
+                                + "totalPages:" + totalPages);
                         pageIndex++;
-                        JsonUtil.updateArticles(getApplicationContext(), pageIndex, lastUpdateTime);
+                        JsonUtil.updateArticles(getApplicationContext(),
+                                pageIndex, lastUpdateTime);
                         progress.progress = pageIndex;
                         progress.message = "更新法条";
                         publishProgress(progress);
@@ -369,11 +383,13 @@ public class LoginActivity extends Activity {
         protected void onPostExecute(Boolean result) {
             mProgressDialog.dismiss();
             if (result) {
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                Intent intent = new Intent(LoginActivity.this,
+                        MainActivity.class);
                 startActivity(intent);
                 finish();
             } else {
-                Toast.makeText(getApplicationContext(), "登录失败", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "登录失败",
+                        Toast.LENGTH_SHORT).show();
             }
             if (mCheckBox.isChecked()) {
 
