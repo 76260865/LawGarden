@@ -2,6 +2,10 @@ package com.jason.lawgarden;
 
 import java.util.ArrayList;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,9 +25,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jason.lawgarden.db.DataBaseHelper;
 import com.jason.lawgarden.model.Article;
@@ -190,6 +194,31 @@ public class LawsFragment extends Fragment {
         return view;
     }
 
+    private AlertDialog alert;
+
+    private void showBuyDialog() {
+        if (alert == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("1、付费专题！请您到网站支付后查阅！\n 2、付费后，您可在所有客户端查阅专题数据。").setCancelable(true)
+                    .setPositiveButton("购买", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent intent = new Intent();
+                            intent.setAction("android.intent.action.VIEW");
+                            Uri content_url = Uri.parse("http://www.lawyer1981.com");
+                            intent.setData(content_url);
+                            startActivity(intent);
+                            dialog.cancel();
+                        }
+                    }).setNegativeButton("不购买", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            alert = builder.create();
+        }
+        alert.show();
+    }
+
     private OnCheckedChangeListener mOnCheckedChangeListener = new OnCheckedChangeListener() {
 
         @Override
@@ -212,9 +241,14 @@ public class LawsFragment extends Fragment {
                 mListArticle.setVisibility(View.VISIBLE);
                 mListArticle.setOnItemClickListener(mOnArticleItemClickListener);
 
-                new ArticlesAsyncTask().execute();
                 ((RadioButton) mRadioGroup.getChildAt(1)).setTextColor(mSelectColor);
                 mIsDetails = true;
+                if (!mDbHelper.isArticleAuthorized(mSubjectId, JsonUtil.sUser.getId())) {
+                    showBuyDialog();
+                    return;
+                }
+
+                new ArticlesAsyncTask().execute();
                 break;
             }
         }
@@ -241,7 +275,7 @@ public class LawsFragment extends Fragment {
                 mRadioGroup.getChildAt(0).setEnabled(false);
                 mRadioGroup.check(R.id.rbtn_article);
                 mRadioGroup.setVisibility(View.GONE);
-                mTxtSubjectName.setOnClickListener(new OnClickListener(){
+                mTxtSubjectName.setOnClickListener(new OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
@@ -291,7 +325,9 @@ public class LawsFragment extends Fragment {
             }
             // TODO: check if it is buyed, toast a message if not
             if (!mDbHelper.isAuthorized(subject.getId(), JsonUtil.sUser.getId())) {
-                Toast.makeText(getActivity(), "请先购买此专题", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getActivity(), "请先购买此专题",
+                // Toast.LENGTH_SHORT).show();
+                showBuyDialog();
                 return;
             }
 
@@ -343,7 +379,7 @@ public class LawsFragment extends Fragment {
             if (article.isNew()) {
                 article.setNew(false);
                 mDbHelper.updateArticles(article);
-                
+
             }
 
             if (mArticleFragement != null) {
@@ -429,10 +465,6 @@ public class LawsFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
-                    if (!mDbHelper.isAuthorized(subject.getId(), JsonUtil.sUser.getId())) {
-                        Toast.makeText(getActivity(), "请先购买此专题", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
                     if (subject.isFavorited()) {
                         mDbHelper.removeFavoriteByFavoriteIds(new int[] { subject.getId() });
                         subject.setFavorited(false);

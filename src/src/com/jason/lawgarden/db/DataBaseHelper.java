@@ -1098,4 +1098,24 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return ret;
         // return true;
     }
+
+    public boolean isArticleAuthorized(int subjectId, int userId) {
+        boolean ret = true;
+        Cursor cursor = null;
+        try {
+
+                cursor = mDataBase.query("user_subject", null, "_id = ?", new String[] { subjectId
+                        + "" }, null, null, null);
+                ret = cursor.getCount() > 0;
+
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return ret;
+    }
 }

@@ -83,7 +83,9 @@ public class LoginActivity extends Activity {
         mUserName = mEditUserName.getText().toString();
         mPwd = mEditPwd.getText().toString();
 
-        initDialog();
+        if (mProgressDialog == null) {
+            initDialog();
+        }
 
         mTxtLoadingInfo.setText("正在登陆...");
         new LoginPwdTask().execute();
@@ -119,6 +121,7 @@ public class LoginActivity extends Activity {
             public void onClick(View v) {
                 mIsCaneled = true;
                 if (mMyAsyncTask == null) {
+                    mProgressDialog.dismiss();
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();
@@ -133,6 +136,14 @@ public class LoginActivity extends Activity {
     public void onRegisterClick(View view) {
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mProgressDialog == null) {
+            mProgressDialog.dismiss();
+        }
+        super.onDestroy();
     }
 
     private class QueryPwdTask extends AsyncTask<Void, Void, User> {
