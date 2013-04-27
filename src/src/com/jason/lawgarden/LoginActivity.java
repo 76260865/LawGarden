@@ -140,7 +140,7 @@ public class LoginActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        if (mProgressDialog == null) {
+        if (mProgressDialog != null) {
             mProgressDialog.dismiss();
         }
         super.onDestroy();
