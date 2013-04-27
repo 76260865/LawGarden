@@ -2,6 +2,10 @@ package com.jason.lawgarden;
 
 import java.util.ArrayList;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,6 +28,7 @@ import android.widget.TextView;
 
 import com.jason.lawgarden.db.DataBaseHelper;
 import com.jason.lawgarden.model.Favorite;
+import com.jason.util.JsonUtil;
 
 public class MyFavoriteFragment extends Fragment {
     private DataBaseHelper mDbHelper;
@@ -188,7 +193,30 @@ public class MyFavoriteFragment extends Fragment {
             }
         }
     };
+    private AlertDialog alert;
 
+    private void showBuyDialog() {
+        if (alert == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("1、付费专题！请您到网站支付后查阅！\n 2、付费后，您可在所有客户端查阅专题数据。").setCancelable(true)
+                    .setPositiveButton("购买", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent intent = new Intent();
+                            intent.setAction("android.intent.action.VIEW");
+                            Uri content_url = Uri.parse("http://www.lawyer1981.com");
+                            intent.setData(content_url);
+                            startActivity(intent);
+                            dialog.cancel();
+                        }
+                    }).setNegativeButton("不购买", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            alert = builder.create();
+        }
+        alert.show();
+    }
     private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
 
         @Override
@@ -197,6 +225,11 @@ public class MyFavoriteFragment extends Fragment {
             Favorite favorite = mCurrentType == TYPE_SUBJECTS ? mFavoritesList
                     .get(postion) : mArticleFavoritesList.get(postion);
             if (favorite.getFavoriteType() == 0) {
+                
+                if(!mDbHelper.isAuthorized(favorite.getFavoriteId(), JsonUtil.sUser.getId())) {
+                    showBuyDialog();
+                    return;
+                }
                 Bundle bundle = new Bundle();
                 bundle.putInt(LawsFragment.EXTRA_KEY_SUBJECT_ID,
                         favorite.getFavoriteId());

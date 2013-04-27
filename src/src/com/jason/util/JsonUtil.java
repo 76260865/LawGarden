@@ -43,7 +43,7 @@ public class JsonUtil {
         if (objectRet.getBoolean("ExecutionResult")) {
             Log.d(TAG, "register:sucess");
             // sAccessToken = objectRet.getString("AccessToken");
-            message[0] = "ע��ɹ�";
+            message[0] = "注册成功";
             return true;
         } else {
             message[0] = objectRet.getString("Message");
