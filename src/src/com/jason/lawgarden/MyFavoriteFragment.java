@@ -258,13 +258,13 @@ public class MyFavoriteFragment extends Fragment {
                 transaction.commit();
             } else {
                 if (mArticleListFragment == null) {
-                    //TODO:
-//                    if (!mDbHelper.isArticleAuthorized2(mDbHelper
-//                            .getArticleById(favorite.getFavoriteId())
-//                            .getSubjects(), JsonUtil.sUser.getId())) {
-//                        showBuyDialog();
-//                        return;
-//                    }
+                    // TODO:
+                    // if (!mDbHelper.isArticleAuthorized2(mDbHelper
+                    // .getArticleById(favorite.getFavoriteId())
+                    // .getSubjects(), JsonUtil.sUser.getId())) {
+                    // showBuyDialog();
+                    // return;
+                    // }
                     Bundle bundle = new Bundle();
                     bundle.putString(ArticleFragement.EXTRA_KEY_ARTICLE_TITLE,
                             favorite.getTitle());
