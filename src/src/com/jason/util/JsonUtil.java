@@ -37,6 +37,10 @@ public class JsonUtil {
         object.put("Password", password);
 
         String appListString = HttpUtil.doPost(SERVICE_URI + "/Register", object);
+        if (TextUtils.isEmpty(appListString)) {
+            message[0] = "网络错误";
+            return false;
+        }
         JSONObject objectRet = new JSONObject(appListString);
         if (TextUtils.isEmpty(appListString)) {
             return false;
@@ -113,9 +117,18 @@ public class JsonUtil {
             DataBaseHelper dbHelper = DataBaseHelper.getSingleInstance(context);
             dbHelper.insertUserSubjects(subjects);
 
-            JsonUtil.sUser.setPurchaseDate(renderJsonDate(objectRet.getString("SubscriptionStart")));
-            JsonUtil.sUser.setOverdueDate(renderJsonDate(objectRet.getString("SubscriptionEnd")));
-            dbHelper.insertOrUpdateUser(JsonUtil.sUser);
+            //TODO
+//            String timeString = HttpUtil.doPost(SERVICE_URI + "/GetValidRootSubjects", object);
+//            if (TextUtils.isEmpty(timeString)) {
+//                Log.d(TAG, "GetValidRootSubjects api error");
+//                return;
+//            }
+//            JSONObject objectRet1 = new JSONObject(timeString);
+//            if (objectRet1.getBoolean("ExecutionResult")) {
+//                JsonUtil.sUser.setPurchaseDate(renderJsonDate(objectRet1.getString("SubscriptionStart")));
+//                JsonUtil.sUser.setOverdueDate(renderJsonDate(objectRet1.getString("SubscriptionEnd")));
+//                dbHelper.insertOrUpdateUser(JsonUtil.sUser);
+//            }
         }
     }
 

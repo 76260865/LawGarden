@@ -465,6 +465,12 @@ public class LawsFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
+                    if (!mDbHelper.isTheLastSubjectsAndAuthorized(JsonUtil.sUser.getId(),
+                            subject.getId())) {
+                        showBuyDialog();
+                        return;
+                    }
+
                     if (subject.isFavorited()) {
                         mDbHelper.removeFavoriteByFavoriteIds(new int[] { subject.getId() });
                         subject.setFavorited(false);

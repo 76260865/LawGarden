@@ -85,6 +85,8 @@ public class LoginActivity extends Activity {
 
         if (mProgressDialog == null) {
             initDialog();
+        } else if (!mProgressDialog.isShowing()) {
+            mProgressDialog.show();
         }
 
         mTxtLoadingInfo.setText("正在登陆...");

@@ -3,6 +3,7 @@ package com.jason.lawgarden;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,6 +29,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
@@ -68,8 +70,6 @@ public class SearchFragment extends Fragment {
 
     private TextView txt_no_data;
 
-    private SearchLawsAsyncTask mSearchLawsAsyncTask;
-
     private SearchArticlesAsyncTask mSearchArticlesAsyncTask;
 
     private FragmentManager mFragmentManager;
@@ -94,6 +94,7 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_list_layout, container, false);
+        mEditSearch = (EditText) view.findViewById(R.id.edit_search);
         mListLaw = (ListView) view.findViewById(R.id.list_law);
         mListLaw.setAdapter(mAdapter);
         mListArticle = (ListView) view.findViewById(R.id.list_articles);
@@ -103,11 +104,9 @@ public class SearchFragment extends Fragment {
         btn_cancel = (Button) view.findViewById(R.id.btn_cancel);
         btn_cancel.setOnClickListener(mOnBtnCancelClickListener);
         mRadioGroup = (RadioGroup) view.findViewById(R.id.rgrp_top);
+        ((RadioButton) mRadioGroup.getChildAt(0)).setChecked(true);
         mRadioGroup.setOnCheckedChangeListener(mOnCheckedChangeListener);
 
-        ((RadioButton) mRadioGroup.getChildAt(0)).setChecked(true);
-
-        mEditSearch = (EditText) view.findViewById(R.id.edit_search);
         mEditSearch.setOnEditorActionListener(mOnEditorActionListener);
         mEditSearch.requestFocus();
         return view;
@@ -135,28 +134,26 @@ public class SearchFragment extends Fragment {
 
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-
+            if (mProgressDialog == null) {
+                initDialog();
+            } else {
+                mProgressDialog.show();
+            }
+            if (mSearchArticlesAsyncTask != null) {
+                mSearchArticlesAsyncTask.cancel(true);
+            }
             // if (actionId == EditorInfo.IME_ACTION_SEARCH) {
             switch (mRadioGroup.getCheckedRadioButtonId()) {
             case R.id.rbtn_subject:
-                if (mSearchLawsAsyncTask != null) {
-                    mSearchLawsAsyncTask.cancel(true);
-                }
-                mSearchLawsAsyncTask = new SearchLawsAsyncTask();
-                mSearchLawsAsyncTask.execute();
+                mSearchArticlesAsyncTask = new SearchArticlesAsyncTask(SearchType.LAW);
+                mSearchArticlesAsyncTask.execute();
                 break;
             case R.id.rbtn_article:
-                if (mSearchArticlesAsyncTask != null) {
-                    mSearchArticlesAsyncTask.cancel(true);
-                }
-                mSearchArticlesAsyncTask = new SearchArticlesAsyncTask(false);
+                mSearchArticlesAsyncTask = new SearchArticlesAsyncTask(SearchType.ARTICLE_CONTENT);
                 mSearchArticlesAsyncTask.execute();
                 break;
             case R.id.rbtn_title_text:
-                if (mSearchArticlesAsyncTask != null) {
-                    mSearchArticlesAsyncTask.cancel(true);
-                }
-                mSearchArticlesAsyncTask = new SearchArticlesAsyncTask(true);
+                mSearchArticlesAsyncTask = new SearchArticlesAsyncTask(SearchType.ARTICLE_TITLE);
                 mSearchArticlesAsyncTask.execute();
                 break;
             }
@@ -170,9 +167,6 @@ public class SearchFragment extends Fragment {
     public void onDestroy() {
         if (mSearchArticlesAsyncTask != null) {
             mSearchArticlesAsyncTask.cancel(true);
-        }
-        if (mSearchLawsAsyncTask != null) {
-            mSearchLawsAsyncTask.cancel(true);
         }
         super.onDestroy();
     }
@@ -188,7 +182,7 @@ public class SearchFragment extends Fragment {
         }
     };
 
-    private class SearchLawsAsyncTask extends AsyncTask<Void, Void, Void> {
+    private class SearchLawsAsyncTask1 extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -205,21 +199,31 @@ public class SearchFragment extends Fragment {
 
     }
 
+    private enum SearchType {
+        LAW, ARTICLE_TITLE, ARTICLE_CONTENT
+    }
+
     private class SearchArticlesAsyncTask extends AsyncTask<Void, Void, Void> {
 
-        private boolean mIsTitle = false;
+        private SearchType mType;
 
-        SearchArticlesAsyncTask(boolean isTitle) {
-            mIsTitle = isTitle;
+        SearchArticlesAsyncTask(SearchType type) {
+            mType = type;
         }
 
         @Override
         protected Void doInBackground(Void... params) {
             if (!TextUtils.isEmpty(mEditSearch.getText())) {
-                if (mIsTitle) {
+                switch (mType) {
+                case LAW:
+                    mSubjects = mDbHelper.searchSubjects(mEditSearch.getText() + "");
+                    break;
+                case ARTICLE_TITLE:
                     mArticles = mDbHelper.searchArticlesByTitle(mEditSearch.getText() + "");
-                } else {
+                    break;
+                case ARTICLE_CONTENT:
                     mArticles = mDbHelper.searchArticles(mEditSearch.getText() + "");
+                    break;
                 }
             }
             return null;
@@ -227,7 +231,18 @@ public class SearchFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Void result) {
-            mArticleAdapter.notifyDataSetChanged();
+            switch (mType) {
+            case LAW:
+                mAdapter.notifyDataSetChanged();
+                break;
+            case ARTICLE_TITLE:
+            case ARTICLE_CONTENT:
+                mArticleAdapter.notifyDataSetChanged();
+                break;
+            }
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+            }
         }
     }
 
@@ -235,6 +250,17 @@ public class SearchFragment extends Fragment {
 
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
+            if (TextUtils.isEmpty(mEditSearch.getText())) {
+                return;
+            }
+            if (mProgressDialog == null) {
+                initDialog();
+            } else {
+                mProgressDialog.show();
+            }
+            if (mSearchArticlesAsyncTask != null) {
+                mSearchArticlesAsyncTask.cancel(true);
+            }
             txt_no_data.setVisibility(View.GONE);
             ((RadioButton) mRadioGroup.getChildAt(0)).setTextColor(mNormalColor);
             ((RadioButton) mRadioGroup.getChildAt(1)).setTextColor(mNormalColor);
@@ -245,11 +271,8 @@ public class SearchFragment extends Fragment {
                 mListArticle.setVisibility(View.GONE);
                 mListLaw.setOnItemClickListener(mOnItemClickListener);
 
-                if (mSearchLawsAsyncTask != null) {
-                    mSearchLawsAsyncTask.cancel(true);
-                }
-                mSearchLawsAsyncTask = new SearchLawsAsyncTask();
-                mSearchLawsAsyncTask.execute();
+                mSearchArticlesAsyncTask = new SearchArticlesAsyncTask(SearchType.LAW);
+                mSearchArticlesAsyncTask.execute();
                 ((RadioButton) mRadioGroup.getChildAt(0)).setTextColor(mSelectColor);
                 break;
             case R.id.rbtn_article:
@@ -257,10 +280,7 @@ public class SearchFragment extends Fragment {
                 mListArticle.setVisibility(View.VISIBLE);
                 mListArticle.setOnItemClickListener(mOnArticleItemClickListener);
 
-                if (mSearchArticlesAsyncTask != null) {
-                    mSearchArticlesAsyncTask.cancel(true);
-                }
-                mSearchArticlesAsyncTask = new SearchArticlesAsyncTask(false);
+                mSearchArticlesAsyncTask = new SearchArticlesAsyncTask(SearchType.ARTICLE_CONTENT);
                 mSearchArticlesAsyncTask.execute();
                 ((RadioButton) mRadioGroup.getChildAt(2)).setTextColor(mSelectColor);
                 break;
@@ -268,10 +288,7 @@ public class SearchFragment extends Fragment {
                 mListLaw.setVisibility(View.GONE);
                 mListArticle.setVisibility(View.VISIBLE);
                 mListArticle.setOnItemClickListener(mOnArticleItemClickListener);
-                if (mSearchArticlesAsyncTask != null) {
-                    mSearchArticlesAsyncTask.cancel(true);
-                }
-                mSearchArticlesAsyncTask = new SearchArticlesAsyncTask(true);
+                mSearchArticlesAsyncTask = new SearchArticlesAsyncTask(SearchType.ARTICLE_TITLE);
                 mSearchArticlesAsyncTask.execute();
                 ((RadioButton) mRadioGroup.getChildAt(1)).setTextColor(mSelectColor);
                 break;
@@ -302,6 +319,18 @@ public class SearchFragment extends Fragment {
             alert = builder.create();
         }
         alert.show();
+    }
+
+    private ProgressDialog mProgressDialog;
+    private TextView mTxtLoadingInfo;
+
+    private void initDialog() {
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.show();
+        mProgressDialog.setContentView(R.layout.loading_dialog_layout);
+        mTxtLoadingInfo = (TextView) mProgressDialog.findViewById(R.id.txt_loading_info);
+        mTxtLoadingInfo.setText("正在搜索。。。");
     }
 
     private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
@@ -360,14 +389,14 @@ public class SearchFragment extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int postion, long id) {
             Article article = mArticles.get(postion);
-            if (TextUtils.isEmpty( article.getSubjects())) {
-                showBuyDialog();
-                return;
-            }
-            if(!mDbHelper.isArticleAuthorized2(article.getSubjects(), JsonUtil.sUser.getId())) {
-                showBuyDialog();
-                return;
-            }
+//            if (TextUtils.isEmpty(article.getSubjects())) {
+//                showBuyDialog();
+//                return;
+//            }
+//            if (!mDbHelper.isArticleAuthorized2(article.getSubjects(), JsonUtil.sUser.getId())) {
+//                showBuyDialog();
+//                return;
+//            }
             if (article.isNew()) {
                 article.setNew(false);
                 mDbHelper.updateArticles(article);

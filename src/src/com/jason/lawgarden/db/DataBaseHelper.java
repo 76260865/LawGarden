@@ -111,8 +111,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             String myPath = mDbPath + DB_NAME;
             File file = new File(myPath);
             if (file.exists()) {
-                checkDB = SQLiteDatabase.openDatabase(myPath, null,
-                        SQLiteDatabase.OPEN_READONLY);
+                checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
             }
 
         } catch (SQLiteException e) {
@@ -134,8 +133,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
      * */
     private void copyDataBase() {
         // Open your local db as the input stream
-        InputStream inputStream = mContext.getResources().openRawResource(
-                R.raw.law_garden_db);// .getAssets().open(DB_NAME);
+        InputStream inputStream = mContext.getResources().openRawResource(R.raw.law_garden_db);// .getAssets().open(DB_NAME);
         // Path to the just created empty db
         String outFileName = mDbPath + DB_NAME;
 
@@ -174,8 +172,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public void openDataBase() throws SQLException {
         // Open the database
         String myPath = mDbPath + DB_NAME;
-        mDataBase = SQLiteDatabase.openDatabase(myPath, null,
-                SQLiteDatabase.OPEN_READWRITE);
+        mDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
     }
 
     @Override
@@ -206,8 +203,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     // to you to create adapters for your views.
 
     public void testDb() {
-        Cursor cursor = mDataBase.query("user_info", new String[] {
-                "user_name", "service_type" }, null, null, null, null, null);
+        Cursor cursor = mDataBase.query("user_info", new String[] { "user_name", "service_type" },
+                null, null, null, null, null);
         Log.d("SplashActivity", cursor.getCount() + "");
         cursor.close();
         ContentValues values = new ContentValues();
@@ -217,13 +214,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Log.d("SplashActivity", "row_id:" + id);
         id = mDataBase.insertOrThrow("user_info", null, values);
         Log.d("SplashActivity", "row_id:" + id);
-        Cursor cursor1 = mDataBase.query("user_info", new String[] {
-                "user_name", "service_type" }, null, null, null, null, null);
+        Cursor cursor1 = mDataBase.query("user_info", new String[] { "user_name", "service_type" },
+                null, null, null, null, null);
         Log.d("SplashActivity", cursor1.getCount() + "");
     }
 
-    public static final String[] SUBJECTS_PROJECTION = { "_id", "parent_id",
-            "name", "description", "is_new" };
+    public static final String[] SUBJECTS_PROJECTION = { "_id", "parent_id", "name", "description",
+            "is_new" };
 
     public ArrayList<Subject> getSubjectsByParentId(int parentId) {
         ArrayList<Subject> subjects = new ArrayList<Subject>();
@@ -231,20 +228,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase.query("subjects", SUBJECTS_PROJECTION,
-                    "parent_id=" + parentId, null, null, null, "order_id ASC");
+            cursor = mDataBase.query("subjects", SUBJECTS_PROJECTION, "parent_id=" + parentId,
+                    null, null, null, "order_id ASC");
 
             while (cursor.moveToNext()) {
                 subject = new Subject();
 
                 subject.setId(cursor.getInt(cursor.getColumnIndex("_id")));
-                subject.setParentId(cursor.getInt(cursor
-                        .getColumnIndex("parent_id")));
+                subject.setParentId(cursor.getInt(cursor.getColumnIndex("parent_id")));
                 subject.setName(cursor.getString(cursor.getColumnIndex("name")));
-                subject.setDescription(cursor.getString(cursor
-                        .getColumnIndex("description")));
-                subject.setNew(cursor.getInt(cursor.getColumnIndex("is_new")) == 0 ? false
-                        : true);
+                subject.setDescription(cursor.getString(cursor.getColumnIndex("description")));
+                subject.setNew(cursor.getInt(cursor.getColumnIndex("is_new")) == 0 ? false : true);
 
                 subjects.add(subject);
             }
@@ -263,9 +257,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase.query("user_subject", null,
-                    "user_id = ? AND parent_id=?", new String[] { userId + "",
-                            parentId + "" }, null, null, null);
+            cursor = mDataBase.query("user_subject", null, "user_id = ? AND parent_id=?",
+                    new String[] { userId + "", parentId + "" }, null, null, null);
             return cursor.getCount() > 0;
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
@@ -275,6 +268,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             }
         }
         return false;
+    }
+
+    public boolean isTheLastSubjectsAndAuthorized(int userId, int parentId) {
+        ArrayList<Subject> subjects = getSubjectsByParentId(parentId);
+        if (subjects.size() == 0) {
+            return isSubjectAthorized(userId, parentId);
+        }
+        return true;
     }
 
     public ArrayList<Subject> getSubjectsByUserId(int userId) {
@@ -292,13 +293,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 subject = new Subject();
 
                 subject.setId(cursor.getInt(cursor.getColumnIndex("_id")));
-                subject.setParentId(cursor.getInt(cursor
-                        .getColumnIndex("parent_id")));
+                subject.setParentId(cursor.getInt(cursor.getColumnIndex("parent_id")));
                 subject.setName(cursor.getString(cursor.getColumnIndex("name")));
-                subject.setDescription(cursor.getString(cursor
-                        .getColumnIndex("description")));
-                subject.setNew(cursor.getInt(cursor.getColumnIndex("is_new")) == 0 ? false
-                        : true);
+                subject.setDescription(cursor.getString(cursor.getColumnIndex("description")));
+                subject.setNew(cursor.getInt(cursor.getColumnIndex("is_new")) == 0 ? false : true);
 
                 subjects.add(subject);
             }
@@ -320,21 +318,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Article article;
         Cursor cursor = null;
         try {
-            cursor = mDataBase.rawQuery(SQL_SELECT_ARTICLES_BY_SUBJECTID,
-                    new String[] { SubjectId + "" });
+            cursor = mDataBase.rawQuery(SQL_SELECT_ARTICLES_BY_SUBJECTID, new String[] { SubjectId
+                    + "" });
 
             while (cursor.moveToNext()) {
                 article = new Article();
 
                 article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
-                article.setTitle(cursor.getString(cursor
-                        .getColumnIndex("title")));
-                article.setContents(cursor.getString(cursor
-                        .getColumnIndex("contents")));
+                article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                article.setContents(cursor.getString(cursor.getColumnIndex("contents")));
                 article.setLastUpdateTime(cursor.getString(cursor
                         .getColumnIndex("last_update_time")));
-                article.setNew(cursor.getInt(cursor.getColumnIndex("new")) == 0 ? false
-                        : true);
+                article.setNew(cursor.getInt(cursor.getColumnIndex("new")) == 0 ? false : true);
 
                 articles.add(article);
             }
@@ -352,8 +347,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         boolean ret = false;
         Cursor cursor = null;
         try {
-            cursor = mDataBase.rawQuery(SQL_SELECT_ARTICLES_BY_SUBJECTID,
-                    new String[] { subjectId + "" });
+            cursor = mDataBase.rawQuery(SQL_SELECT_ARTICLES_BY_SUBJECTID, new String[] { subjectId
+                    + "" });
 
             ret = cursor.getCount() > 0;
         } catch (SQLException ex) {
@@ -366,8 +361,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return ret;
     }
 
-    private static final String[] NEWS_PROJECTION = { "_id", "title",
-            "content", "create_time", "uri", "came_from", "img_byte" };
+    private static final String[] NEWS_PROJECTION = { "_id", "title", "content", "create_time",
+            "uri", "came_from", "img_byte" };
 
     public ArrayList<News> getAllNews() {
         ArrayList<News> newsList = new ArrayList<News>();
@@ -376,22 +371,19 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase.query("news", NEWS_PROJECTION, null, null, null,
-                    null, "last_update_time DESC");
+            cursor = mDataBase.query("news", NEWS_PROJECTION, null, null, null, null,
+                    "last_update_time DESC");
             while (cursor.moveToNext()) {
                 news = new News();
 
                 news.setId(cursor.getInt(cursor.getColumnIndex("_id")));
                 news.setTitle(cursor.getString(cursor.getColumnIndex("title")));
-                news.setContent(cursor.getString(cursor
-                        .getColumnIndex("content")));
+                news.setContent(cursor.getString(cursor.getColumnIndex("content")));
                 news.setCrateTime(format.parse(cursor.getString(cursor
                         .getColumnIndex("create_time"))));
-                news.setFrom(cursor.getString(cursor
-                        .getColumnIndex("came_from")));
+                news.setFrom(cursor.getString(cursor.getColumnIndex("came_from")));
                 news.setUri(cursor.getString(cursor.getColumnIndex("uri")));
-                news.setBmpByte(cursor.getBlob(cursor
-                        .getColumnIndex("img_byte")));
+                news.setBmpByte(cursor.getBlob(cursor.getColumnIndex("img_byte")));
 
                 newsList.add(news);
             }
@@ -413,22 +405,19 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase.query("news", NEWS_PROJECTION, "_id = " + id,
-                    null, null, null, "create_time");
+            cursor = mDataBase.query("news", NEWS_PROJECTION, "_id = " + id, null, null, null,
+                    "create_time");
             if (cursor.moveToFirst()) {
                 news = new News();
 
                 news.setId(cursor.getInt(cursor.getColumnIndex("_id")));
                 news.setTitle(cursor.getString(cursor.getColumnIndex("title")));
-                news.setContent(cursor.getString(cursor
-                        .getColumnIndex("content")));
+                news.setContent(cursor.getString(cursor.getColumnIndex("content")));
                 news.setCrateTime(format.parse(cursor.getString(cursor
                         .getColumnIndex("create_time"))));
-                news.setFrom(cursor.getString(cursor
-                        .getColumnIndex("came_from")));
+                news.setFrom(cursor.getString(cursor.getColumnIndex("came_from")));
                 news.setUri(cursor.getString(cursor.getColumnIndex("uri")));
-                news.setBmpByte(cursor.getBlob(cursor
-                        .getColumnIndex("img_byte")));
+                news.setBmpByte(cursor.getBlob(cursor.getColumnIndex("img_byte")));
             }
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
@@ -442,8 +431,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return news;
     }
 
-    private static final String[] FAVORITE_PROJECTION = { "_id", "title",
-            "favorite_type", "favorite_id" };
+    private static final String[] FAVORITE_PROJECTION = { "_id", "title", "favorite_type",
+            "favorite_id" };
 
     public ArrayList<Favorite> getAllFavorites() {
         ArrayList<Favorite> favorites = new ArrayList<Favorite>();
@@ -451,19 +440,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase.query("favorites", FAVORITE_PROJECTION,
-                    "user_id = " + JsonUtil.sUser.getId(), null, null, null,
-                    "favorite_id ASC");
+            cursor = mDataBase.query("favorites", FAVORITE_PROJECTION, "user_id = "
+                    + JsonUtil.sUser.getId(), null, null, null, "favorite_id ASC");
             while (cursor.moveToNext()) {
                 favorite = new Favorite();
 
                 favorite.setId(cursor.getInt(cursor.getColumnIndex("_id")));
-                favorite.setTitle(cursor.getString(cursor
-                        .getColumnIndex("title")));
-                favorite.setFavoriteType(cursor.getInt(cursor
-                        .getColumnIndex("favorite_type")));
-                favorite.setFavoriteId(cursor.getInt(cursor
-                        .getColumnIndex("favorite_id")));
+                favorite.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                favorite.setFavoriteType(cursor.getInt(cursor.getColumnIndex("favorite_type")));
+                favorite.setFavoriteId(cursor.getInt(cursor.getColumnIndex("favorite_id")));
                 favorite.setFavorited(true);
 
                 favorites.add(favorite);
@@ -484,8 +469,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase.query("favorites", FAVORITE_PROJECTION,
-                    "favorite_id=" + favoriteId, null, null, null, null);
+            cursor = mDataBase.query("favorites", FAVORITE_PROJECTION, "favorite_id=" + favoriteId,
+                    null, null, null, null);
             isFavorited = cursor.getCount() > 0;
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
@@ -502,8 +487,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase.query("favorites", FAVORITE_PROJECTION,
-                    "title='" + title + "'", null, null, null, null);
+            cursor = mDataBase.query("favorites", FAVORITE_PROJECTION, "title='" + title + "'",
+                    null, null, null, null);
             isFavorited = cursor.getCount() > 0;
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
@@ -520,16 +505,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase.query("articles_of_law", null, "_id=" + id,
-                    null, null, null, null);
+            cursor = mDataBase.query("articles_of_law", null, "_id=" + id, null, null, null, null);
             if (cursor.moveToFirst()) {
                 article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
-                article.setTitle(cursor.getString(cursor
-                        .getColumnIndex("title")));
-                article.setContents(cursor.getString(cursor
-                        .getColumnIndex("contents")));
-                article.setSubjects(cursor.getString(cursor
-                        .getColumnIndex("subjects")));
+                article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                article.setContents(cursor.getString(cursor.getColumnIndex("contents")));
+                article.setSubjects(cursor.getString(cursor.getColumnIndex("subjects")));
             }
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
@@ -549,8 +530,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase.query("articles_of_law", null, "title='" + title
-                    + "'", null, null, null, null);
+            cursor = mDataBase.query("articles_of_law", null, "title='" + title + "'", null, null,
+                    null, null);
             while (cursor.moveToNext()) {
                 // article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
                 // article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
@@ -573,23 +554,20 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase.query("user_info", null, "user_name='"
-                    + userName + "'", null, null, null, null);
+            cursor = mDataBase.query("user_info", null, "user_name='" + userName + "'", null, null,
+                    null, null);
             if (cursor.moveToFirst()) {
                 user.setId(cursor.getInt(cursor.getColumnIndex("_id")));
-                user.setUserName(cursor.getString(cursor
-                        .getColumnIndex("user_name")));
-                user.setServiceType(cursor.getInt(cursor
-                        .getColumnIndex("service_type")));
+                user.setUserName(cursor.getString(cursor.getColumnIndex("user_name")));
+                user.setServiceType(cursor.getInt(cursor.getColumnIndex("service_type")));
                 user.setPurchaseDate(new Date((long) cursor.getDouble(cursor
                         .getColumnIndex("purchase_date"))));
                 user.setOverdueDate(new Date((long) cursor.getDouble(cursor
                         .getColumnIndex("overdue_date"))));
-                user.setAboutUs(cursor.getString(cursor
-                        .getColumnIndex("about_us")));
+                user.setAboutUs(cursor.getString(cursor.getColumnIndex("about_us")));
                 user.setToken(cursor.getString(cursor.getColumnIndex("token")));
-                user.setRememberPwd(cursor.getInt(cursor
-                        .getColumnIndex("is_remember_pwd")) == 1 ? true : false);
+                user.setRememberPwd(cursor.getInt(cursor.getColumnIndex("is_remember_pwd")) == 1 ? true
+                        : false);
             }
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
@@ -637,8 +615,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             if (!isExistSubject(subject)) {
                 mDataBase.insert("subjects", null, values);
             } else {
-                mDataBase.update("subjects", values,
-                        "_id = " + subject.getId(), null);
+                mDataBase.update("subjects", values, "_id = " + subject.getId(), null);
             }
         }
 
@@ -698,12 +675,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase.query(
-                    "subjects_articles",
-                    null,
-                    "article_id=? and subject_id=?",
-                    new String[] { article.getArticleId() + "",
-                            article.getSubjectId() + "" }, null, null, null);
+            cursor = mDataBase.query("subjects_articles", null, "article_id=? and subject_id=?",
+                    new String[] { article.getArticleId() + "", article.getSubjectId() + "" },
+                    null, null, null);
             if (cursor.getCount() > 0) {
                 return true;
             }
@@ -733,8 +707,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             if (!isExistArticle(article)) {
                 mDataBase.insert("articles_of_law", null, values);
             } else {
-                mDataBase.update("articles_of_law", values,
-                        "_id=" + article.getId(), null);
+                mDataBase.update("articles_of_law", values, "_id=" + article.getId(), null);
             }
 
             String[] subjectIds = article.getSubjects().split(",");
@@ -749,11 +722,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
                 if (!isExistSubjectArticle(subjectArticle)) {
                     valuesSubjectArticles.put("article_id", article.getId());
-                    valuesSubjectArticles
-                            .put("subject_id", Integer.valueOf(id));
+                    valuesSubjectArticles.put("subject_id", Integer.valueOf(id));
 
-                    mDataBase.insert("subjects_articles", null,
-                            valuesSubjectArticles);
+                    mDataBase.insert("subjects_articles", null, valuesSubjectArticles);
                 }
             }
         }
@@ -774,8 +745,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         values.put("contents", article.getContents());
         values.put("last_update_time", article.getLastUpdateTime());
         values.put("is_new", article.isNew());
-        mDataBase.update("articles_of_law", values, "_id=" + article.getId(),
-                null);
+        mDataBase.update("articles_of_law", values, "_id=" + article.getId(), null);
     }
 
     public void updateSubject(Subject article) {
@@ -800,9 +770,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase.query("favorites", null,
-                    "title='" + favorite.getTitle() + "'", null, null, null,
-                    null);
+            cursor = mDataBase.query("favorites", null, "title='" + favorite.getTitle() + "'",
+                    null, null, null, null);
             if (cursor.getCount() > 0) {
                 return true;
             }
@@ -827,12 +796,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase.query(
-                    "user_subject",
-                    null,
-                    "user_id=? and parent_id=?",
-                    new String[] { userSubject.getUserId() + "",
-                            userSubject.getParentId() + "" }, null, null, null);
+            cursor = mDataBase.query("user_subject", null, "user_id=? and parent_id=?",
+                    new String[] { userSubject.getUserId() + "", userSubject.getParentId() + "" },
+                    null, null, null);
             if (cursor.getCount() > 0) {
                 return true;
             }
@@ -873,8 +839,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         try {
             // TODO: filter the result by authorized
-            cursor = mDataBase.rawQuery(
-                    "SELECT * FROM subjects WHERE name LIKE ?",
+            cursor = mDataBase.rawQuery("SELECT * FROM subjects WHERE name LIKE ?",
                     new String[] { "%" + text + "%" });
             // String query =
             // "SELECT subjects.* FROM subjects JOIN user_subject ON subjects._id = user_subject._id WHERE subjects.name LIKE ? ORDER BY subjects._id ASC";
@@ -884,15 +849,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 subject = new Subject();
 
                 subject.setId(cursor.getInt(cursor.getColumnIndex("_id")));
-                subject.setParentId(cursor.getInt(cursor
-                        .getColumnIndex("parent_id")));
+                subject.setParentId(cursor.getInt(cursor.getColumnIndex("parent_id")));
                 subject.setName(cursor.getString(cursor.getColumnIndex("name")));
-                subject.setDescription(cursor.getString(cursor
-                        .getColumnIndex("description")));
+                subject.setDescription(cursor.getString(cursor.getColumnIndex("description")));
                 subject.setLastUpdateTime(cursor.getString(cursor
                         .getColumnIndex("last_update_time")));
-                subject.setNew(cursor.getInt(cursor.getColumnIndex("is_new")) == 0 ? false
-                        : true);
+                subject.setNew(cursor.getInt(cursor.getColumnIndex("is_new")) == 0 ? false : true);
 
                 subjects.add(subject);
             }
@@ -926,16 +888,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 article = new Article();
 
                 article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
-                article.setTitle(cursor.getString(cursor
-                        .getColumnIndex("title")));
-                article.setContents(cursor.getString(cursor
-                        .getColumnIndex("contents")));
-                article.setNew(cursor.getInt(cursor.getColumnIndex("is_new")) == 0 ? false
-                        : true);
+                article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                article.setContents(cursor.getString(cursor.getColumnIndex("contents")));
+                article.setNew(cursor.getInt(cursor.getColumnIndex("is_new")) == 0 ? false : true);
                 article.setLastUpdateTime(cursor.getString(cursor
                         .getColumnIndex("last_update_time")));
-                article.setSubjects(cursor.getString(cursor
-                        .getColumnIndex("subjects")));
+                article.setSubjects(cursor.getString(cursor.getColumnIndex("subjects")));
 
                 articles.add(article);
             }
@@ -957,26 +915,23 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
         try {
             // TODO need filter by user authorized
-            // cursor = mDataBase.rawQuery(
-            // "SELECT MIN(_id), * FROM articles_of_law WHERE title LIKE ? GROUP BY title ORDER BY _id ASC",
+            cursor = mDataBase
+                    .rawQuery(
+                            "SELECT MIN(_id), * FROM articles_of_law WHERE title LIKE ? GROUP BY title ORDER BY _id ASC",
+                            new String[] { "%" + text + "%" });
+            // cursor = mDataBase.rawQuery(queryArticlesByTitle,
             // new String[] { "%" + text + "%" });
-            cursor = mDataBase.rawQuery(queryArticlesByTitle,
-                    new String[] { "%" + text + "%" });
 
             while (cursor.moveToNext()) {
                 article = new Article();
 
                 article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
-                article.setTitle(cursor.getString(cursor
-                        .getColumnIndex("title")));
-                article.setContents(cursor.getString(cursor
-                        .getColumnIndex("contents")));
-                article.setNew(cursor.getInt(cursor.getColumnIndex("is_new")) == 0 ? false
-                        : true);
+                article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                article.setContents(cursor.getString(cursor.getColumnIndex("contents")));
+                article.setNew(cursor.getInt(cursor.getColumnIndex("is_new")) == 0 ? false : true);
                 article.setLastUpdateTime(cursor.getString(cursor
                         .getColumnIndex("last_update_time")));
-                article.setSubjects(cursor.getString(cursor
-                        .getColumnIndex("subjects")));
+                article.setSubjects(cursor.getString(cursor.getColumnIndex("subjects")));
 
                 articles.add(article);
             }
@@ -994,8 +949,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         boolean ret = false;
         Cursor cursor = null;
         try {
-            cursor = mDataBase.query("user_info", null, "user_name='"
-                    + userName + "'", null, null, null, null);
+            cursor = mDataBase.query("user_info", null, "user_name='" + userName + "'", null, null,
+                    null, null);
 
             ret = cursor.getCount() > 0;
         } catch (SQLException ex) {
@@ -1025,26 +980,23 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         User user = null;
         Cursor cursor = null;
         try {
-            cursor = mDataBase.query("user_info", null, "is_remember_pwd=1",
-                    null, null, null, null);
+            cursor = mDataBase
+                    .query("user_info", null, "is_remember_pwd=1", null, null, null, null);
 
             if (cursor.moveToFirst()) {
                 user = new User();
 
                 user.setId(cursor.getInt(cursor.getColumnIndex("_id")));
-                user.setUserName(cursor.getString(cursor
-                        .getColumnIndex("user_name")));
-                user.setServiceType(cursor.getInt(cursor
-                        .getColumnIndex("service_type")));
+                user.setUserName(cursor.getString(cursor.getColumnIndex("user_name")));
+                user.setServiceType(cursor.getInt(cursor.getColumnIndex("service_type")));
                 user.setPurchaseDate(new Date((long) cursor.getDouble(cursor
                         .getColumnIndex("purchase_date"))));
                 user.setOverdueDate(new Date((long) cursor.getDouble(cursor
                         .getColumnIndex("overdue_date"))));
-                user.setAboutUs(cursor.getString(cursor
-                        .getColumnIndex("about_us")));
+                user.setAboutUs(cursor.getString(cursor.getColumnIndex("about_us")));
                 user.setToken(cursor.getString(cursor.getColumnIndex("token")));
-                user.setRememberPwd(cursor.getInt(cursor
-                        .getColumnIndex("is_remember_pwd")) == 1 ? true : false);
+                user.setRememberPwd(cursor.getInt(cursor.getColumnIndex("is_remember_pwd")) == 1 ? true
+                        : false);
             }
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
@@ -1064,8 +1016,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     "last_update_time desc");
 
             if (cursor.moveToFirst()) {
-                lastUpdateTime = cursor.getString(cursor
-                        .getColumnIndex("last_update_time"));
+                lastUpdateTime = cursor.getString(cursor.getColumnIndex("last_update_time"));
             }
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
@@ -1083,12 +1034,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         String lastUpdateTime = "";
         Cursor cursor = null;
         try {
-            cursor = mDataBase.query("news", null, null, null, null, null,
-                    "last_update_time desc");
+            cursor = mDataBase.query("news", null, null, null, null, null, "last_update_time desc");
 
             if (cursor.moveToFirst()) {
-                lastUpdateTime = cursor.getString(cursor
-                        .getColumnIndex("last_update_time"));
+                lastUpdateTime = cursor.getString(cursor.getColumnIndex("last_update_time"));
             }
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
@@ -1106,12 +1055,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         String lastUpdateTime = "";
         Cursor cursor = null;
         try {
-            cursor = mDataBase.query("articles_of_law", null, null, null, null,
-                    null, "last_update_time desc");
+            cursor = mDataBase.query("articles_of_law", null, null, null, null, null,
+                    "last_update_time desc");
 
             if (cursor.moveToFirst()) {
-                lastUpdateTime = cursor.getString(cursor
-                        .getColumnIndex("last_update_time"));
+                lastUpdateTime = cursor.getString(cursor.getColumnIndex("last_update_time"));
             }
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
@@ -1139,11 +1087,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor2 = null;
         try {
 
-            cursor2 = mDataBase.query("subjects", null, "parent_id = ?",
-                    new String[] { subjectId + "" }, null, null, null);
+            cursor2 = mDataBase.query("subjects", null, "parent_id = ?", new String[] { subjectId
+                    + "" }, null, null, null);
             if (cursor2.getCount() == 0) {
-                cursor = mDataBase.query("user_subject", null, "_id = ?",
-                        new String[] { subjectId + "" }, null, null, null);
+                cursor = mDataBase.query("user_subject", null, "_id = ?", new String[] { subjectId
+                        + "" }, null, null, null);
                 ret = cursor.getCount() > 0;
             }
 
@@ -1183,13 +1131,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return ret;
     }
 
+    // TODO bug
     public boolean isArticleAuthorized2(String subjects, int userId) {
         boolean ret = true;
         Cursor cursor = null;
         try {
 
-            cursor = mDataBase.query("user_subject", null, "_id IN {?}",
-                    new String[] { subjects }, null, null, null);
+            cursor = mDataBase.query("user_subject", null, "_id IN (?)", new String[] { subjects },
+                    null, null, null);
             ret = cursor.getCount() > 0;
 
         } catch (SQLException ex) {

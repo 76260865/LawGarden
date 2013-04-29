@@ -32,7 +32,7 @@
             android:layout_marginTop="5dip"
             android:textColor="#333333"
             android:maxLines="3"
-            android:textSize="9sp" />
+            android:textSize="12sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -44,14 +44,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#333333"
-                android:textSize="9sp" />
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/txt_from"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#333333"
-                android:textSize="9sp" />
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 
