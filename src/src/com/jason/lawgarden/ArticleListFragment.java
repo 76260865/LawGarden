@@ -117,6 +117,13 @@ public class ArticleListFragment extends Fragment {
                 imgNew.setImageBitmap(null);
             }
 
+            txtTitle.setVisibility(View.VISIBLE);
+            if (position != 0) {
+                if (mArticles.get(position - 1).getTitle().equals(article.getTitle())) {
+                    txtTitle.setVisibility(View.GONE);
+                }
+            }
+
             txtTitle.setText(article.getTitle());
             txtContent.setText(article.getContents());
             return convertView;

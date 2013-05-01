@@ -97,6 +97,7 @@ public class SearchFragment extends Fragment {
         mEditSearch = (EditText) view.findViewById(R.id.edit_search);
         mListLaw = (ListView) view.findViewById(R.id.list_law);
         mListLaw.setAdapter(mAdapter);
+        mListLaw.setOnItemClickListener(mOnItemClickListener);
         mListArticle = (ListView) view.findViewById(R.id.list_articles);
         mListArticle.setAdapter(mArticleAdapter);
 
@@ -269,7 +270,6 @@ public class SearchFragment extends Fragment {
             case R.id.rbtn_subject:
                 mListLaw.setVisibility(View.VISIBLE);
                 mListArticle.setVisibility(View.GONE);
-                mListLaw.setOnItemClickListener(mOnItemClickListener);
 
                 mSearchArticlesAsyncTask = new SearchArticlesAsyncTask(SearchType.LAW);
                 mSearchArticlesAsyncTask.execute();

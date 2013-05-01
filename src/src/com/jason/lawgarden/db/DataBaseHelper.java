@@ -311,7 +311,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return subjects;
     }
 
-    private static final String SQL_SELECT_ARTICLES_BY_SUBJECTID = "SELECT *, articles_of_law.is_new as new FROM subjects_articles JOIN articles_of_law ON subjects_articles.article_id=articles_of_law._id WHERE subject_id =? ORDER BY articles_of_law._id ASC";
+    private static final String SQL_SELECT_ARTICLES_BY_SUBJECTID = "SELECT *, articles_of_law.is_new as new FROM subjects_articles JOIN articles_of_law ON subjects_articles.article_id=articles_of_law._id WHERE subject_id =? ORDER BY articles_of_law.level ASC, articles_of_law._id ASC";
 
     public ArrayList<Article> getArticlesBySubjectId(int SubjectId) {
         ArrayList<Article> articles = new ArrayList<Article>();
@@ -326,7 +326,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
                 article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
                 article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
-                article.setContents(cursor.getString(cursor.getColumnIndex("contents")));
+                article.setContents("\t\t"+cursor.getString(cursor.getColumnIndex("contents")));
                 article.setLastUpdateTime(cursor.getString(cursor
                         .getColumnIndex("last_update_time")));
                 article.setNew(cursor.getInt(cursor.getColumnIndex("new")) == 0 ? false : true);
@@ -371,8 +371,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase.query("news", NEWS_PROJECTION, null, null, null, null,
-                    "last_update_time DESC");
+            cursor = mDataBase.query("news", null, null, null, null, null, "last_update_time DESC");
             while (cursor.moveToNext()) {
                 news = new News();
 
@@ -381,7 +380,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 news.setContent(cursor.getString(cursor.getColumnIndex("content")));
                 news.setCrateTime(format.parse(cursor.getString(cursor
                         .getColumnIndex("create_time"))));
-                news.setFrom(cursor.getString(cursor.getColumnIndex("came_from")));
+                news.setFrom(cursor.getString(cursor.getColumnIndex("source")));
                 news.setUri(cursor.getString(cursor.getColumnIndex("uri")));
                 news.setBmpByte(cursor.getBlob(cursor.getColumnIndex("img_byte")));
 
@@ -405,17 +404,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase.query("news", NEWS_PROJECTION, "_id = " + id, null, null, null,
-                    "create_time");
+            cursor = mDataBase.query("news", null, "_id = " + id, null, null, null, "create_time");
             if (cursor.moveToFirst()) {
                 news = new News();
 
                 news.setId(cursor.getInt(cursor.getColumnIndex("_id")));
                 news.setTitle(cursor.getString(cursor.getColumnIndex("title")));
-                news.setContent(cursor.getString(cursor.getColumnIndex("content")));
+                news.setContent("\t\t"
+                        + cursor.getString(cursor.getColumnIndex("content")).replace("\n",
+                                "\n\n\t\t"));
                 news.setCrateTime(format.parse(cursor.getString(cursor
                         .getColumnIndex("create_time"))));
-                news.setFrom(cursor.getString(cursor.getColumnIndex("came_from")));
+                news.setFrom(cursor.getString(cursor.getColumnIndex("source")));
                 news.setUri(cursor.getString(cursor.getColumnIndex("uri")));
                 news.setBmpByte(cursor.getBlob(cursor.getColumnIndex("img_byte")));
             }
@@ -526,7 +526,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public Article getArticleByTitle(String title) {
         Article article = new Article();
         article.setTitle(title);
-        article.setContents("\t\t");
         Cursor cursor = null;
 
         try {
@@ -535,7 +534,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 // article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
                 // article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
-                article.setContents(article.getContents()
+                article.setContents(article.getContents() + "\t\t"
                         + cursor.getString(cursor.getColumnIndex("contents")));
             }
         } catch (SQLException ex) {
@@ -742,7 +741,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put("_id", article.getId());
         values.put("title", article.getTitle());
-        values.put("contents", article.getContents());
+//        values.put("contents", article.getContents());
         values.put("last_update_time", article.getLastUpdateTime());
         values.put("is_new", article.isNew());
         mDataBase.update("articles_of_law", values, "_id=" + article.getId(), null);
@@ -879,7 +878,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             // TODO need filter by user authorized
             cursor = mDataBase
                     .rawQuery(
-                            "SELECT * FROM articles_of_law WHERE contents LIKE ? GROUP BY title ORDER BY _id ASC",
+                            "SELECT MIN(_id), * FROM articles_of_law WHERE contents LIKE ? GROUP BY title ORDER BY _id ASC",
                             new String[] { "%" + text + "%" });
             // cursor = mDataBase.rawQuery(queryArticlesByText, new String[] {
             // "%" + text + "%" });
@@ -907,7 +906,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return articles;
     }
 
-    private static final String queryArticlesByTitle = "SELECT articles_of_law.* FROM articles_of_law INNER JOIN subjects_articles ON articles_of_law._id = subjects_articles.article_id JOIN user_subject ON subjects_articles.subject_id = user_subject._id WHERE articles_of_law.title LIKE ? GROUP BY title ORDER BY articles_of_law._id ASC";
+    private static final String queryArticlesByTitle = "SELECT MIN(.articles_of_law_id), articles_of_law.* FROM articles_of_law INNER JOIN subjects_articles ON articles_of_law._id = subjects_articles.article_id JOIN user_subject ON subjects_articles.subject_id = user_subject._id WHERE articles_of_law.title LIKE ? GROUP BY title ORDER BY articles_of_law._id ASC";
 
     public ArrayList<Article> searchArticlesByTitle(String text) {
         ArrayList<Article> articles = new ArrayList<Article>();
