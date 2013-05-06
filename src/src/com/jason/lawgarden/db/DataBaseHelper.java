@@ -228,7 +228,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase.query("subjects", SUBJECTS_PROJECTION, "parent_id=" + parentId,
+            cursor = mDataBase.query("subjects", SUBJECTS_PROJECTION, "parent_id=" + parentId + " AND is_private=0",
                     null, null, null, "order_id ASC");
 
             while (cursor.moveToNext()) {
@@ -607,7 +607,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             values.put("name", subject.getName());
             values.put("description", subject.getDescription());
             values.put("order_id", subject.getOrderId());
-            values.put("is_private", subject.isPrivate());
+            values.put("is_private", subject.isPrivate() ? 1 : 0);
             values.put("last_update_time", subject.getLastUpdateTime());
             values.put("is_new", subject.isNew() ? 1 : 0);
 

@@ -105,6 +105,9 @@ public class ArticleListFragment extends Fragment {
                 convertView = LayoutInflater.from(getActivity()).inflate(
                         R.layout.article_list_item_layout, null);
             }
+            if (position > getCount() -1) {
+                return convertView;
+            }
             final Article article = mArticles.get(position);
             TextView txtTitle = (TextView) convertView.findViewById(R.id.txt_law_title);
             TextView txtContent = (TextView) convertView.findViewById(R.id.txt_article_content);
