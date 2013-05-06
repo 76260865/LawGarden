@@ -67,8 +67,19 @@ public class UserFragment extends Fragment implements OnClickListener {
                 mSimpleDateFormat.format(mUser.getPurchaseDate())));
         txtOverdueDate.setText(getString(R.string.txt_overdue_date_format_text,
                 mSimpleDateFormat.format(mUser.getOverdueDate())));
-        mBtnUpdate = (Button) (Button) view.findViewById(R.id.btn_update);
+        mBtnUpdate = (Button) view.findViewById(R.id.btn_update);
         mBtnUpdate.setOnClickListener(this);
+        ((Button) view.findViewById(R.id.btn_logout))
+                .setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mDbHelper.deleteUser();
+                        getActivity().finish();
+                        Intent intent = new Intent(getActivity(),
+                                LoginActivity.class);
+                        startActivity(intent);
+                    }
+                });
         return view;
     }
 

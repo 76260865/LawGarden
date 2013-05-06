@@ -978,6 +978,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return getUserInfo(user.getUserName());
     }
 
+    public void deleteUser() {
+
+        if (!mDataBase.isOpen()) {
+            openDataBase();
+        }
+        mDataBase.delete("user_info", null, null);
+    }
+
     public User getRememberedUser() {
         User user = null;
         Cursor cursor = null;
