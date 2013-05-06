@@ -105,6 +105,9 @@ public class ArticleListFragment extends Fragment {
                 convertView = LayoutInflater.from(getActivity()).inflate(
                         R.layout.article_list_item_layout, null);
             }
+            if (position > getCount() -1) {
+                return convertView;
+            }
             final Article article = mArticles.get(position);
             TextView txtTitle = (TextView) convertView.findViewById(R.id.txt_law_title);
             TextView txtContent = (TextView) convertView.findViewById(R.id.txt_article_content);
@@ -160,16 +163,17 @@ public class ArticleListFragment extends Fragment {
         }
     };
 
-    private class ArticlesAsyncTask extends AsyncTask<Void, Void, Void> {
+    private class ArticlesAsyncTask extends AsyncTask<Void, Void, ArrayList<Article>> {
+
 
         @Override
-        protected Void doInBackground(Void... params) {
-            mArticles = mDbHelper.getArticlesBySubjectId(mSubjectId);
-            return null;
+        protected ArrayList<Article> doInBackground(Void... params) {
+            return mDbHelper.getArticlesBySubjectId(mSubjectId);
         }
 
         @Override
-        protected void onPostExecute(Void result) {
+        protected void onPostExecute(ArrayList<Article> result) {
+            mArticles = result;
             mArticleAdapter.notifyDataSetChanged();
             if (mArticleAdapter.getCount() == 0) {
                 txt_no_data.setVisibility(View.VISIBLE);

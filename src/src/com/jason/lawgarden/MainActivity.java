@@ -74,6 +74,7 @@ public class MainActivity extends FragmentActivity {
             case R.id.rbtn_law_fav:
                 if (mArticleFragement != null) {
                     mArticleListFragment.getView().setVisibility(View.GONE);
+                    mArticleFragement.clearContent();
                     mArticleFragement.getView().setVisibility(View.VISIBLE);
                 }
                 MyFavoriteFragment favoriteFragment = new MyFavoriteFragment();

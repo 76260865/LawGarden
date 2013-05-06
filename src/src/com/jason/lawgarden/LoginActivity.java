@@ -63,6 +63,7 @@ public class LoginActivity extends Activity {
         mEditUserName = (EditText) findViewById(R.id.edit_user_name);
         mEditPwd = (EditText) findViewById(R.id.edit_pwd);
         mPrefs = getSharedPreferences(EXTRA_KEY_SHARE_REFS, Context.MODE_PRIVATE);
+        mDbHelper = DataBaseHelper.getSingleInstance(LoginActivity.this);
         new QueryPwdTask().execute();
     }
 
@@ -162,7 +163,6 @@ public class LoginActivity extends Activity {
 
         @Override
         protected User doInBackground(Void... params) {
-            mDbHelper = DataBaseHelper.getSingleInstance(LoginActivity.this);
             JsonUtil.sUser = mDbHelper.getRememberedUser();
             if (JsonUtil.sUser != null) {
                 JsonUtil.sAccessToken = JsonUtil.sUser.getToken();

@@ -1,15 +1,17 @@
 package com.jason.lawgarden;
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.jason.lawgarden.db.DataBaseHelper;
@@ -96,6 +98,27 @@ public class ArticleFragement extends Fragment {
         linear_subject.setVisibility(View.GONE);
     }
 
+    private ProgressDialog mProgressDialog;
+    private boolean mIsCaneled = false;
+    private TextView mTxtLoadingInfo;
+    private Button mBtnOk;
+    private Button mBtnCancel;
+    private ProgressBar mProgressBar;
+    private ProgressBar mProgressLogin;
+
+    private void initDialog() {
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.show();
+        mProgressDialog.setContentView(R.layout.loading_dialog_layout);
+        mBtnOk = (Button) mProgressDialog.findViewById(R.id.btn_ok);
+        mBtnCancel = (Button) mProgressDialog.findViewById(R.id.btn_cancel);
+        mTxtLoadingInfo = (TextView) mProgressDialog.findViewById(R.id.txt_loading_info);
+        mProgressBar = (ProgressBar) mProgressDialog.findViewById(R.id.progress_loading);
+        mProgressLogin = (ProgressBar) mProgressDialog.findViewById(R.id.progress_login);
+        mTxtLoadingInfo.setText("正在加载...");
+    }
+
     private OnClickListener mOnClickListener = new OnClickListener() {
 
         @Override
@@ -123,6 +146,17 @@ public class ArticleFragement extends Fragment {
     private class ArticleAyncTask extends AsyncTask<Void, Void, Article> {
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            if (mProgressDialog == null) {
+                initDialog();
+            } else if (!mProgressDialog.isShowing()) {
+                mProgressDialog.show();
+            }
+        }
+
+        @Override
         protected Article doInBackground(Void... params) {
             mArticle = mDbHelper.getArticleByTitle(mArticleTitle);
             mArticle.setFavorite(mDbHelper.isFavoritedByTitle(mArticleTitle));
@@ -137,6 +171,9 @@ public class ArticleFragement extends Fragment {
                     .setImageResource(mArticle.isFavorite() ? R.drawable.list_start_sect
                             : R.drawable.list_start);
             linear_subject.setVisibility(View.VISIBLE);
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+            }
         }
     }
 
