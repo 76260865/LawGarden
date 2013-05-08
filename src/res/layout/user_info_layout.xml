@@ -68,39 +68,6 @@
                 android:layout_height="1dip"
                 android:background="#dedede" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dip"
-                android:layout_marginRight="10dip"
-                android:orientation="horizontal" >
-
-                
-                <Button
-                    android:id="@+id/btn_update"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/login_button"
-                    android:text="检查更新"
-                    android:layout_marginRight="10dip"
-                    android:textColor="#78AA84" />
-
-                <Button
-                    android:id="@+id/btn_logout"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/login_button"
-                    android:text="注销"
-                    android:textColor="#78AA84" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dip"
-                android:background="#dedede" />
-
             <TextView
                 android:id="@+id/txt_about_us"
                 android:layout_width="wrap_content"
@@ -126,6 +93,30 @@
                 android:textColor="#5A7C7C"
                 android:textIsSelectable="true"
                 android:textSize="15sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dip" />
+
+            <Button
+                android:id="@+id/btn_update"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/login_button"
+                android:text="检查更新"
+                android:textColor="#78AA84" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dip"/>
+
+            <Button
+                android:id="@+id/btn_logout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/login_button"
+                android:text="注销"
+                android:textColor="#78AA84" />
         </LinearLayout>
     </ScrollView>
 

@@ -70,32 +70,29 @@
                 android:layout_height="1dip"
                 android:background="#dedede" />
 
-            <LinearLayout
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dip" />
+
+            <Button
+                android:id="@+id/btn_update"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dip"
-                android:layout_marginRight="10dip"
-                android:orientation="horizontal" >
+                android:background="@drawable/login_button"
+                android:text="检查更新"
+                android:textColor="#78AA84" />
 
-                <Button
-                    android:id="@+id/btn_update"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/login_button"
-                    android:text="检查更新"
-                    android:layout_marginRight="10dip"
-                    android:textColor="#78AA84" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dip"/>
 
-                <Button
-                    android:id="@+id/btn_logout"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/login_button"
-                    android:text="注销"
-                    android:textColor="#78AA84" />
-            </LinearLayout>
+            <Button
+                android:id="@+id/btn_logout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/login_button"
+                android:text="注销"
+                android:textColor="#78AA84" />
         </LinearLayout>
 
         <LinearLayout
