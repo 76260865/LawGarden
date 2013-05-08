@@ -186,6 +186,7 @@ public class LoginActivity extends Activity {
                         }
                     }
 
+                    JsonUtil.updateUserSubjects(getApplicationContext());
                     mHasUpdateData = JsonUtil.CheckAllUpdates(getApplicationContext());
                 } catch (JSONException e) {
                     Log.e(TAG, e.getMessage());
@@ -261,6 +262,11 @@ public class LoginActivity extends Activity {
             user.setOverdueDate(new Date());
 
             JsonUtil.sUser = mDbHelper.insertOrUpdateUser(user);
+            try {
+                JsonUtil.updateUserSubjects(getApplicationContext());
+            } catch (JSONException e1) {
+                Log.e(TAG, e1.getMessage());
+            }
 
             try {
                 mHasUpdateData = JsonUtil.CheckAllUpdates(getApplicationContext());
@@ -314,15 +320,6 @@ public class LoginActivity extends Activity {
 
             try {
                 Progress progress = new Progress();
-                if (!mIsCaneled) {
-                    progress.progress = 50;
-                    progress.message = "同步用户购买专题";
-                    publishProgress(progress);
-                    JsonUtil.updateUserSubjects(getApplicationContext());
-                    progress.progress = 100;
-                    progress.message = "完成同步用户购买专题";
-                    publishProgress(progress);
-                }
                 if (!mIsCaneled) {
                     progress.progress = 50;
                     progress.message = "同步专题";

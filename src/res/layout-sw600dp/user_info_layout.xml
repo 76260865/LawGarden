@@ -81,31 +81,20 @@
                     android:id="@+id/btn_update"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dip"
-                    android:layout_marginLeft="20dip"
-                    android:layout_marginRight="20dip"
-                    android:layout_marginTop="5dip"
                     android:layout_weight="1"
                     android:background="@drawable/login_button"
                     android:text="检查更新"
-                    android:textColor="#78AA84"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:layout_marginRight="10dip"
+                    android:textColor="#78AA84" />
 
                 <Button
                     android:id="@+id/btn_logout"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dip"
-                    android:layout_marginLeft="20dip"
-                    android:layout_marginRight="20dip"
-                    android:layout_marginTop="5dip"
                     android:layout_weight="1"
                     android:background="@drawable/login_button"
                     android:text="注销"
-                    android:textColor="#78AA84"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textColor="#78AA84" />
             </LinearLayout>
         </LinearLayout>
 

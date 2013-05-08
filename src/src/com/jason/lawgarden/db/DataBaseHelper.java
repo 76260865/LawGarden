@@ -326,7 +326,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
                 article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
                 article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
-                article.setContents("\t\t"+cursor.getString(cursor.getColumnIndex("contents")));
+                article.setContents("        "+cursor.getString(cursor.getColumnIndex("contents")).replace("\n", "\n        "));
                 article.setLastUpdateTime(cursor.getString(cursor
                         .getColumnIndex("last_update_time")));
                 article.setNew(cursor.getInt(cursor.getColumnIndex("new")) == 0 ? false : true);
@@ -526,6 +526,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public Article getArticleByTitle(String title) {
         Article article = new Article();
         article.setTitle(title);
+        article.setContents("        ");
         Cursor cursor = null;
 
         try {
@@ -534,8 +535,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 // article.setId(cursor.getInt(cursor.getColumnIndex("_id")));
                 // article.setTitle(cursor.getString(cursor.getColumnIndex("title")));
-                article.setContents(article.getContents() + "\t\t"
-                        + cursor.getString(cursor.getColumnIndex("contents")));
+                article.setContents(article.getContents()
+                        + cursor.getString(cursor.getColumnIndex("contents")).replace("\n", "\n\n        "));
             }
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());

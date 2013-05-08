@@ -1,6 +1,7 @@
 package com.jason.lawgarden;
 
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -109,6 +110,15 @@ public class MainActivity extends FragmentActivity {
             }
         }
     };
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (mArticleFragement != null 
+                && mArticleFragement.getView().getVisibility() == View.VISIBLE) {
+            mArticleFragement.clearLargeText();
+        }
+    }
 
     private void popupAllFragmentStack() {
         for (int i = 0; i < mFragmentManager.getBackStackEntryCount(); i++) {

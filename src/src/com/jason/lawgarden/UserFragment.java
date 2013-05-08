@@ -233,7 +233,7 @@ public class UserFragment extends Fragment implements OnClickListener {
             mProgressDialog.show();
         }
 
-        mTxtLoadingInfo.setText("正在登陆...");
+        mTxtLoadingInfo.setText("正在更新...");
         new LoginPwdTask().execute();
 
     }

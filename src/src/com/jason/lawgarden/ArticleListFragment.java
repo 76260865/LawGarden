@@ -150,11 +150,6 @@ public class ArticleListFragment extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int postion, long id) {
             Article article = mArticles.get(postion);
-            if (article.isNew()) {
-                article.setNew(false);
-                mDbHelper.updateArticles(article);
-            }
-
             if (mArticleListFragment != null) {
                 mArticleListFragment.getView().setVisibility(View.GONE);
                 mArticleFragement.getView().setVisibility(View.VISIBLE);

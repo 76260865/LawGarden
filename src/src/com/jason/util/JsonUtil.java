@@ -117,18 +117,17 @@ public class JsonUtil {
             DataBaseHelper dbHelper = DataBaseHelper.getSingleInstance(context);
             dbHelper.insertUserSubjects(subjects);
 
-            //TODO
-//            String timeString = HttpUtil.doPost(SERVICE_URI + "/GetValidRootSubjects", object);
-//            if (TextUtils.isEmpty(timeString)) {
-//                Log.d(TAG, "GetValidRootSubjects api error");
-//                return;
-//            }
-//            JSONObject objectRet1 = new JSONObject(timeString);
-//            if (objectRet1.getBoolean("ExecutionResult")) {
-//                JsonUtil.sUser.setPurchaseDate(renderJsonDate(objectRet1.getString("SubscriptionStart")));
-//                JsonUtil.sUser.setOverdueDate(renderJsonDate(objectRet1.getString("SubscriptionEnd")));
-//                dbHelper.insertOrUpdateUser(JsonUtil.sUser);
-//            }
+            String timeString = HttpUtil.doPost(SERVICE_URI + "/GetValidRootSubjects", object);
+            if (TextUtils.isEmpty(timeString)) {
+                Log.d(TAG, "GetValidRootSubjects api error");
+                return;
+            }
+            JSONObject objectRet1 = new JSONObject(timeString);
+            if (objectRet1.getBoolean("ExecutionResult")) {
+                JsonUtil.sUser.setPurchaseDate(renderJsonDate(objectRet1.getString("SubscriptionStart")));
+                JsonUtil.sUser.setOverdueDate(renderJsonDate(objectRet1.getString("SubscriptionEnd")));
+                dbHelper.insertOrUpdateUser(JsonUtil.sUser);
+            }
         }
     }
 

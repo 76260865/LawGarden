@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -82,6 +83,11 @@ public class ArticleFragement extends Fragment {
     }
 
     public void updateContent(int articleId, String articleTitle) {
+        if (mProgressDialog == null) {
+            initDialog();
+        } else if (!mProgressDialog.isShowing()) {
+            mProgressDialog.show();
+        }
         mArticleId = articleId;
         mArticleTitle = articleTitle;
         mTxtArticleTitle.setText(mArticleTitle);
@@ -98,24 +104,20 @@ public class ArticleFragement extends Fragment {
         linear_subject.setVisibility(View.GONE);
     }
 
+    public void clearLargeText() {
+        mTxtLawContent.setText(null);
+        new ArticleAyncTask().execute();
+    }
+
     private ProgressDialog mProgressDialog;
-    private boolean mIsCaneled = false;
     private TextView mTxtLoadingInfo;
-    private Button mBtnOk;
-    private Button mBtnCancel;
-    private ProgressBar mProgressBar;
-    private ProgressBar mProgressLogin;
 
     private void initDialog() {
         mProgressDialog = new ProgressDialog(getActivity());
         mProgressDialog.setCancelable(false);
         mProgressDialog.show();
         mProgressDialog.setContentView(R.layout.loading_dialog_layout);
-        mBtnOk = (Button) mProgressDialog.findViewById(R.id.btn_ok);
-        mBtnCancel = (Button) mProgressDialog.findViewById(R.id.btn_cancel);
         mTxtLoadingInfo = (TextView) mProgressDialog.findViewById(R.id.txt_loading_info);
-        mProgressBar = (ProgressBar) mProgressDialog.findViewById(R.id.progress_loading);
-        mProgressLogin = (ProgressBar) mProgressDialog.findViewById(R.id.progress_login);
         mTxtLoadingInfo.setText("正在加载...");
     }
 
@@ -143,12 +145,10 @@ public class ArticleFragement extends Fragment {
         }
     };
 
-    private class ArticleAyncTask extends AsyncTask<Void, Void, Article> {
+    private class ArticleAyncTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
-            super.onPreExecute();
-
             if (mProgressDialog == null) {
                 initDialog();
             } else if (!mProgressDialog.isShowing()) {
@@ -157,16 +157,16 @@ public class ArticleFragement extends Fragment {
         }
 
         @Override
-        protected Article doInBackground(Void... params) {
+        protected Void doInBackground(Void... params) {
             mArticle = mDbHelper.getArticleByTitle(mArticleTitle);
             mArticle.setFavorite(mDbHelper.isFavoritedByTitle(mArticleTitle));
-            return mArticle;
+            return null;
         }
 
         @Override
-        protected void onPostExecute(Article result) {
-            mTxtArticleTitle.setText(result.getTitle());
-            mTxtLawContent.setText(result.getContents());
+        protected void onPostExecute(Void result) {
+            mTxtArticleTitle.setText(mArticle.getTitle());
+            mTxtLawContent.setText(mArticle.getContents());
             img_article_favorite
                     .setImageResource(mArticle.isFavorite() ? R.drawable.list_start_sect
                             : R.drawable.list_start);
