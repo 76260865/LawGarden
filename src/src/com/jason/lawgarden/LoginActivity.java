@@ -1,5 +1,6 @@
 package com.jason.lawgarden;
 
+import java.text.ParseException;
 import java.util.Date;
 
 import org.json.JSONException;
@@ -329,6 +330,9 @@ public class LoginActivity extends Activity {
                     progress.message = "完成同步专题";
                     publishProgress(progress);
                 }
+
+                JsonUtil.updatePurchaseSubjects(getApplicationContext());
+
                 if (!mIsCaneled) {
                     progress.progress = 50;
                     progress.message = "更新新闻";
@@ -361,6 +365,8 @@ public class LoginActivity extends Activity {
                     }
                 }
             } catch (JSONException e) {
+                Log.e(TAG, e.getMessage());
+            } catch (ParseException e) {
                 Log.e(TAG, e.getMessage());
             }
             return true;

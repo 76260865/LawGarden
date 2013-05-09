@@ -1,5 +1,7 @@
 package com.jason.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 import com.jason.lawgarden.db.DataBaseHelper;
 import com.jason.lawgarden.model.Article;
 import com.jason.lawgarden.model.News;
+import com.jason.lawgarden.model.PurchaseSubject;
 import com.jason.lawgarden.model.Subject;
 import com.jason.lawgarden.model.User;
 import com.jason.lawgarden.model.UserSubjects;
@@ -116,18 +119,6 @@ public class JsonUtil {
             // add the subjects to db
             DataBaseHelper dbHelper = DataBaseHelper.getSingleInstance(context);
             dbHelper.insertUserSubjects(subjects);
-
-            String timeString = HttpUtil.doPost(SERVICE_URI + "/GetValidRootSubjects", object);
-            if (TextUtils.isEmpty(timeString)) {
-                Log.d(TAG, "GetValidRootSubjects api error");
-                return;
-            }
-            JSONObject objectRet1 = new JSONObject(timeString);
-            if (objectRet1.getBoolean("ExecutionResult")) {
-                JsonUtil.sUser.setPurchaseDate(renderJsonDate(objectRet1.getString("SubscriptionStart")));
-                JsonUtil.sUser.setOverdueDate(renderJsonDate(objectRet1.getString("SubscriptionEnd")));
-                dbHelper.insertOrUpdateUser(JsonUtil.sUser);
-            }
         }
     }
 
@@ -377,4 +368,31 @@ public class JsonUtil {
         return null;
     }
 
+    public static void updatePurchaseSubjects(Context context) throws JSONException, ParseException {
+        SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat(
+                "yyyy-MM-dd HH:mm");
+
+        DataBaseHelper dbHelper = DataBaseHelper.getSingleInstance(context);
+        JSONObject object = new JSONObject();
+        object.put("AccessToken", sAccessToken);
+
+        String appListString = HttpUtil.doPost(SERVICE_URI + "/GetValidRootSubjects", object);
+        JSONObject objectRet = new JSONObject(appListString);
+        if (objectRet.getBoolean("ExecutionResult")) {
+            JSONArray array = objectRet.getJSONArray("Subjects");
+            ArrayList<PurchaseSubject> subjects = new ArrayList<PurchaseSubject>();
+            if (array.length() > 0) {
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject obj = array.getJSONObject(i);
+                    PurchaseSubject subject = new PurchaseSubject();
+                    subject.setId(obj.getInt("Id"));
+                    subject.setPurchaseDate(mSimpleDateFormat.parse(obj.getString("SubscriptionStart")));
+                    subject.setOurdueDate(mSimpleDateFormat.parse(obj.getString("SubscriptionEnd")));
+                    subjects.add(subject);
+                }
+                dbHelper.updatePurchaseSubjects(subjects);
+            }
+        }
+
+    }
 }

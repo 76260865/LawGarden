@@ -26,6 +26,7 @@ import com.jason.lawgarden.R;
 import com.jason.lawgarden.model.Article;
 import com.jason.lawgarden.model.Favorite;
 import com.jason.lawgarden.model.News;
+import com.jason.lawgarden.model.PurchaseSubject;
 import com.jason.lawgarden.model.Subject;
 import com.jason.lawgarden.model.SubjectArticle;
 import com.jason.lawgarden.model.User;
@@ -1161,5 +1162,44 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
 
         return ret;
+    }
+
+    public void updatePurchaseSubjects(ArrayList<PurchaseSubject> subjects) {
+        mDataBase.delete("purchase_subjects", null, null);
+        for(PurchaseSubject subject : subjects) {
+            ContentValues values = new ContentValues();
+            values.put("_id", subject.getId());
+            values.put("name", subject.getName());
+            values.put("subscription_start", subject.getPurchaseDate().getTime());
+            values.put("subscription_end", subject.getOurdueDate().getTime());
+            mDataBase.insert("purchase_subjects", null, values);
+        }
+    }
+
+    public ArrayList<PurchaseSubject> getPurchaseSubjects() {
+        ArrayList<PurchaseSubject> subjects = new ArrayList<PurchaseSubject>();
+        Cursor cursor = null;
+
+        try {
+            cursor = mDataBase.query("purchase_subjects", null, null, null, null,
+                    null, null);
+            while (cursor.moveToNext()) {
+                PurchaseSubject subject = new PurchaseSubject();
+                subject.setId(cursor.getInt(cursor.getColumnIndex("_id")));
+                subject.setName(cursor.getString(cursor.getColumnIndex("name")));
+                subject.setPurchaseDate(new Date((long) cursor.getDouble(cursor
+                        .getColumnIndex("subscription_start"))));
+                subject.setOurdueDate(new Date((long) cursor.getDouble(cursor
+                        .getColumnIndex("subscription_end"))));
+                subjects.add(subject);
+            }
+        } catch (SQLException ex) {
+            Log.e(TAG, ex.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return subjects;
     }
 }
