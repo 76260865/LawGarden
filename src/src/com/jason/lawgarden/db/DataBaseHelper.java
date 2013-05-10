@@ -254,12 +254,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return subjects;
     }
 
-    public boolean isSubjectAthorized(int userId, int parentId) {
+    public boolean isSubjectAthorized(int userId, int subjectId) {
         Cursor cursor = null;
 
         try {
-            cursor = mDataBase.query("user_subject", null, "user_id = ? AND parent_id=?",
-                    new String[] { userId + "", parentId + "" }, null, null, null);
+            cursor = mDataBase.query("user_subject", null, "user_id = ? AND _id=?",
+                    new String[] { userId + "", subjectId + "" }, null, null, null);
             return cursor.getCount() > 0;
         } catch (SQLException ex) {
             Log.e(TAG, ex.getMessage());
@@ -271,10 +271,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return false;
     }
 
-    public boolean isTheLastSubjectsAndAuthorized(int userId, int parentId) {
-        ArrayList<Subject> subjects = getSubjectsByParentId(parentId);
+    public boolean isTheLastSubjectsAndAuthorized(int userId, int subjectId) {
+        ArrayList<Subject> subjects = getSubjectsByParentId(subjectId);
         if (subjects.size() == 0) {
-            return isSubjectAthorized(userId, parentId);
+            return isSubjectAthorized(userId, subjectId);
         }
         return true;
     }

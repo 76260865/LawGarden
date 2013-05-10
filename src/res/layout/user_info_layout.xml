@@ -44,7 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/user_info_text_height"
                 android:gravity="center"
-                android:text="购买专题"
+                android:text="购买专题:"
                 android:textColor="#5A7C7C"
                 android:textIsSelectable="true"
                 android:textSize="18sp" />
@@ -58,11 +58,6 @@
                 android:divider="#dedede"
                 android:dividerHeight="1dip"
                 android:listSelector="@drawable/item_selector" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dip"
-                android:background="#dedede" />
 
             <View
                 android:layout_width="match_parent"

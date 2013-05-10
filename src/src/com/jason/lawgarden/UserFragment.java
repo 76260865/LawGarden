@@ -126,17 +126,10 @@ public class UserFragment extends Fragment implements OnClickListener {
             }
 
             PurchaseSubject subject = mSubjects.get(position);
-            TextView txtPurchaseDate = (TextView) convertView.findViewById(R.id.txt_purchase_date);
-            TextView txtPurchaseName = (TextView) convertView.findViewById(R.id.txt_purchase_name);
             TextView txtOverdueDate = (TextView) convertView.findViewById(R.id.txt_overdue_date);
-            txtPurchaseDate.setText(getString(R.string.txt_purchase_date_format_text,
-                    mSimpleDateFormat.format(subject.getPurchaseDate())));
-            txtOverdueDate.setText(getString(R.string.txt_overdue_date_format_text,
-                    mSimpleDateFormat.format(subject.getOurdueDate())));
-            txtPurchaseName.setText(subject.getName());
+            txtOverdueDate.setText(subject.getName() + "截至" + subject.getOurdueDate() + "有效");
             return convertView;
         }
-
     }
 
     private ProgressDialog mProgressDialog;

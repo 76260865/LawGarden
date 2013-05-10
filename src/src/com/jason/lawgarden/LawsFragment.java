@@ -238,7 +238,9 @@ public class LawsFragment extends Fragment {
                 break;
             case R.id.rbtn_article:
                 mListLaw.setVisibility(View.GONE);
-                mListArticle.setVisibility(View.VISIBLE);
+                if (mArticleListFragment == null) {
+                    mListArticle.setVisibility(View.VISIBLE);
+                }
                 mListArticle.setOnItemClickListener(mOnArticleItemClickListener);
 
                 ((RadioButton) mRadioGroup.getChildAt(1)).setTextColor(mSelectColor);
