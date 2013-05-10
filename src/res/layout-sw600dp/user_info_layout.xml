@@ -61,10 +61,6 @@
                 android:dividerHeight="1dip"
                 android:listSelector="@drawable/item_selector" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="3dip" />
-
             <Button
                 android:id="@+id/btn_update"
                 android:layout_width="match_parent"
@@ -114,6 +110,7 @@
                 android:layout_margin="5dip"
                 android:text="@string/txt_about_us"
                 android:textColor="#5A7C7C"
+                android:autoLink="all"
                 android:textIsSelectable="true"
                 android:textSize="15sp" />
         </LinearLayout>

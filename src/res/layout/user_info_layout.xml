@@ -59,11 +59,6 @@
                 android:dividerHeight="1dip"
                 android:listSelector="@drawable/item_selector" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dip"
-                android:background="#dedede" />
-
             <TextView
                 android:id="@+id/txt_about_us"
                 android:layout_width="wrap_content"

@@ -113,6 +113,7 @@ public class NewsOfLawFragment extends Fragment {
             txtTime.setText(sdf.format(news.getCrateTime()));
             txtFrom.setText(news.getFrom());
             if (news.getBmpByte() != null && news.getBmpByte().length > 0) {
+                imgNews.setVisibility(View.VISIBLE);
                 imgNews.setImageBitmap(BitmapFactory.decodeByteArray(news.getBmpByte(), 0,
                         news.getBmpByte().length));
             } else {

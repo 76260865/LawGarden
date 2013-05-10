@@ -127,7 +127,9 @@ public class UserFragment extends Fragment implements OnClickListener {
 
             PurchaseSubject subject = mSubjects.get(position);
             TextView txtOverdueDate = (TextView) convertView.findViewById(R.id.txt_overdue_date);
-            txtOverdueDate.setText(subject.getName() + "截至" + subject.getOurdueDate() + "有效");
+            String str = TextUtils.isEmpty(subject.getName()) ? "" : subject.getName();
+            txtOverdueDate.setText(str + " 截至" + mSimpleDateFormat.format(subject.getOurdueDate())
+                    + "有效");
             return convertView;
         }
     }
