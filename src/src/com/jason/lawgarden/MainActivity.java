@@ -1,26 +1,17 @@
 package com.jason.lawgarden;
 
-import android.content.DialogInterface;
 import android.content.res.Configuration;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
-import android.widget.TextView;
 
 import com.jason.lawgarden.db.DataBaseHelper;
-import com.jason.lawgarden.model.User;
-import com.jason.util.JsonUtil;
 
 public class MainActivity extends FragmentActivity {
 

@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -128,6 +129,17 @@ public class SearchFragment extends Fragment {
         super.onResume();
         if (mArticleListFragment != null) {
             mArticleListFragment.clearContent();
+            if (!mArticleFragement.getView().isShown()) {
+                mArticleListFragment.getView().setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mSearchArticlesAsyncTask != null) {
+            mSearchArticlesAsyncTask.cancel(true);
         }
     }
 
@@ -182,23 +194,6 @@ public class SearchFragment extends Fragment {
             getActivity().getSupportFragmentManager().popBackStack();
         }
     };
-
-    private class SearchLawsAsyncTask1 extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            if (!TextUtils.isEmpty(mEditSearch.getText())) {
-                mSubjects = mDbHelper.searchSubjects(mEditSearch.getText() + "");
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            mAdapter.notifyDataSetChanged();
-        }
-
-    }
 
     private enum SearchType {
         LAW, ARTICLE_TITLE, ARTICLE_CONTENT
@@ -296,41 +291,25 @@ public class SearchFragment extends Fragment {
         }
     };
 
-    private AlertDialog alert;
-
-    private void showBuyDialog() {
-        if (alert == null) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("1、付费专题！请您到网站支付后查阅！\n 2、付费后，您可在所有客户端查阅专题数据。").setCancelable(true)
-                    .setPositiveButton("购买", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            Intent intent = new Intent();
-                            intent.setAction("android.intent.action.VIEW");
-                            Uri content_url = Uri.parse("http://www.lawyer1981.com");
-                            intent.setData(content_url);
-                            startActivity(intent);
-                            dialog.cancel();
-                        }
-                    }).setNegativeButton("不购买", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
-            alert = builder.create();
-        }
-        alert.show();
-    }
-
     private ProgressDialog mProgressDialog;
     private TextView mTxtLoadingInfo;
 
     private void initDialog() {
         mProgressDialog = new ProgressDialog(getActivity());
-        mProgressDialog.setCancelable(false);
+        mProgressDialog.setCancelable(true);
         mProgressDialog.show();
         mProgressDialog.setContentView(R.layout.loading_dialog_layout);
         mTxtLoadingInfo = (TextView) mProgressDialog.findViewById(R.id.txt_loading_info);
         mTxtLoadingInfo.setText("正在搜索。。。");
+        mProgressDialog.setOnCancelListener(new OnCancelListener() {
+
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                if (mSearchArticlesAsyncTask != null) {
+                    mSearchArticlesAsyncTask.cancel(true);
+                }
+            }
+        });
     }
 
     private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
@@ -389,32 +368,39 @@ public class SearchFragment extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int postion, long id) {
             Article article = mArticles.get(postion);
-//            if (TextUtils.isEmpty(article.getSubjects())) {
-//                showBuyDialog();
-//                return;
-//            }
-//            if (!mDbHelper.isArticleAuthorized2(article.getSubjects(), JsonUtil.sUser.getId())) {
-//                showBuyDialog();
-//                return;
-//            }
+            // if (TextUtils.isEmpty(article.getSubjects())) {
+            // showBuyDialog();
+            // return;
+            // }
+            // if (!mDbHelper.isArticleAuthorized2(article.getSubjects(),
+            // JsonUtil.sUser.getId())) {
+            // showBuyDialog();
+            // return;
+            // }
             if (article.isNew()) {
                 article.setNew(false);
                 mDbHelper.updateArticles(article);
             }
 
-            Bundle bundle = new Bundle();
-            bundle.putString(ArticleFragement.EXTRA_KEY_ARTICLE_TITLE, article.getTitle());
-            ArticleFragement fragment = new ArticleFragement();
-            fragment.setArguments(bundle);
+            if (mArticleListFragment == null) {
+                Bundle bundle = new Bundle();
+                bundle.putString(ArticleFragement.EXTRA_KEY_ARTICLE_TITLE, article.getTitle());
+                ArticleFragement fragment = new ArticleFragement();
+                fragment.setArguments(bundle);
 
-            FragmentTransaction transaction = getActivity().getSupportFragmentManager()
-                    .beginTransaction();
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager()
+                        .beginTransaction();
 
-            transaction.replace(R.id.fragment_container, fragment);
-            transaction.addToBackStack(null);
+                transaction.replace(R.id.fragment_container, fragment);
+                transaction.addToBackStack(null);
 
-            // Commit the transaction
-            transaction.commit();
+                // Commit the transaction
+                transaction.commit();
+            } else {
+                mArticleListFragment.getView().setVisibility(View.GONE);
+                mArticleFragement.getView().setVisibility(View.VISIBLE);
+                mArticleFragement.updateContent(article.getId(), article.getTitle());
+            }
         }
     };
 

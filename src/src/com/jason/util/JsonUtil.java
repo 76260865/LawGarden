@@ -123,8 +123,9 @@ public class JsonUtil {
     }
 
     private static Date renderJsonDate(String date) {
-        return new Date(Integer.valueOf(date.replace("/Date(","").replace(")/","").split("+")[0]));
+        return new Date(Integer.valueOf(date.replace("/Date(", "").replace(")/", "").split("+")[0]));
     }
+
     private static String sDATE_FOR_TEST = "/Date(1362575535693+0800)/";
 
     public static void updateSubjects(Context context) throws JSONException {
@@ -332,9 +333,8 @@ public class JsonUtil {
         String LastUpdateTimeOfNews = dbHelper.getLastUpdateNewsTime();
         String LastUpdateTimeOfSubjects = dbHelper.getLastUpdateSubjectTime();
         String LastUpdateTimeOfArticles = dbHelper.getLastUpdateArticleTime();
-        if (TextUtils.isEmpty(LastUpdateTimeOfNews) 
-                || TextUtils.isEmpty(LastUpdateTimeOfSubjects)
-                ||TextUtils.isEmpty(LastUpdateTimeOfArticles)) {
+        if (TextUtils.isEmpty(LastUpdateTimeOfNews) || TextUtils.isEmpty(LastUpdateTimeOfSubjects)
+                || TextUtils.isEmpty(LastUpdateTimeOfArticles)) {
             return true;
         }
 
@@ -362,15 +362,14 @@ public class JsonUtil {
 
         String appListString = HttpUtil.doPost(SERVICE_URI + "/ValidateToken", object);
         if (!TextUtils.isEmpty(appListString)) {
-            return  new JSONObject(appListString);
+            return new JSONObject(appListString);
         }
 
         return null;
     }
 
     public static void updatePurchaseSubjects(Context context) throws JSONException, ParseException {
-        SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd HH:mm");
+        SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
         DataBaseHelper dbHelper = DataBaseHelper.getSingleInstance(context);
         JSONObject object = new JSONObject();
@@ -386,8 +385,10 @@ public class JsonUtil {
                     JSONObject obj = array.getJSONObject(i);
                     PurchaseSubject subject = new PurchaseSubject();
                     subject.setId(obj.getInt("Id"));
-                    subject.setPurchaseDate(mSimpleDateFormat.parse(obj.getString("SubscriptionStart")));
+                    subject.setPurchaseDate(mSimpleDateFormat.parse(obj
+                            .getString("SubscriptionStart")));
                     subject.setOurdueDate(mSimpleDateFormat.parse(obj.getString("SubscriptionEnd")));
+                    subject.setName(obj.getString("Name"));
                     subjects.add(subject);
                 }
                 dbHelper.updatePurchaseSubjects(subjects);

@@ -14,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
@@ -41,6 +42,12 @@ public class NewsOfLawFragment extends Fragment {
     @SuppressLint("SimpleDateFormat")
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
+    private FragmentManager mFragmentManager;
+
+    private ArticleFragement mArticleFragement;
+
+    private ArticleListFragment mArticleListFragment;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +64,25 @@ public class NewsOfLawFragment extends Fragment {
         mListLaw.setAdapter(new NewsAdapter());
         mListLaw.setOnItemClickListener(mOnItemClickListener);
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mArticleListFragment != null) {
+            mArticleListFragment.getView().setVisibility(View.GONE);
+            mArticleFragement.getView().setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mFragmentManager = getActivity().getSupportFragmentManager();
+        mArticleListFragment = (ArticleListFragment) mFragmentManager
+                .findFragmentById(R.id.fragment_detail_article_list);
+        mArticleFragement = (ArticleFragement) mFragmentManager
+                .findFragmentById(R.id.fragment_detail_article);
     }
 
     private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {

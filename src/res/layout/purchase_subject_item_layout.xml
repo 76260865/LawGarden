@@ -6,10 +6,9 @@
 
     <TextView
         android:id="@+id/txt_overdue_date"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/user_info_text_height"
         android:gravity="center"
-        android:text="dasasdasd"
         android:textColor="#5A7C7C"
         android:textSize="15sp" />
 

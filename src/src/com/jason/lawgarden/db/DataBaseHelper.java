@@ -411,9 +411,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
                 news.setId(cursor.getInt(cursor.getColumnIndex("_id")));
                 news.setTitle(cursor.getString(cursor.getColumnIndex("title")));
-                news.setContent("\t\t"
+                news.setContent("        "
                         + cursor.getString(cursor.getColumnIndex("content")).replace("\n",
-                                "\n\n\t\t"));
+                                "\n\n        "));
                 news.setCrateTime(format.parse(cursor.getString(cursor
                         .getColumnIndex("create_time"))));
                 news.setFrom(cursor.getString(cursor.getColumnIndex("source")));
@@ -840,7 +840,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         try {
             // TODO: filter the result by authorized
-            cursor = mDataBase.rawQuery("SELECT * FROM subjects WHERE name LIKE ?",
+            cursor = mDataBase.rawQuery("SELECT * FROM subjects WHERE is_private = 0 AND name LIKE ?",
                     new String[] { "%" + text + "%" });
             // String query =
             // "SELECT subjects.* FROM subjects JOIN user_subject ON subjects._id = user_subject._id WHERE subjects.name LIKE ? ORDER BY subjects._id ASC";

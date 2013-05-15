@@ -91,7 +91,7 @@ public class LoginActivity extends Activity {
             mProgressDialog.show();
         }
 
-        mTxtLoadingInfo.setText("正在登陆...");
+        mTxtLoadingInfo.setText("正在登录...");
         new LoginPwdTask().execute();
     }
 

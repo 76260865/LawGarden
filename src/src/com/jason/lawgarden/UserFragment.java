@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,6 +41,12 @@ public class UserFragment extends Fragment implements OnClickListener {
 
     private DataBaseHelper mDbHelper;
 
+    private FragmentManager mFragmentManager;
+
+    private ArticleFragement mArticleFragement;
+
+    private ArticleListFragment mArticleListFragment;
+
     @SuppressLint("SimpleDateFormat")
     private SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
@@ -49,6 +56,7 @@ public class UserFragment extends Fragment implements OnClickListener {
 
         mUser = JsonUtil.sUser;
         mDbHelper = DataBaseHelper.getSingleInstance(getActivity());
+        mFragmentManager = getActivity().getSupportFragmentManager();
     }
 
     private ListView mListView;
@@ -57,7 +65,6 @@ public class UserFragment extends Fragment implements OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.user_info_layout, null);
         TextView txtUserName = (TextView) view.findViewById(R.id.txt_user_name);
-        TextView txtAboutUs = (TextView) view.findViewById(R.id.txt_about_us_content);
 
         txtUserName.setText(getString(R.string.txt_user_name_format_text, mUser.getUserName()));
         mBtnUpdate = (Button) view.findViewById(R.id.btn_update);
@@ -74,6 +81,24 @@ public class UserFragment extends Fragment implements OnClickListener {
         mListView = (ListView) view.findViewById(R.id.list_subjects);
         new QueryPurchaseSubjectsTask().execute();
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mArticleFragement != null) {
+            mArticleListFragment.getView().setVisibility(View.GONE);
+            mArticleFragement.getView().setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mArticleListFragment = (ArticleListFragment) mFragmentManager
+                .findFragmentById(R.id.fragment_detail_article_list);
+        mArticleFragement = (ArticleFragement) mFragmentManager
+                .findFragmentById(R.id.fragment_detail_article);
     }
 
     private class QueryPurchaseSubjectsTask extends AsyncTask<Void, Void, String> {

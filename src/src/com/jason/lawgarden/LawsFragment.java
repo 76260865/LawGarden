@@ -122,8 +122,9 @@ public class LawsFragment extends Fragment {
         super.onPause();
         // tablet
         if (mArticleListFragment != null) {
-            mArticleListFragment.getView().setVisibility(View.GONE);
-            mArticleFragement.getView().setVisibility(View.GONE);
+            if (mArticleFragement.getView().isShown()) {
+                mArticleListFragment.getView().setVisibility(View.GONE);
+            }
         }
     }
 
