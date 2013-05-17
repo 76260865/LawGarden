@@ -76,6 +76,7 @@
                 android:layout_weight="1"
                 android:button="@drawable/check_box_bg"
                 android:text="@string/chk_remember_password_text"
+                android:checked="true"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp"
                 android:textStyle="bold" />

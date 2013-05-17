@@ -183,12 +183,12 @@ public class LoginActivity extends Activity {
                             // token is invalid
                             return null;
                         } else {
-                            JsonUtil.updateUserSubjects(getApplicationContext());
+//                            JsonUtil.updateUserSubjects(getApplicationContext());
                         }
                     }
 
-                    JsonUtil.updateUserSubjects(getApplicationContext());
-                    mHasUpdateData = JsonUtil.CheckAllUpdates(getApplicationContext());
+//                    JsonUtil.updateUserSubjects(getApplicationContext());
+//                    mHasUpdateData = JsonUtil.CheckAllUpdates(getApplicationContext());
                 } catch (JSONException e) {
                     Log.e(TAG, e.getMessage());
                 }
@@ -263,17 +263,17 @@ public class LoginActivity extends Activity {
             user.setOverdueDate(new Date());
 
             JsonUtil.sUser = mDbHelper.insertOrUpdateUser(user);
-            try {
-                JsonUtil.updateUserSubjects(getApplicationContext());
-            } catch (JSONException e1) {
-                Log.e(TAG, e1.getMessage());
-            }
-
-            try {
-                mHasUpdateData = JsonUtil.CheckAllUpdates(getApplicationContext());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                JsonUtil.updateUserSubjects(getApplicationContext());
+//            } catch (JSONException e1) {
+//                Log.e(TAG, e1.getMessage());
+//            }
+//
+//            try {
+//                mHasUpdateData = JsonUtil.CheckAllUpdates(getApplicationContext());
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
             return null;
         }
 
