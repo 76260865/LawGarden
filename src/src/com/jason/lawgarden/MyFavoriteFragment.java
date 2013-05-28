@@ -66,8 +66,7 @@ public class MyFavoriteFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_my_favorite, null);
         mListFavorite = (ListView) view.findViewById(R.id.list_law);
         mListFavorite.setOnItemClickListener(mOnItemClickListener);
@@ -104,8 +103,7 @@ public class MyFavoriteFragment extends Fragment {
             } else {
                 if (mArticleFavoritesList.size() > 0) {
                     Favorite favorite = mArticleFavoritesList.get(0);
-                    mArticleFragement.updateContent(favorite.getFavoriteId(),
-                            favorite.getTitle());
+                    mArticleFragement.updateContent(favorite.getFavoriteId(), favorite.getTitle());
                 }
             }
             mArticleFragement.getView().setVisibility(View.VISIBLE);
@@ -122,8 +120,7 @@ public class MyFavoriteFragment extends Fragment {
                     Favorite favorite = mFavoritesList.get(i);
                     if (!favorite.isFavorited()) {
                         mDbHelper
-                                .removeFavoriteByFavoriteIds(new int[] { favorite
-                                        .getFavoriteId() });
+                                .removeFavoriteByFavoriteIds(new int[] { favorite.getFavoriteId() });
                         mFavoritesList.remove(favorite);
                     }
                 }
@@ -132,16 +129,14 @@ public class MyFavoriteFragment extends Fragment {
                     Favorite favorite = mArticleFavoritesList.get(i);
                     if (!favorite.isFavorited()) {
                         mDbHelper
-                                .removeFavoriteByFavoriteIds(new int[] { favorite
-                                        .getFavoriteId() });
+                                .removeFavoriteByFavoriteIds(new int[] { favorite.getFavoriteId() });
                         mArticleFavoritesList.remove(favorite);
                     }
                 }
             }
             mInEditMode = !mInEditMode;
-            mImageFavorite
-                    .setImageResource(mInEditMode ? R.drawable.usercenter_ok
-                            : R.drawable.usercenter_edit);
+            mImageFavorite.setImageResource(mInEditMode ? R.drawable.usercenter_ok
+                    : R.drawable.usercenter_edit);
             mFavoriteAdapter.notifyDataSetChanged();
         }
     };
@@ -167,8 +162,7 @@ public class MyFavoriteFragment extends Fragment {
             mFavoriteAdapter.notifyDataSetChanged();
             if (mArticleFragement != null && mArticleFavoritesList.size() > 0) {
                 Favorite favorite = mArticleFavoritesList.get(0);
-                mArticleFragement.updateContent(favorite.getFavoriteId(),
-                        favorite.getTitle());
+                mArticleFragement.updateContent(favorite.getFavoriteId(), favorite.getTitle());
             }
         }
     }
@@ -194,31 +188,25 @@ public class MyFavoriteFragment extends Fragment {
     };
     private AlertDialog alert;
 
-    private void showBuyDialog() {
+    private void showBuyDialog(int id) {
         if (alert == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("1、付费专题！请您到网站支付后查阅！\n 2、付费后，您可在所有客户端查阅专题数据。")
-                    .setCancelable(true)
-                    .setPositiveButton("购买",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,
-                                        int id) {
-                                    Intent intent = new Intent();
-                                    intent.setAction("android.intent.action.VIEW");
-                                    Uri content_url = Uri
-                                            .parse("http://www.lawyer1981.com");
-                                    intent.setData(content_url);
-                                    startActivity(intent);
-                                    dialog.cancel();
-                                }
-                            })
-                    .setNegativeButton("不购买",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,
-                                        int id) {
-                                    dialog.cancel();
-                                }
-                            });
+            builder.setMessage("1、付费专题！请您到网站支付后查阅！\n 2、付费后，您可在所有客户端查阅专题数据。").setCancelable(true)
+                    .setPositiveButton("购买", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent intent = new Intent();
+                            intent.setAction("android.intent.action.VIEW");
+                            Uri content_url = Uri
+                                    .parse("http://www.llgarden.com/?url=Account/Purchase/" + id);
+                            intent.setData(content_url);
+                            startActivity(intent);
+                            dialog.cancel();
+                        }
+                    }).setNegativeButton("不购买", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
             alert = builder.create();
         }
         alert.show();
@@ -227,29 +215,24 @@ public class MyFavoriteFragment extends Fragment {
     private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
 
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int postion,
-                long id) {
-            Favorite favorite = mCurrentType == TYPE_SUBJECTS ? mFavoritesList
-                    .get(postion) : mArticleFavoritesList.get(postion);
+        public void onItemClick(AdapterView<?> parent, View view, int postion, long id) {
+            Favorite favorite = mCurrentType == TYPE_SUBJECTS ? mFavoritesList.get(postion)
+                    : mArticleFavoritesList.get(postion);
             if (favorite.getFavoriteType() == 0) {
-                if (!mDbHelper.isAuthorized(favorite.getFavoriteId(),
-                        JsonUtil.sUser.getId())) {
-                    showBuyDialog();
+                if (!mDbHelper.isAuthorized(favorite.getFavoriteId(), JsonUtil.sUser.getId())) {
+                    showBuyDialog(favorite.getFavoriteId());
                     return;
                 }
                 Bundle bundle = new Bundle();
-                bundle.putInt(LawsFragment.EXTRA_KEY_SUBJECT_ID,
-                        favorite.getFavoriteId());
-                bundle.putString(LawsFragment.EXTRA_KEY_SUBJECT_NAME,
-                        favorite.getTitle());
-                bundle.putBoolean(LawsFragment.EXTRA_KEY_SUBJECT_IS_FAVORITED,
-                        true);
+                bundle.putInt(LawsFragment.EXTRA_KEY_SUBJECT_ID, favorite.getFavoriteId());
+                bundle.putString(LawsFragment.EXTRA_KEY_SUBJECT_NAME, favorite.getTitle());
+                bundle.putBoolean(LawsFragment.EXTRA_KEY_SUBJECT_IS_FAVORITED, true);
 
                 LawsFragment fragment = new LawsFragment();
                 fragment.setArguments(bundle);
 
-                FragmentTransaction transaction = getActivity()
-                        .getSupportFragmentManager().beginTransaction();
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager()
+                        .beginTransaction();
 
                 transaction.replace(R.id.fragment_container, fragment);
                 transaction.addToBackStack(null);
@@ -266,8 +249,7 @@ public class MyFavoriteFragment extends Fragment {
                     // return;
                     // }
                     Bundle bundle = new Bundle();
-                    bundle.putString(ArticleFragement.EXTRA_KEY_ARTICLE_TITLE,
-                            favorite.getTitle());
+                    bundle.putString(ArticleFragement.EXTRA_KEY_ARTICLE_TITLE, favorite.getTitle());
                     // bundle.putBoolean(LawsFragment.EXTRA_KEY_SUBJECT_IS_FAVORITED,
                     // true);
 
@@ -275,8 +257,8 @@ public class MyFavoriteFragment extends Fragment {
 
                     fragment.setArguments(bundle);
 
-                    FragmentTransaction transaction = getActivity()
-                            .getSupportFragmentManager().beginTransaction();
+                    FragmentTransaction transaction = getActivity().getSupportFragmentManager()
+                            .beginTransaction();
 
                     transaction.replace(R.id.fragment_container, fragment);
                     transaction.addToBackStack(null);
@@ -284,8 +266,7 @@ public class MyFavoriteFragment extends Fragment {
                     // Commit the transaction
                     transaction.commit();
                 } else {
-                    mArticleFragement.updateContent(favorite.getFavoriteId(),
-                            favorite.getTitle());
+                    mArticleFragement.updateContent(favorite.getFavoriteId(), favorite.getTitle());
                 }
             }
         }
@@ -329,18 +310,14 @@ public class MyFavoriteFragment extends Fragment {
                         R.layout.my_favorites_item_layout, null);
             }
 
-            final Favorite favorite = mType == TYPE_SUBJECTS ? mFavoritesList
-                    .get(position) : mArticleFavoritesList.get(position);
-            TextView txtTitle = (TextView) convertView
-                    .findViewById(R.id.txt_law_title);
-            final ImageView imgFavorite = (ImageView) convertView
-                    .findViewById(R.id.img_favorite);
+            final Favorite favorite = mType == TYPE_SUBJECTS ? mFavoritesList.get(position)
+                    : mArticleFavoritesList.get(position);
+            TextView txtTitle = (TextView) convertView.findViewById(R.id.txt_law_title);
+            final ImageView imgFavorite = (ImageView) convertView.findViewById(R.id.img_favorite);
             txtTitle.setText(favorite.getTitle());
-            imgFavorite.setVisibility(mInEditMode ? View.VISIBLE
-                    : View.INVISIBLE);
-            imgFavorite
-                    .setImageResource(favorite.isFavorited() ? R.drawable.list_start_sect
-                            : R.drawable.list_start);
+            imgFavorite.setVisibility(mInEditMode ? View.VISIBLE : View.INVISIBLE);
+            imgFavorite.setImageResource(favorite.isFavorited() ? R.drawable.list_start_sect
+                    : R.drawable.list_start);
             imgFavorite.setOnClickListener(new OnClickListener() {
 
                 @Override

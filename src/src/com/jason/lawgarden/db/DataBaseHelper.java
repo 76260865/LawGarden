@@ -1164,6 +1164,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return ret;
     }
 
+    public void cleanPurchaseSubjects() {
+        if (!mDataBase.isOpen()) {
+            openDataBase();
+        }
+        mDataBase.delete("purchase_subjects", null, null);
+    }
+
     public void updatePurchaseSubjects(ArrayList<PurchaseSubject> subjects) {
         mDataBase.delete("purchase_subjects", null, null);
         for(PurchaseSubject subject : subjects) {

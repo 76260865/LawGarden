@@ -92,6 +92,7 @@ public class LoginActivity extends Activity {
         }
 
         mTxtLoadingInfo.setText("正在登录...");
+        mDbHelper.cleanPurchaseSubjects();
         new LoginPwdTask().execute();
     }
 

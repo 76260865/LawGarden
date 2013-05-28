@@ -27,7 +27,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jason.lawgarden.db.DataBaseHelper;
 import com.jason.lawgarden.model.Article;
@@ -197,7 +196,7 @@ public class LawsFragment extends Fragment {
 
     private AlertDialog alert;
 
-    private void showBuyDialog() {
+    private void showBuyDialog(int id) {
         if (alert == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage("1、付费专题！请您到网站支付后查阅！\n 2、付费后，您可在所有客户端查阅专题数据。").setCancelable(true)
@@ -205,7 +204,8 @@ public class LawsFragment extends Fragment {
                         public void onClick(DialogInterface dialog, int id) {
                             Intent intent = new Intent();
                             intent.setAction("android.intent.action.VIEW");
-                            Uri content_url = Uri.parse("http://www.lawyer1981.com");
+                            Uri content_url = Uri
+                                    .parse("http://www.llgarden.com/?url=Account/Purchase/" + id);
                             intent.setData(content_url);
                             startActivity(intent);
                             dialog.cancel();
@@ -247,7 +247,7 @@ public class LawsFragment extends Fragment {
                 ((RadioButton) mRadioGroup.getChildAt(1)).setTextColor(mSelectColor);
                 mIsDetails = true;
                 if (!mDbHelper.isArticleAuthorized(mSubjectId, JsonUtil.sUser.getId())) {
-                    showBuyDialog();
+                    showBuyDialog(mSubjectId);
                     return;
                 }
 
@@ -330,7 +330,7 @@ public class LawsFragment extends Fragment {
             if (!mDbHelper.isAuthorized(subject.getId(), JsonUtil.sUser.getId())) {
                 // Toast.makeText(getActivity(), "请先购买此专题",
                 // Toast.LENGTH_SHORT).show();
-                showBuyDialog();
+                showBuyDialog(subject.getId());
                 return;
             }
 
@@ -470,7 +470,7 @@ public class LawsFragment extends Fragment {
                 public void onClick(View v) {
                     if (!mDbHelper.isTheLastSubjectsAndAuthorized(JsonUtil.sUser.getId(),
                             subject.getId())) {
-                        showBuyDialog();
+                        showBuyDialog(subject.getId());
                         return;
                     }
 

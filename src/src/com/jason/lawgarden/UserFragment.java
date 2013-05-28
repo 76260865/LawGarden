@@ -343,6 +343,7 @@ public class UserFragment extends Fragment implements OnClickListener {
 
         @Override
         protected void onPostExecute(String result) {
+            new QueryPurchaseSubjectsTask().execute();
             if (mHasUpdateData) {
                 mTxtLoadingInfo.setText("当前应用有更新数据，你是否要更新？");
                 mProgressLogin.setVisibility(View.GONE);
