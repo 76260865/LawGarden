@@ -223,7 +223,9 @@ public class MainActivity extends FragmentActivity {
                     progress.progress = 50;
                     progress.message = "同步专题";
                     publishProgress(progress);
+                    String serverTime = JsonUtil.getCurrentServerDateTimeEx();
                     JsonUtil.updateSubjects(getApplicationContext());
+                    mDbHelper.updateLastDateTime("subjects_update_time", serverTime);
                     progress.progress = 100;
                     progress.message = "完成同步专题";
                     publishProgress(progress);
@@ -235,7 +237,9 @@ public class MainActivity extends FragmentActivity {
                     progress.progress = 50;
                     progress.message = "更新新闻";
                     publishProgress(progress);
+                    String serverTime = JsonUtil.getCurrentServerDateTimeEx();
                     JsonUtil.updateNews(getApplicationContext());
+                    mDbHelper.updateLastDateTime("news_update_time", serverTime);
                     progress.progress = 100;
                     progress.message = "新闻更新完成";
                     publishProgress(progress);
@@ -247,6 +251,7 @@ public class MainActivity extends FragmentActivity {
                     progress.message = "更新法条";
                     publishProgress(progress);
                     String lastUpdateTime = mDbHelper.getLastUpdateArticleTime();
+                    String serverTime = JsonUtil.getCurrentServerDateTimeEx();
                     int pageIndex = 0;
                     int totalPages = JsonUtil.updateArticles(getApplicationContext(), pageIndex,
                             lastUpdateTime);
@@ -261,6 +266,7 @@ public class MainActivity extends FragmentActivity {
                         progress.message = "更新法条";
                         publishProgress(progress);
                     }
+                    mDbHelper.updateLastDateTime("articles_update_time", serverTime);
                 }
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());

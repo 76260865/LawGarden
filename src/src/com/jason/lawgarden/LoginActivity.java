@@ -184,12 +184,13 @@ public class LoginActivity extends Activity {
                             // token is invalid
                             return null;
                         } else {
-//                            JsonUtil.updateUserSubjects(getApplicationContext());
+                            // JsonUtil.updateUserSubjects(getApplicationContext());
                         }
                     }
 
-//                    JsonUtil.updateUserSubjects(getApplicationContext());
-//                    mHasUpdateData = JsonUtil.CheckAllUpdates(getApplicationContext());
+                    // JsonUtil.updateUserSubjects(getApplicationContext());
+                    // mHasUpdateData =
+                    // JsonUtil.CheckAllUpdates(getApplicationContext());
                 } catch (JSONException e) {
                     Log.e(TAG, e.getMessage());
                 }
@@ -264,17 +265,18 @@ public class LoginActivity extends Activity {
             user.setOverdueDate(new Date());
 
             JsonUtil.sUser = mDbHelper.insertOrUpdateUser(user);
-//            try {
-//                JsonUtil.updateUserSubjects(getApplicationContext());
-//            } catch (JSONException e1) {
-//                Log.e(TAG, e1.getMessage());
-//            }
-//
-//            try {
-//                mHasUpdateData = JsonUtil.CheckAllUpdates(getApplicationContext());
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
+            // try {
+            // JsonUtil.updateUserSubjects(getApplicationContext());
+            // } catch (JSONException e1) {
+            // Log.e(TAG, e1.getMessage());
+            // }
+            //
+            // try {
+            // mHasUpdateData =
+            // JsonUtil.CheckAllUpdates(getApplicationContext());
+            // } catch (JSONException e) {
+            // e.printStackTrace();
+            // }
             return null;
         }
 
@@ -326,7 +328,9 @@ public class LoginActivity extends Activity {
                     progress.progress = 50;
                     progress.message = "同步专题";
                     publishProgress(progress);
+                    String serverTime = JsonUtil.getCurrentServerDateTimeEx();
                     JsonUtil.updateSubjects(getApplicationContext());
+                    mDbHelper.updateLastDateTime("subjects_update_time", serverTime);
                     progress.progress = 100;
                     progress.message = "完成同步专题";
                     publishProgress(progress);
@@ -338,7 +342,9 @@ public class LoginActivity extends Activity {
                     progress.progress = 50;
                     progress.message = "更新新闻";
                     publishProgress(progress);
+                    String serverTime = JsonUtil.getCurrentServerDateTimeEx();
                     JsonUtil.updateNews(getApplicationContext());
+                    mDbHelper.updateLastDateTime("news_update_time", serverTime);
                     progress.progress = 100;
                     progress.message = "新闻更新完成";
                     publishProgress(progress);
@@ -349,6 +355,7 @@ public class LoginActivity extends Activity {
                     progress.progress = 0;
                     progress.message = "更新法条";
                     publishProgress(progress);
+                    String serverTime = JsonUtil.getCurrentServerDateTimeEx();
                     String lastUpdateTime = mDbHelper.getLastUpdateArticleTime();
                     int pageIndex = 0;
                     int totalPages = JsonUtil.updateArticles(getApplicationContext(), pageIndex,
@@ -364,6 +371,7 @@ public class LoginActivity extends Activity {
                         progress.message = "更新法条";
                         publishProgress(progress);
                     }
+                    mDbHelper.updateLastDateTime("articles_update_time", serverTime);
                 }
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());

@@ -175,6 +175,11 @@ public class JsonUtil {
         }
     }
 
+    public static String getCurrentServerDateTimeEx() {
+        JSONObject object = new JSONObject();
+        return HttpUtil.doPost(SERVICE_URI + "/getCurrentServerDateTimeEx", object);
+    }
+
     public static void updateNews(Context context) throws JSONException {
         Log.d(TAG, "updateNews");
         DataBaseHelper dbHelper = DataBaseHelper.getSingleInstance(context);

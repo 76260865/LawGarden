@@ -235,7 +235,9 @@ public class UserFragment extends Fragment implements OnClickListener {
                     progress.progress = 50;
                     progress.message = "同步专题";
                     publishProgress(progress);
+                    String serverTime = JsonUtil.getCurrentServerDateTimeEx();
                     JsonUtil.updateSubjects(getActivity());
+                    mDbHelper.updateLastDateTime("subjects_update_time", serverTime);
                     progress.progress = 100;
                     progress.message = "完成同步专题";
                     publishProgress(progress);
@@ -244,7 +246,9 @@ public class UserFragment extends Fragment implements OnClickListener {
                     progress.progress = 50;
                     progress.message = "更新新闻";
                     publishProgress(progress);
+                    String serverTime = JsonUtil.getCurrentServerDateTimeEx();
                     JsonUtil.updateNews(getActivity());
+                    mDbHelper.updateLastDateTime("news_update_time", serverTime);
                     progress.progress = 100;
                     progress.message = "新闻更新完成";
                     publishProgress(progress);
@@ -256,6 +260,7 @@ public class UserFragment extends Fragment implements OnClickListener {
                     progress.message = "更新法条";
                     publishProgress(progress);
                     String lastUpdateTime = mDbHelper.getLastUpdateArticleTime();
+                    String serverTime = JsonUtil.getCurrentServerDateTimeEx();
                     int pageIndex = 0;
                     int totalPages = JsonUtil.updateArticles(getActivity(), pageIndex,
                             lastUpdateTime);
@@ -270,6 +275,7 @@ public class UserFragment extends Fragment implements OnClickListener {
                         progress.message = "更新法条";
                         publishProgress(progress);
                     }
+                    mDbHelper.updateLastDateTime("articles_update_time", serverTime);
                 }
             } catch (JSONException e) {
                 Log.e("UserFragement", e.getMessage());
