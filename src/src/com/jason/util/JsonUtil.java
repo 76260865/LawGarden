@@ -177,7 +177,9 @@ public class JsonUtil {
 
     public static String getCurrentServerDateTimeEx() {
         JSONObject object = new JSONObject();
-        return HttpUtil.doPost(SERVICE_URI + "/getCurrentServerDateTimeEx", object);
+        String s = HttpUtil.doPost(SERVICE_URI + "/getCurrentServerDateTimeEx", object);
+        s = "/Date" + s.substring(s.indexOf('('), s.lastIndexOf(")")) + ")/";
+        return s;
     }
 
     public static void updateNews(Context context) throws JSONException {
